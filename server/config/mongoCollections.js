@@ -1,20 +1,19 @@
-import { dbConnection } from './mongoConnection.js';
+const dbConnection = require('./mongoConnection');
 
-const getCollectionFn = (collection) => {
-  let _col = undefined;
+const getCollectionFn = (collection) =>{
+    let _col = undefined;
 
-  return async () => {
-    if (!_col) {
-      const db = await dbConnection();
-      _col = await db.collection(collection);
-    }
+    return async ()=>{
+        if(!_col){
+            const db = await dbConnection.dbConnection();
+            _col = await db.collection(collection);
+        }
 
-    return _col;
-  };
+        return _col;
+    };
 };
 
-
-export const users = getCollectionFn('users');
-export const chatHistory = getCollectionFn('chat_history');
-
-
+module.exports = {
+    users: getCollectionFn('users'),
+    schedules: getCollectionFn('schedules')
+};
