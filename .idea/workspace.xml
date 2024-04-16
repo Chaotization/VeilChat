@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="d4a03713-3b19-4578-9690-4962f7cfceaa" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/react-server/src/firebase/FirebaseFunctions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/VeilChat.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/aws.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/public/favicon.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/public/imgs/btn_google_signin.png" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/public/imgs/btn_google_signin.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/public/imgs/facebook_signin.png" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/public/imgs/facebook_signin.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/public/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/public/logo192.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/public/logo512.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/public/manifest.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/App.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/App.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/App.test.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/Account.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/App.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/Calendar.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/ChangePassword.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/ChangeUserInfo.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/Chatroom.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/Forms/InviteForm.js" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/Forms/InviteForm.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/Home.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/InvitedUsers.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/MyInvites.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/PrivateRoute.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/SearchUsers.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/SignIn.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/SignOut.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/SignUp.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/firebase/Auth.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/firebase/Firebase.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/firebase/FirebaseFunctions.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/index.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/index.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/logo.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/serviceWorker.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/setupTests.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/yarn.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/config/firebase-config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/config/mongoCollections.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/config/mongoConnection.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/config/settings.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/config/settings.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/data/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/data/invites.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/data/users.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/routes/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/routes/invites.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/routes/users.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/seed/seed.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/validation.js" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2fBc4nOhFvyJf6SZE66ixJG94Tx" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "E:/Stevens Master in CS/CS554_Web_Programming2/Lab6/react_client",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\jinxi\git_repos\CS554-VeilChat\react-server" />
+      <recent name="C:\Users\jinxi\git_repos\CS554-VeilChat\react-server\src" />
+      <recent name="C:\Users\jinxi\git_repos\CS554-VeilChat\react-server\public" />
+      <recent name="C:\Users\jinxi\git_repos\CS554-VeilChat\client\src\components" />
+      <recent name="C:\Users\jinxi\git_repos\CS554-VeilChat\client\src" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="dev" type="js.build_tools.npm" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/react-server/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="dev" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d4a03713-3b19-4578-9690-4962f7cfceaa" name="Changes" comment="" />
+      <created>1713277725741</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1713277725741</updated>
+      <workItem from="1713277732910" duration="7500000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName=".env" />
+  </component>
+</project>
