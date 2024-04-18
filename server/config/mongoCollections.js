@@ -1,11 +1,11 @@
-const dbConnection = require('./mongoConnection');
+import { dbConnection as _dbConnection } from "./mongoConnection.js";
 
 const getCollectionFn = (collection) =>{
     let _col = undefined;
 
     return async ()=>{
         if(!_col){
-            const db = await dbConnection.dbConnection();
+            const db = await _dbConnection();
             _col = await db.collection(collection);
         }
 
@@ -13,6 +13,6 @@ const getCollectionFn = (collection) =>{
     };
 };
 
-module.exports = {
-    users: getCollectionFn('users'),
-};
+const users = getCollectionFn('users');
+
+export default users;
