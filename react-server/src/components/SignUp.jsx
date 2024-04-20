@@ -3,6 +3,7 @@ import {Navigate} from 'react-router-dom';
 import {doCreateUserWithEmailAndPassword} from '../firebase/FirebaseFunctions.js';
 import {AuthContext} from '../context/AuthContext.jsx';
 import SocialSignIn from './SocialSignIn';
+import '../App.css';
 function SignUp() {
     const {currentUser} = useContext(AuthContext);
     const [pwMatch, setPwMatch] = useState('');

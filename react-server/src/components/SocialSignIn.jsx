@@ -1,6 +1,6 @@
 import React from 'react';
 import {doSocialSignIn} from '../firebase/FirebaseFunctions';
-
+import '../App.css';
 const SocialSignIn = () => {
     const socialSignOn = async () => {
         try {
