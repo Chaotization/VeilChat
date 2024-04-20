@@ -30,6 +30,8 @@
     "socket.io": "^4.5.4",
     "country-state-city": "3.2.1",
     "redis": "4.6.13",
-    "uuid": "9.0.1"
+    "uuid": "9.0.1",
+    "cors": "2.8.5",
+    "jsonwebtoken": "9.0.2"
   }
 }

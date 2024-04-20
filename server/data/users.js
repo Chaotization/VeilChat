@@ -201,17 +201,19 @@ catch(e)
         result=false;
       throw "Invalid email format";
     }
+   
     let userData = await users();
     let user = await userData.findOne({ email });
-    if (user == null) {
+    if (!user) {
         result=false;
-      throw "No records found";
+      return [ user, result];
     }
     if (!await bcrypt.compare(password, user.password)) {
         result=false;
         throw "email/password incorrect!";
     }
-    return [result, user]
+    
+    return [user, result]
   },
   async changePassword(body) {
     let{id, new_password}=body;

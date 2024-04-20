@@ -1,19 +1,25 @@
 import express from "express";
 import session from "express-session";
-const app = express();
 import configRoutes from "./routes/index.js";
+import cors from "cors";
 
+const app = express();
+
+app.use(cors({
+  origin: ['http://localhost:3000']})); 
 app.use(
   session({
     name: "AuthCookie",
-    secret: "some secret",
+    secret: "someSecret",
     resave: false,
     saveUninitialized: false,
   })
 );
 app.use(express.json());
 configRoutes(app);
-app.listen(4000, () => {
-  console.log("We've now got a server!");
-  console.log("Your routes will be running on http://localhost:4000");
+
+const PORT = 4000;
+app.listen(PORT, () => {
+  console.log("Server is running...");
+  console.log(`Routes are available at http://localhost:${PORT}`);
 });
