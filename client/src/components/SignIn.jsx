@@ -51,7 +51,7 @@ const SignIn=()=>
     }
     return(
         <div className="container">
-            <h2 style={{textAlign:"center"}}>Login</h2>
+            <h2 style={{textAlign:"center", fontWeight:"bold"}}>Login</h2>
         <form onSubmit={handleSignIn} id='form' className="flex flex-col space-y-4">
         <div className="container mx-auto">
           <div className="card bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
@@ -73,7 +73,11 @@ const SignIn=()=>
             </div>
             {error && <p className="text-center text-red" style={{color:"red"}}>{error}</p>}
           </div>
-          <Link to="/signup">Create account</Link>
+          <Link to="/signup">
+          <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+            Create account
+          </button>
+        </Link>
         </div>
       </form>
       </div>

@@ -29,13 +29,13 @@ router.route("/").post(async (req, res) => {
       country
     );
     if (result) {
-      return res.redirect("/login");
+      return res.status(200).json({ message: "success" });
     } else {
       throw "Couldn't add user";
     }
 
   } catch (e) {
-    return res.status(400).json({ error: e });
+    return res.status(400).json({ message: e });
   }
 });
 

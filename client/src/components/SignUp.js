@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useState, useContext } from "react";
 import AuthContext from "./AuthContext";
 import { State, City } from "country-state-city";
 function SignUp() {
   const { loggedIn, handleLogedIn } = useContext(AuthContext);
+  if (loggedIn) navigate("/");
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -20,7 +21,7 @@ function SignUp() {
   const [repeat_password, setRepeatPassword] = useState("");
   let [user_name, setUserName] = useState("");
   let [userMatch, setUserMatch] = useState(false);
-  if (loggedIn) navigate("/");
+  
   let states = State.getAllStates().filter(
     (state) => state.countryCode === "US"
   );
@@ -73,19 +74,94 @@ function SignUp() {
     setRepeatPassword(newPwd);
     setMatch(password === newPwd);
   }
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    if (formData.password !== formData.repeat_password) {
+    setErrors([])
+    if (password !== repeat_password) {
       setErrors((prevState) => {
         return [...prevState, "Passwords doesn't match"];
       });
     }
+    
+    const regex = /^[A-Za-zÀ-ÿ ]+$/;
+    if(!regex.test(formData.first_name.trim()))
+    {
+        setErrors((prevState) => {
+            return [...prevState, "Invalid First name"]
+          });
+    }
+    if(!regex.test(formData.last_name.trim()))
+    {
+        setErrors((prevState) => {
+            return [...prevState, "Invalid Last name"]
+          });
+    }
+    if(!userMatch){
+        setErrors((prevState) => {
+            return [...prevState, "Invalid user name"];
+          });
+    }
+    let state=document.getElementById("state").value;
+    let city=document.getElementById("city").value;
+    if(!cities)
+    {
+        city=state;
+    }
+    if(!errors.length)
+    {
+    let response=await fetch("http://localhost:4000/signup",{
+        method:"POST",
+        headers: { 'Content-Type': 'application/json' },
+        body:JSON.stringify(
+            {
+                "first_name":formData.first_name.trim(),
+                "last_name":formData.last_name.trim(),
+                "email":formData.email.trim(),
+                "user_name":user_name.trim(),
+                "password":password,
+                "repeat_password":repeat_password,
+                "city":city,
+                "state":state,
+                "country":"US"
+            })
+    });
+    try
+    {
+    let data=await response.json()
+    if (!response.ok) {
+        console.log(data.message)
+        if (data && data.message) {
+            setErrors((prevState) => {
+                return [...prevState, data.message];
+              });
+            return
+          } else {
+            setErrors((prevState) => {
+                return [...prevState, "An error occurred while logging in"];
+              });
+            return
+          }
+        }
+        setErrors([]);
+        alert("Sucessfully created your profile");
+        navigate('/login');
+    }
+catch(e)
+{
+    console.log(e)
+    setErrors((prevState) => {
+        return [...prevState, e.message];
+      });
+}
+    }
+    return;
   };
 
   return (
     <div className="max-w-md mx-auto my-8">
-      <h2 style={{ textAlign: "center" }}>Create a new profile</h2>
+      <h2 style={{textAlign:"center", fontWeight:"bold"}}>Create a new profile</h2>
       <div className="container">
+       
         <form
           onSubmit={handleSubmit}
           className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
@@ -210,7 +286,9 @@ function SignUp() {
             </label>
             <select
               name="state"
+              id="state"
               required
+              className=" border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               value={formData.state}
               onChange={handleChange}>
               <option key="some_random_value" value="select">
@@ -234,6 +312,8 @@ function SignUp() {
               </label>
               <select
                 name="city"
+                id="city"
+                className=" border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 value={formData.city}
                 required
                 onChange={handleChange}>
@@ -252,12 +332,29 @@ function SignUp() {
           <label htmlFor="country" className="block text-gray-700 text-sm font-bold mb-2">Country:</label>
           <input type="text" name="country" value={formData.country} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
         </div> */}
+        <div className="container">
+            {errors.length>0 && <ul>
+                {errors.map((error)=>(
+                    <li key={error}style={{color:"red"}}>
+                        {error}
+                    </li>
+                ))}
+                </ul>}
+        </div>
           <div className="mb-6">
+            <div className="flex space-x-3">
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+              className="bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline">
               Sign Up
             </button>
+          
+            <Link to="/login">
+              <button className="bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline">
+                Already have an account
+                </button>
+                </Link>
+                </div>
           </div>
         </form>
       </div>

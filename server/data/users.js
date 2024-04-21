@@ -10,11 +10,14 @@ let exportedMethods = {
       _id,
       first_name,
       last_name,
+      user_name,
       email,
       city,
       state,
       country,
-      status,
+     user_since,
+     friends,
+     role
     });
 
     return newList;
@@ -70,7 +73,8 @@ if(!regex.test(user_name))
      const usersCollection = await users();
     let info = await usersCollection.findOne({ email: email });
     if (info) throw "Email already exists";
-
+    info = await usersCollection.findOne({user_name:user_name.trim()});
+    if (info) throw "User name already exists";
     let newUser = {
       first_name: first_name.trim(),
       last_name: last_name.trim(),
