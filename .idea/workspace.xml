@@ -6,24 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d4a03713-3b19-4578-9690-4962f7cfceaa" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/.env" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/App.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/App.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/components/Account.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/Account.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/components/App.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/components/ChangePassword.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/ChangePassword.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/components/Home.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/Home.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/components/Navigation.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/Navigation.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/components/PrivateRoute.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/PrivateRoute.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/components/ProtectedHome.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/ProtectedHome.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/components/SignIn.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/SignIn.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/components/SignOut.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/SignOut.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/components/SignUp.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/SignUp.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/components/SocialSignIn.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/SocialSignIn.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/context/AuthContext.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/context/AuthContext.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/firebase/FirebaseConfig.js" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/firebase/FirebaseConfig.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/index.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/main.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/main.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/config/settings.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/config/settings.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,12 +29,13 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/jinxi/git_repos/CS-554/react_third_lecture/firebase-auth",
+    "last_opened_file_path": "C:/Users/jinxi/git_repos/University-Management-System",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "ts.external.directory.path": "D:\\WebStorm 2023.1\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -86,7 +70,8 @@
       <updated>1713277725741</updated>
       <workItem from="1713277732910" duration="7806000" />
       <workItem from="1713583686425" duration="53000" />
-      <workItem from="1713584518896" duration="1715000" />
+      <workItem from="1713584518896" duration="1865000" />
+      <workItem from="1713803780080" duration="1460000" />
     </task>
     <servers />
   </component>
