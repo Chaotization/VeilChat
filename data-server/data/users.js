@@ -10,7 +10,10 @@ import path from 'path';
  * @param {string} firstName - First name of the user.
  * @param {string} lastName - Last name of the user.
  * @param {string} state - Email of the user.
+<<<<<<< HEAD
+=======
  * @param {string} gender - Gender of the user
+>>>>>>> 2972a766ffa6f34a9be0e45d3d867a861b4de88c
  * @param {string} phoneNumber - phoneNumber of the user.
  * @param {string} password - The password when users log in.
  * @param {String} profilePicture - The URL points to the item in S3
