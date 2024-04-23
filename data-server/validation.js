@@ -93,6 +93,110 @@ const exportedMethods = {
         if (min < 0 || max < 0 || min > max) throw "Invalid age range";
 
         return { min, max };
+    },
+    validateName(name, valName) {
+        if (!name) {
+            throw `Error: ${valName} not supplied`;
+        }
+        if (typeof name !== "string" || name.trim().length === 0) {
+            throw `Error: ${valName} should be a valid string (no empty spaces)`;
+        }
+
+        name = name.trim();
+        const nameRegex = /^[a-zA-Z]+$/;
+        if (!nameRegex.test(name)) {
+            throw `Error: ${valName} must only contain character a-z and should not contain numbers`;
+        }
+        if (name.length < 2 || name.length > 25) {
+            throw `Error: ${valName} length must be at least 2 characters long with a max of 25 characters`
+        }
+        return name;
+    },
+    validateEmail(email) {
+        if (!email) {
+            throw "Error: Email is not supplied";
+        }
+        if (typeof email !== "string" || email.trim().length === 0) {
+            throw "Error: Email should be a valid string (no empty spaces)";
+        }
+        email = email.trim().toLowerCase();
+        const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+        const validDomains = ["com", "edu", "org", "net"]
+        if (!emailRegex.test(email)) {
+            throw "Error: Email is in the wrong format";
+        }
+
+        const domain = email.split('@')[1].toLowerCase();
+        if (!validDomains.some(validDomain => domain.endsWith(`.${validDomain}`))) {
+            throw "Error: Email has an unsupported domain";
+        }
+        return email;
+    },
+    validatePhoneNumber(phoneNumber) {
+        if (!phoneNumber) {
+            throw "Error: Phone number not supplied";
+        }
+        if (typeof phoneNumber !== "string" || phoneNumber.trim().length === 0) {
+            throw "Error: Phone number should be a valid string (no empty spaces)";
+        }
+        phoneNumber = phoneNumber.trim();
+
+        const phoneRegex = /^\+\d{1,3}\s?(\d{1,4}\s?)?\d{4,14}$/;
+        if (!phoneRegex.test(phoneNumber)) {
+            throw "Error: Invalid phone number format. A country code is required.";
+        }
+        return phoneNumber;
+    },
+    validatePassword(password, valName) {
+        if (!password) throw `Error: ${valName} not supplied`;
+        if (typeof password !== "string" || password.trim().length <= 0) {
+            throw `Error: ${valName} must be a valid string(no empty spaces)!`;
+        }
+        password = password.trim();
+        if (password.length < 8) {
+            throw `Error: ${valName} must be at least 8 characters`;
+        }
+        if (/\s/.test(password)) throw `Error: ${valName} must not contain spaces`;
+        //There needs to be at least one uppercase character
+        if (!/[A-Z]/.test(password)) {
+            throw `Error: ${valName} must contain at least one uppercase character`;
+        }
+        if (!/[a-z]/.test(password)) {
+            throw `Error: ${valName} must contain at least one lowercase character`;
+        }
+        //at least one number
+        if (!/\d/.test(password)) {
+            throw `Error: ${valName} must contain at least one number`;
+        }
+        //at least one special character
+        if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+            throw `Error: ${valName} must contain at least one special character`;
+        }
+        return password;
+    },
+    generateCurrentDate() {
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        const hour = date.getHours();
+        const minutes = date.getMinutes();
+        return `${month}/${day}/${year} ${hour}:${minutes}`;
+    },
+    validateLanguages(languages){
+        const topLanguages = [
+            "chinese", "spanish", "english", "hindi", "bengali",
+            "portuguese", "russian", "japanese", "western punjabi", "marathi",
+            "telugu", "wu chinese", "turkish", "korean", "french",
+            "german", "vietnamese", "tamil", "urdu"];
+
+        return languages.map(language => {
+            const normalizedLanguage = language.trim().toLowerCase();
+            if (!topLanguages.includes(normalizedLanguage)) {
+                throw `Error: '${language}' is not a recognized top 20 language`;
+            }
+            return normalizedLanguage;
+        });
     }
 
 }

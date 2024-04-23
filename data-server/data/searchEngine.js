@@ -1,7 +1,5 @@
 import validation from "../validation";
 import axios from "axios";
-import os from 'os';
-import dotenv from 'dotenv';
 import {users} from "../config/mongoCollections";
 
 
