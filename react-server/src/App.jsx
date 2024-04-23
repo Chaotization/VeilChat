@@ -1,6 +1,5 @@
-
-
 import React, { useState } from 'react'
+
 
 import {Route, Routes} from 'react-router-dom';
 import Account from './components/Account.jsx';
@@ -11,12 +10,14 @@ import SignIn from './components/SignIn.jsx';
 import SignUp from './components/SignUp.jsx';
 import {AuthProvider} from './context/AuthContext.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
+import UserFilter from './components/SearchUsers.jsx'
 import 'tailwindcss/tailwind.css';
 import './output.css';
+
 function App() {
     return (
         <AuthProvider>
-
+            <div className='App'>
                 <header className='App-header card'>
                     <Navigation />
                 </header>
@@ -30,7 +31,9 @@ function App() {
                     </Route>
                     <Route path='/signin' element={<SignIn />} />
                     <Route path='/signup' element={<SignUp />} />
+                    <Route path='/search-user' element={<UserFilter/>} />
                 </Routes>
+            </div>
         </AuthProvider>
     );
 }
