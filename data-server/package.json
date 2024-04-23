@@ -13,6 +13,7 @@
   "author": "CS554 boys 2024-spring",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.6.8",
     "bcrypt": "^5.1.0",
     "@apollo/server": "4.10.3",
     "graphql":"16.8.1",
@@ -21,8 +22,6 @@
     "dotenv": "^16.0.3",
     "express": "^4.17.1",
     "express-session": "^1.17.3",
-    "firebase": "^7.23.0",
-    "firebase-admin": "^11.4.0",
     "gm": "^1.25.0",
     "mongodb": "6.5.0",
     "multer": "^1.4.5-lts.1",
@@ -31,7 +30,6 @@
     "country-state-city": "3.2.1",
     "redis": "4.6.13",
     "uuid": "9.0.1",
-    "cors": "2.8.5",
     "jsonwebtoken": "9.0.2"
   }
 }

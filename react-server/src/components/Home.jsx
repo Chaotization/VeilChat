@@ -1,8 +1,12 @@
-const Home=()=>
-{
+import React from 'react';
+import '../App.css';
 
-    
-    return(<div>Landing page content goes here...</div>)
+function Landing() {
+    return (
+        <div className='card'>
+            <h2>This is the Landing page</h2>
+        </div>
+    );
 }
 
-export default Home;
+export default Landing;
