@@ -2,7 +2,7 @@ import users from "../config/mongoCollections.js";
 import {ObjectId} from "mongodb";
 import bcrypt from "bcrypt";
 import validation from "../validation.js";
-
+import redis from "redis";
 import AWS from 'aws-sdk';
 import fs from 'fs';
 
@@ -19,6 +19,11 @@ import fs from 'fs';
  * @param {HashTable{{user_id, “status”},{...},...}} friends - A HashTable that has friend_id as the key and the status as value.
  * @param {String} role - A String variable reflects whether the user is an admin or user.
  */
+
+
+const client = redis.createClient();
+client.connect().then(() => {
+});
 
 const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
 const AWS_SECRET_ACCESS_ID = process.env.AWS_ACCESS_KEY_ID;
@@ -142,7 +147,7 @@ export const createUser = async (
 };
 
 
-export const loginUser = async (email, password) => {
+export const loginUser = async (email, password, currentLocation) => {
     email = validation.validateEmail(email);
     password = validation.validatePassword(password);
 
