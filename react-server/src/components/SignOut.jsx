@@ -1,9 +1,9 @@
 import React from 'react';
 import {doSignOut} from '../firebase/FirebaseFunctions.js';
-import '../App.css';
+
 const SignOutButton = () => {
     return (
-        <button className='button' type='button' onClick={doSignOut}>
+        <button className='bg-red-400 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' type='button' onClick={doSignOut}>
             Sign Out
         </button>
     );

@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+
 
 import {Route, Routes} from 'react-router-dom';
 import Account from './components/Account.jsx';
@@ -13,7 +11,8 @@ import SignUp from './components/SignUp.jsx';
 import {AuthProvider} from './context/AuthContext.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
 import UserFilter from './components/SearchUsers.jsx'
-
+import 'tailwindcss/tailwind.css';
+import './output.css';
 
 function App() {
     return (
