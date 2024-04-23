@@ -52,6 +52,7 @@ let exportedMethods = {
     city,
     state,
     country,
+    gender,
     status = "online",
     
   ) {
@@ -94,6 +95,7 @@ if(!regex.test(user_name))
       state,
       dob,
       country,
+      gender,
       friends: [],
       user_since: user_since,
       role: "user",

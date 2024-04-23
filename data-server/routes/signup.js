@@ -12,6 +12,7 @@ router.route("/").post(async (req, res) => {
     password,
     repeat_password,
     dob,
+    gender,
     city,
     state,
     country,
@@ -25,6 +26,8 @@ router.route("/").post(async (req, res) => {
       user_name,
       email,
       password,
+      dob,
+      gender,
       city,
       state,
       country
