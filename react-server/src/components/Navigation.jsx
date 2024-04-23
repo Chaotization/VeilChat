@@ -2,7 +2,7 @@ import React, {useContext} from 'react';
 import {NavLink} from 'react-router-dom';
 import {AuthContext} from '../context/AuthContext.jsx';
 import SignOutButton from './SignOut.jsx';
-
+import '../App.css';
 const Navigation = () => {
     const {currentUser} = useContext(AuthContext);
     return <div>{currentUser ? <NavigationAuth /> : <NavigationNonAuth />}</div>;

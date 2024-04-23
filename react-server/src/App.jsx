@@ -12,6 +12,8 @@ import SignIn from './components/SignIn.jsx';
 import SignUp from './components/SignUp.jsx';
 import {AuthProvider} from './context/AuthContext.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
+import UserFilter from './components/SearchUsers.jsx'
+
 
 function App() {
     return (
@@ -30,6 +32,7 @@ function App() {
                     </Route>
                     <Route path='/signin' element={<SignIn />} />
                     <Route path='/signup' element={<SignUp />} />
+                    <Route path='/search-user' element={<UserFilter/>} />
                 </Routes>
             </div>
         </AuthProvider>
