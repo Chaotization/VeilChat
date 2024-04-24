@@ -2,7 +2,7 @@ import users from "../config/mongoCollections.js";
 import {ObjectId} from "mongodb";
 import bcrypt from "bcrypt";
 import validation from "../validation.js";
-
+// import redis from "redis";
 import AWS from 'aws-sdk';
 import fs from 'fs';
 
@@ -12,6 +12,8 @@ import fs from 'fs';
  * @param {string} lastName - Last name of the user.
  * @param {string} email - email of the user.
  * @param {[string,string]} languages - languages of the user he/she can speak.
+ * @param {string} gender - gender of the user.
+ * @param {string} dob - birthday of the user.
  * @param {string} phoneNumber - phoneNumber of the user.
  * @param {string} password - The password when users log in.
  * @param {string} userSince - the user's registration time.
@@ -19,6 +21,11 @@ import fs from 'fs';
  * @param {HashTable{{user_id, “status”},{...},...}} friends - A HashTable that has friend_id as the key and the status as value.
  * @param {String} role - A String variable reflects whether the user is an admin or user.
  */
+
+
+// const client = redis.createClient();
+// client.connect().then(() => {
+// });
 
 const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
 const AWS_SECRET_ACCESS_ID = process.env.AWS_ACCESS_KEY_ID;
@@ -97,6 +104,8 @@ export const createUser = async (
     lastName,
     email,
     languages,
+    gender,
+    dob,
     phoneNumber,
     password,
     profilePictureLocation
@@ -107,6 +116,8 @@ export const createUser = async (
     phoneNumber = validation.validatePhoneNumber(phoneNumber);
     password = validation.validatePassword(password, "password");
     languages = validation.validateLanguages(languages);
+    gender = validation.validateGender(gender);
+    dob = validation.validateDateTime(dob);
 
     const userCollection = await users();
     const ifExist = await userCollection.findOne({email: email});
@@ -127,6 +138,8 @@ export const createUser = async (
         lastName,
         email,
         languages,
+        gender,
+        dob,
         phoneNumber,
         password: await bcrypt.hash(password, 15),
         userSince: validation.generateCurrentDate(),
@@ -142,7 +155,7 @@ export const createUser = async (
 };
 
 
-export const loginUser = async (email, password) => {
+export const loginUser = async (email, password, currentLocation) => {
     email = validation.validateEmail(email);
     password = validation.validatePassword(password);
 
@@ -165,6 +178,8 @@ export const loginUser = async (email, password) => {
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
+            gender: user.gender,
+            dob: user.dob,
             phoneNumber: user.phoneNumber,
             languages: user.languages,
             userSince: user.userSince,
