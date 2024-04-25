@@ -47,7 +47,8 @@ const exportedMethods = {
         if(!gender) throw "Gender is not provided";
         if(typeof gender !== 'string') throw "Password must be a string!";
         gender = gender.trim();
-        if(gender.toLowerCase() !== 'male' || gender.toLowerCase() !== 'female' || gender.toLowerCase() !== 'others') throw "Invalid gender provided. Gender must be either 'male', 'female', or 'others'.";
+        const validGenders = ['male', 'female', 'others'];
+        if (!validGenders.includes(gender)) throw "Invalid gender provided. Gender must be either 'male', 'female', or 'others'.";
 
         return gender;
     },
@@ -57,22 +58,12 @@ const exportedMethods = {
         if (typeof language !== 'string') throw "Language must be a string!";
         language = language.trim();
 
-        const countryLanguages = {
-            "English": ["United States", "United Kingdom", "Canada", "Australia", "New Zealand", "Ireland"],
-            "French": ["France", "Canada", "Belgium", "Switzerland"],
-            "German": ["Germany", "Austria", "Switzerland", "Belgium", "Luxembourg"],
-            "Spanish": ["Mexico", "Spain", "Argentina", "Colombia", "Peru"],
-            "Mandarin": ["China", "Singapore"],
-            "Arabic": ["Egypt", "Saudi Arabia", "United Arab Emirates", "Iraq"],
-            "Russian": ["Russia", "Ukraine", "Kazakhstan", "Belarus"],
-            "Hindi": ["India"],
-            "Portuguese": ["Brazil", "Portugal"],
-            "Bengali": ["Bangladesh"]
-        };
+        const languages = [
+            "english", "french", "german", "spanish", "mandarin", "arabic","russian", "hindi", "portuguese", "bengali"]
 
 
-        if (language.toLowerCase() in countryLanguages) {
-            return { countries: countryLanguages[language.toLowerCase()], language };
+        if (languages.includes(language.toLowerCase())) {
+            return  language ;
         } else {
             throw "Country not found for the provided language.";
         }
@@ -85,15 +76,28 @@ const exportedMethods = {
 
         if (ranges.length !== 2) throw "Invalid age range format";
 
-        let min = parseInt(ranges[0]);
-        let max = parseInt(ranges[1]);
+        let minAge = parseInt(ranges[0]);
+        let maxAge = parseInt(ranges[1]);
 
-        if (isNaN(min) || isNaN(max)) throw "Invalid age range format";
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
 
-        if (min < 0 || max < 0 || min > max) throw "Invalid age range";
+        const minBirthYear = new Date(currentDate);
+        minBirthYear.setFullYear(currentYear - maxAge);
 
-        return { min, max };
+        const maxBirthYear = new Date(currentDate);
+        maxBirthYear.setFullYear(currentYear - minAge);
+
+        const formatDate = (date) => {
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            const year = date.getFullYear();
+            return `${month}/${day}/${year}`;
+        };
+
+        return { min: formatDate(minBirthYear), max: formatDate(maxBirthYear) };
     },
+
     validateName(name, valName) {
         if (!name) {
             throw `Error: ${valName} not supplied`;
@@ -112,6 +116,7 @@ const exportedMethods = {
         }
         return name;
     },
+
     validateEmail(email) {
         if (!email) {
             throw "Error: Email is not supplied";
@@ -197,6 +202,24 @@ const exportedMethods = {
             }
             return normalizedLanguage;
         });
+    },
+    validateDateTime(inputDate) {
+        const dateRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/(19[0-9]{2}|20[0-9]{2})$/;
+
+        if (typeof inputDate !== "string") {
+            throw "Date must be a string.";
+        }
+        inputDate = inputDate.trim();
+        if (!dateRegex.test(inputDate)) {
+            throw "Invalid date format. Must be in MM/DD/YYYY format.";
+        }
+        return new Date(inputDate);
+    },
+    validateGender(gender) {
+        if (!gender) throw "Gender is not provided";
+        gender = gender.trim().toLowerCase();
+        if (gender !== 'male' && gender !== 'female') throw "Invalid gender provided. Gender must be either 'male' or 'female'.";
+        return gender;
     }
 
 }

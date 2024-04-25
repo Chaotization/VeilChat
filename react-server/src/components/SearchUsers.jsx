@@ -30,13 +30,14 @@ const UserFilter = () => {
 
     const handleFilter = async () => {
         try {
-            const response = await axios.post('/api/filterUsers', {
+            const response = await axios.post('http://localhost:4000/search', {
+                _id: "662963e613e649c284e1e509",
                 gender,
                 age,
                 language,
                 distance,
-                userLocation
-            });
+                userLocation,
+               });
 
             setFilteredUsers(response.data.users);
         } catch (error) {

@@ -4,7 +4,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d4a03713-3b19-4578-9690-4962f7cfceaa" name="Changes" comment="" />
+    <list default="true" id="d4a03713-3b19-4578-9690-4962f7cfceaa" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/config/settings.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/data/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/data/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/data/searchEngine.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/data/searchEngine.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/data/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/data/users.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/env" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/routes/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/routes/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/routes/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/routes/login.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/routes/search.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/routes/search.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/routes/signup.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/routes/signup.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/routes/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/routes/user.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/seed.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/seed.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/seed/seed.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/validation.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/validation.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react-server/src/components/SearchUsers.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/SearchUsers.jsx" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -16,25 +34,36 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 1
+}</component>
   <component name="ProjectId" id="2fBc4nOhFvyJf6SZE66ixJG94Tx" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/jinxi/git_repos/University-Management-System&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Node.js.searchEngine.js.executor": "Debug",
+    "Node.js.seed.js.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "E:/CS/554/hw/hw3",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "npm.client.executor": "Run",
+    "npm.server.executor": "Debug",
+    "ts.external.directory.path": "D:\\JetBrains\\WebStorm 2024.1.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\jinxi\git_repos\CS554-VeilChat\react-server" />
@@ -44,8 +73,8 @@
       <recent name="C:\Users\jinxi\git_repos\CS554-VeilChat\client\src" />
     </key>
   </component>
-  <component name="RunManager">
-    <configuration name="dev" type="js.build_tools.npm" nameIsGenerated="true">
+  <component name="RunManager" selected="npm.server">
+    <configuration name="client" type="js.build_tools.npm">
       <package-json value="$PROJECT_DIR$/react-server/package.json" />
       <command value="run" />
       <scripts>
@@ -55,6 +84,27 @@
       <envs />
       <method v="2" />
     </configuration>
+    <configuration name="server" type="js.build_tools.npm">
+      <package-json value="$PROJECT_DIR$/data-server/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="start" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="npm.client" />
+      <item itemvalue="npm.server" />
+    </list>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-1d06a55b98c1-2e7d6887c066-JavaScript-WS-241.15989.47" />
+      </set>
+    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -68,6 +118,9 @@
       <workItem from="1713884293055" duration="9104000" />
       <workItem from="1713893550791" duration="2736000" />
       <workItem from="1713897620212" duration="3008000" />
+      <workItem from="1713972475043" duration="948000" />
+      <workItem from="1713975171214" duration="10589000" />
+      <workItem from="1714053979370" duration="9715000" />
     </task>
     <servers />
   </component>
@@ -76,5 +129,45 @@
   </component>
   <component name="UnknownFeatures">
     <option featureType="com.intellij.fileTypeFactory" implementationName=".env" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/react-server/src/components/SearchUsers.jsx</url>
+          <line>13</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/react-server/src/components/SearchUsers.jsx</url>
+          <line>32</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/data-server/data/searchEngine.js</url>
+          <line>47</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/data-server/data/searchEngine.js</url>
+          <line>28</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/data-server/data/searchEngine.js</url>
+          <line>155</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="25" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/data-server/data/searchEngine.js</url>
+          <line>149</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="27" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
