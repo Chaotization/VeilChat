@@ -59,7 +59,7 @@ const exportedMethods = {
         language = language.trim();
 
         const languages = [
-            "english", "french", "german", "spanish", "mandarin", "arabic","russian", "hindi", "portuguese", "bengali"]
+            "english", "french", "german", "spanish", "chinese", "arabic","russian", "hindi", "portuguese", "bengali"]
 
 
         if (languages.includes(language.toLowerCase())) {

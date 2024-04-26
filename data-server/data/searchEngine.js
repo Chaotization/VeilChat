@@ -2,6 +2,7 @@ import validation from "../validation.js";
 import axios from "axios";
 import redis from 'redis';
 import users from '../config/mongoCollections.js'
+import {ObjectId} from "mongodb";
 
 const client = redis.createClient();
 client.connect().then(() => {
@@ -121,11 +122,12 @@ let exportedMethods = {
 
             if (criteria.age) {
                 const { min, max } = validation.checkAgeRange(criteria.age);
-                query.age = { $gte: min, $lte: max };
+                query.dob = {$gte: new Date(min), $lte: new Date(max)};
             }
 
             if(criteria.language) {
-                query.language = validation.checkLanguage(criteria.language)
+                const language = validation.checkLanguage(criteria.language);
+                query.languages = { $in: [language] };
             }
 
             if (criteria.distance && criteria.position.lat && criteria.position.lng) {
@@ -146,10 +148,11 @@ let exportedMethods = {
                 if(exists){
                     const activeUsers = await client.json.get('activeUsers');
                     const filteredUsers = activeUsers.filter((user) => user._id !== userId && user.position !== null);
-                    if (filteredUsers.length === 0) throw "Error: No users nearby.";
+                    if(!filteredUsers || filteredUsers.length === 0) return [];
                     const nearbyUsers = await findNearByUsers(filteredUsers, lat, lng, criteria.distance);
                     const nearbyUserIds = nearbyUsers.map(user => user._id);
-                    query._id = { $in: nearbyUserIds };
+                    const userQueries = nearbyUserIds.map(id => ({ _id: new ObjectId(id) }));
+                    query.$or = userQueries;
                 }
 
             }
