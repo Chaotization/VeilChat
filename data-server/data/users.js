@@ -124,13 +124,13 @@ export const createUser = async (
         throw `Error: ${email} is already registered, Please Login`;
     }
 
-    if (!profilePictureLocation) {
-        profilePictureLocation = "https://veilchat-s3.s3.amazonaws.com/usersProfileFolder/defaultUserProfilePicture.jpg";
-    } else if (typeof profilePictureLocation === 'string') {
-        profilePictureLocation = await createURLByPath(profilePictureLocation);
-    } else {
-        profilePictureLocation = await createURLByFile(profilePictureLocation);
-    }
+    // if (!profilePictureLocation) {
+    //     profilePictureLocation = "https://veilchat-s3.s3.amazonaws.com/usersProfileFolder/defaultUserProfilePicture.jpg";
+    // } else if (typeof profilePictureLocation === 'string') {
+    //     profilePictureLocation = await createURLByPath(profilePictureLocation);
+    // } else {
+    //     profilePictureLocation = await createURLByFile(profilePictureLocation);
+    // }
 
     const user = {
         firstName,
