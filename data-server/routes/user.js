@@ -1,7 +1,7 @@
 import Router, {json} from "express";
 import bcrypt from "bcrypt";
 
-import usersData from "../data/index.js";
+import usersData from '../data/index.js';
 
 const router = Router();
 

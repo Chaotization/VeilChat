@@ -30,13 +30,14 @@ const UserFilter = () => {
 
     const handleFilter = async () => {
         try {
-            const response = await axios.post('/api/filterUsers', {
+            const response = await axios.post('http://localhost:4000/search', {
+                _id: "662963ed13e649c284e1e50c",
                 gender,
                 age,
                 language,
                 distance,
-                userLocation
-            });
+                userLocation,
+               });
 
             setFilteredUsers(response.data.users);
         } catch (error) {
@@ -83,7 +84,7 @@ const UserFilter = () => {
                     <option value="France">France</option>
                     <option value="German">German</option>
                     <option value="Spanish">Spanish</option>
-                    <option value="Mandarin">Mandarin</option>
+                    <option value="Chinese">Chinese</option>
                     <option value="Arabic">Arabic</option>
                     <option value="Russian">Russian</option>
                     <option value="Hindi">Hindi</option>
