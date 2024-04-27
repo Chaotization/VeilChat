@@ -12,6 +12,7 @@ import {
     reauthenticateWithCredential,
     deleteUser
 } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
 async function doCreateUserWithEmailAndPassword(email, password, displayName) {
     const auth = getAuth();
@@ -32,21 +33,22 @@ async function doDeleteUser(password) {
     try {
       const auth = getAuth();
       
-      // Re-authenticate the user
       const user = auth.currentUser;
+      console.log(user.uid)
       const credential = EmailAuthProvider.credential(user.email, password);
       await reauthenticateWithCredential(user, credential);
   
       // Delete the user account
-      await deleteUser(user);
-      console.log("User account deleted successfully.");
+      await deleteUser(user.uid);
+      //console.log("User account deleted successfully.");
     } catch (error) {
-      console.error("Error deleting user account:", error.message);
-      if (error.code === "auth/network-request-failed") {
-        // Retry the operation after a delay
-        await new Promise(resolve => setTimeout(resolve, 3000)); // Wait for 3 seconds
-        await doDeleteUser(password); // Retry the operation
-      }
+      //console.error("Error deleting user account:", error.message);
+    //   if (error.code === "auth/network-request-failed") {
+    //     await new Promise(resolve => setTimeout(resolve, 3000)); // Wait for 3 seconds
+    //     await doDeleteUser(password); // Retry the operation
+    //   }
+      alert('Could not delete your account right now, Signing you out');
+      doSignOut();
     }
   }
   

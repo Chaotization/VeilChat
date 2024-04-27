@@ -9,7 +9,6 @@ export const AuthProvider = ({children}) => {
     useEffect(() => {
         let myListener = onAuthStateChanged(auth, (user) => {
             setCurrentUser(user);
-            console.log('onAuthStateChanged', user);
             setLoadingUser(false);
         });
         return () => {
