@@ -1,40 +1,56 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useNavigate, Link, Navigate } from "react-router-dom";
 import { useState, useContext } from "react";
 import {doCreateUserWithEmailAndPassword} from '../firebase/FirebaseFunctions.js';
 import AuthContext from "./AuthContext.jsx";
-import { State, City } from "country-state-city";
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import Resizer from 'react-image-file-resizer';
 import SocialSignIn from './SocialSignIn.jsx';
+
 function SignUp() {
   const { currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const [continuePage, setContinuePage]=useState(false);
+  const [languages, setLanguages]=useState([]);
+  const langs= [
+    "English",
+    "Arabic",
+    "Bengali",
+    "Chinese",
+    "French",
+    "German",
+    "Hindi",
+    "Indonesian",
+    "Japanese",
+    "Marathi",
+    "Nigerian Pidgin",
+    "Portuguese",
+    "Russian",
+    "Spanish",
+    "Tamil",
+    "Telugu",
+    "Turkish",
+    "Urdu",
+    "Vietnamese"
+  ];
+  const [availableLanguages, setAvailableLanguages]=useState(langs)
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
     email: "",
-    city: "",
-    state: "",
-    country: "US",
+    gender:"",
+    phoneNumber:""
   });
   const [errors, setErrors] = useState([]);
+  const[profilePictureLocation, setProfilePictureLocation]=useState(null);
   const [loading, setLoading]=useState([]);
   const [password, setPassword] = useState("");
   const [repeat_password, setRepeatPassword] = useState("");
-  let [user_name, setUserName] = useState("");
-  let [userMatch, setUserMatch] = useState(false);
-  
-  let states = State.getAllStates().filter(
-    (state) => state.countryCode === "US"
-  );
-
-  let [cities, setCities] = useState([]);
-  useEffect(() => {
-    let c = City.getAllCities().filter(
-      (city) => city.stateCode === formData.state
-    );
-    setCities(c);
-  }, [formData.state]);
+  const [uploadError, setUploadError] = useState(null);
+  const [imageFile, setImageFile] = useState(null); // Stores the uploaded image file
+  const cropperRef = useRef(null);
+const AWS_ACCESS_KEY_ID=import.meta.env.VITE_AWS_ACCESS_KEY_ID
+const AWS_SECRET_ACCESS_ID=import.meta.env.VITE_AWS_SECRET_ACCESS_ID
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -48,16 +64,6 @@ function SignUp() {
     let newPwd = e.target.value;
     setPassword(newPwd);
     validatePassword(newPwd);
-  }
-  function handleUserName(e) {
-    let user = e.target.value;
-    setUserName(user);
-    const regex = /^[^\s]+$/;
-    if (regex.test(user)) {
-      setUserMatch(true);
-    } else {
-      setUserMatch(false);
-    }
   }
   function validatePassword(password) {
     const hasUpperCase = /[A-Z]/g.test(password);
@@ -74,6 +80,66 @@ function SignUp() {
     }
     return;
   }
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    console.log(file)
+    Resizer.imageFileResizer(
+      file,
+      150,
+      150,
+      'JPEG',
+      100, // Image quality (0 to 100)
+      0, // Rotation (0 to 360)
+      (resizedImage) => {
+        // Check the size of the resized image
+        if (resizedImage.size / 1024 / 1024 > 5) {
+          alert('Image size should be less than 5MB.');
+          return;
+        }
+        
+        setImageFile(resizedImage);
+      },
+      'blob'
+    );
+    }
+
+const uploadToS3 = async () => {
+  try {
+    const s3Client = new S3Client({
+      region:'us-east-1',
+      credentials: {
+        accessKeyId: AWS_ACCESS_KEY_ID,
+        secretAccessKey: AWS_SECRET_ACCESS_ID,
+      },
+     
+    });
+
+
+    const params = {
+      Bucket: "veilchat-s3",
+      Key: `${Date.now()}-${imageFile.name}`,
+      Body: imageFile,
+      ContentType: 'image/jpeg',
+      ACL : "public-read"
+    };
+
+    const command = new PutObjectCommand(params);
+    const response = await s3Client.send(command);
+
+    console.log("Image uploaded successfully:", response.Location);
+    console.log(response);
+    setProfilePictureLocation(response.Location);
+  } catch (error) {
+    setErrors((prevState) => {
+      return [...prevState,error];
+    });
+
+  }
+};
+
+
+
   function handleRePwdChange(e) {
     let newPwd = e.target.value;
     setRepeatPassword(newPwd);
@@ -95,44 +161,15 @@ function SignUp() {
       });
 
     }
-    if(!userMatch){
-      setErrors((prevState) => {
-          return [...prevState, "Invalid user name"];
-        });
-  }
-  try
-  {
-    let response=await fetch("http://localhost:4000/user/checkusername",{
-      method:"POST",
-      headers: { 'Content-Type': 'application/json' },
-      body:JSON.stringify({
-        user_name: user_name.trim().toLowerCase()
-    })});
-    if(!response.ok)
-    {
-      setErrors((prevState) => {
-        return [...prevState, "Username already exists..."];
-      });
-      return
-    }
-  }
-  catch(e)
-  {
-    setErrors((prevState) => {
-      return [...prevState, e];
-    });
-    return
-  }
+
   if(!errors.length){
     
      try {
            const userCredential= await doCreateUserWithEmailAndPassword(
                 formData.email,
-                password,
-                user_name              
+                password           
             );
-            console.log("User created successfully:", userCredential);
-            
+            //console.log("User created successfully:", userCredential);           
               setContinuePage(true);
               return
         } catch (error) {
@@ -145,11 +182,31 @@ function SignUp() {
   setLoading(false)
   return;
 }
+const handleLanguages=(e)=>
+{
+ 
+  if(!languages.includes(e.target.value))
+  {
+    if(languages.length>2)
+    {
+      alert("You already selected 3 languages...")
+    }
+    else
+    {
+  setLanguages([...languages,e.target.value])
+    }
+  }
+  console.log(languages);
+}
+const handleLanguageRemove = (languageToRemove) => {
+  setLanguages(languages.filter((lang) => lang !== languageToRemove));
+};
+  
+
         const handleSignUp=async(e)=>
         {
           e.preventDefault();
           setErrors([]);
-          setUserMatch(false);
           setMatch(false);
       const regex = /^[A-Za-zÀ-ÿ ]+$/;
     if(!regex.test(formData.first_name.trim()))
@@ -166,7 +223,6 @@ function SignUp() {
     }
     
     let dob=document.getElementById("dob").value;
-    console.log(dob);
     dob=new Date(dob);
    
     let yearOfBirth=parseInt(dob.getFullYear());
@@ -179,13 +235,15 @@ function SignUp() {
       });
       return
     }
-    
-    let state=document.getElementById("state").value;
-    let city=document.getElementById("city").value;
-    if(!cities)
+    if(formData.gender==="select")
     {
-        city=state;
+      setErrors((prevState) => {
+        return [...prevState, "Select your gender"]
+      });
+      return
     }
+    let phone=document.getElementById("phoneNumber").value.trim();
+
     if(!errors.length>0)
     {
     let response=await fetch("http://localhost:4000/signup",{
@@ -193,16 +251,15 @@ function SignUp() {
         headers: { 'Content-Type': 'application/json' },
         body:JSON.stringify(
             {
-                "first_name":formData.first_name.trim(),
-                "last_name":formData.last_name.trim(),
+                "firstName":formData.first_name.trim(),
+                "lastName":formData.last_name.trim(),
                 "email":formData.email.trim(),
-                "user_name":user_name.trim(),
                 "password":password,
-                "repeat_password":repeat_password,
                 "dob":dob,
-                "city":city,
-                "state":state,
-                "country":"US"
+                "gender":formData.gender,
+                "languages":languages,
+                "phoneNumber":phone,
+                "profilePictureLocation":setImageFile|| ""
             })
     });
     try
@@ -248,26 +305,6 @@ return
       <h2 style={{textAlign:"center", fontWeight:"bold"}}>Create a new profile</h2>
       <div className='card'>
             <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-            <label
-              htmlFor="user_name"
-              className="block text-gray-700 text-sm font-bold mb-2">
-              Username:
-            </label>
-            <input
-              type="text"
-              name="user_name"
-              value={formData.user_name}
-              required
-              onChange={handleUserName}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
-            {user_name && (
-              <span style={{ color: userMatch ? "green" : "red" }}>
-                {userMatch ? "Format Accepted " + "\u2714" : "\u2716"}
-              </span>
-            )}
-          </div>
                 <div className="mb-4">
             <label
               htmlFor="email"
@@ -409,60 +446,92 @@ return
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
         </div>
-          <div className="mb-4">
+        <div className="mb-4">
+          <label htmlFor="phoneNumber"
+          className="block text-gray-700 text-sm font-bold mb-2">
+            Mobile Number:
+          </label>
+          <input
+              type="tel"
+              name="phoneNumber"
+              id="phoneNumber"
+              placeholder="123-456-7890" pattern="[0-9]{10}"
+              required
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+        </div>
+
+
+        <div className="mb-4">
             <label
-              htmlFor="state"
+              htmlFor="gender"
               className="block text-gray-700 text-sm font-bold mb-2">
-              State:
+              Gender:
             </label>
             <select
-              name="state"
-              id="state"
+              name="gender"
+              id="gender"
               required
               className=" border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              value={formData.state}
+              value={formData.gender}
               onChange={handleChange}>
               <option key="some_random_value" value="select">
                 Select
               </option>
-              {states.map((state) => (
-                <option
-                  key={state.latitude + state.longitude}
-                  value={state.isoCode}>
-                  {state.name}
-                </option>
-              ))}
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="non-binary">Non-Binary</option>
             </select>
           </div>
-          {formData.state && cities.length > 0 && (
-            <div className="mb-4">
-              <label
-                htmlFor="city"
-                className="block text-gray-700 text-sm font-bold mb-2">
-                City:
-              </label>
-              <select
-                name="city"
-                id="city"
-                className=" border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                value={formData.city}
-                required
-                onChange={handleChange}>
-                {cities.map((city) => (
-                  <option
-                    key={city.latitude + city.longitude}
-                    value={city.isoCode}>
-                    {city.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
+          <div className="mb-4">
+            <label
+              htmlFor="languages"
+              className="block text-gray-700 text-sm font-bold mb-2">
+              Languages:(choose maximum 3)
+            </label>
+            <select
+    name="languages[]" 
+    id="languages"
+    required
+    className="border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+    value={languages}  
+    onChange={handleLanguages}
+    multiple
+    max={3} 
+  >
+  {availableLanguages.map((lang)=>(
+    <option value={lang}>{lang}</option>
+  ))}
+            </select>
+          </div>
+          <div className="container">
+  {languages && languages.length > 0 && (
+    <div className="card mb-3"> 
+      <div className="card-body d-flex flex-wrap">
+        {languages.map((language) => (
+          <span key={language} className="me-2 mb-2">
+            
+            <button type="button" className="bg-blue-300 hover:bg-red-300 text-black  py-1 px-1 rounded focus:outline-none focus:shadow-outline" onClick={() => handleLanguageRemove(language)}>
+            {language}
+            </button>
+          </span>
+        ))}
+      </div>
+    </div>
+  )}
+</div>
+<div className="container">
+      <label className="block text-gray-700 text-sm font-bold mb-2">Upload your Profile picture:</label>
+        <input type="file" accept="image/*" onChange={handleImageChange} />
+        {uploadError &&<p style={{color:"red"}}>{uploadError}</p>}
+        {imageFile && (
+        <div>
+          <img src={URL.createObjectURL(imageFile)} alt="Resized" />
+          {/* <button type="button" className="bg-green-500 hover:bg-green-700 text-black font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline"onClick={uploadToS3}>Upload</button> */}
+        </div>
+      )}
 
-          {/* <div className="mb-4">
-          <label htmlFor="country" className="block text-gray-700 text-sm font-bold mb-2">Country:</label>
-          <input type="text" name="country" value={formData.country} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
-        </div> */}
+    </div>
         <div className="container">
             {errors.length>0 && <ul>
                 {errors.map((error)=>(
