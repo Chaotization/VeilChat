@@ -10,3 +10,4 @@ const user7 = await createUser("Daniel", "Garcia", "daniel.garcia6@example.com",
 const user8 = await createUser("Olivia", "Lopez", "olivia.lopez7@example.com", ["french"], "male", "07/19/1998", "+12345678901", "P@ssword123", "")
 const user9 = await createUser("Ethan", "Rodriguez", "ethan.rodriguez8@example.com", ["chinese"], "male", "11/13/2000", "+19876543210", "Passw0rd!", "")
 const user10 = await createUser("Ava", "Perez", "ava.perez9@example.com", ["english"], "female", "01/11/2011", "+17654328901", "Abc123456!", "")
+
