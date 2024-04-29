@@ -11,6 +11,7 @@ import SignUp from './components/SignUp.jsx';
 import {AuthProvider} from './context/AuthContext.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
 import UserFilter from './components/SearchUsers.jsx'
+import Chatroom from './components/Chatroom.jsx';
 import 'tailwindcss/tailwind.css';
 import './output.css';
 
@@ -32,6 +33,7 @@ function App() {
                     <Route path='/signin' element={<SignIn />} />
                     <Route path='/signup' element={<SignUp />} />
                     <Route path='/search-user' element={<UserFilter/>} />
+                    <Route path='/chat/:providedChatId' element={<Chatroom/>}/>
                 </Routes>
             </div>
         </AuthProvider>
