@@ -26,15 +26,15 @@ import fs from 'fs';
 // const client = redis.createClient();
 // client.connect().then(() => {
 // });
-
 const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
-const AWS_SECRET_ACCESS_ID = process.env.AWS_ACCESS_KEY_ID;
+const AWS_SECRET_ACCESS_ID = process.env.AWS_SECRET_ACCESS_ID;
 const bucketName = process.env.bucketName;
 
 AWS.config.update({
     region: 'us-east-1',
     accessKeyId: AWS_ACCESS_KEY_ID,
-    secretAccessKey: AWS_SECRET_ACCESS_ID
+    secretAccessKey: AWS_SECRET_ACCESS_ID,
+    correctClockSkew: true
 });
 
 
@@ -44,8 +44,9 @@ const createURLByPath = async (filePath) => {
     const randomString = Math.random().toString(36).substring(2, 15)
         + Math.random().toString(36).substring(2, 15);
     const originalFileName = filePath.split('/').pop();
+    const extension = originalFileName.slice(((originalFileName.lastIndexOf(".") - 1) >>> 0) + 2);
+    const currentFileName = `usersProfileFolder/${randomString}.${extension}`;
 
-    const currentFileName = randomString + '.' + originalFileName.slice(((originalFileName.lastIndexOf(".") - 1) >>> 0) + 2);
     const params = {
         Bucket: bucketName,
         Key: currentFileName,
@@ -59,7 +60,7 @@ const createURLByPath = async (filePath) => {
                 reject(err);
             } else {
                 console.log("Successfully uploaded file to S3");
-                const url = `https://${bucketName}.s3.amazonaws.com/usersProfileFolder/${currentFileName}`;
+                const url = data.Location;  // Using the location returned by S3
                 console.log("File URL:", url);
                 resolve(url);
             }
@@ -71,11 +72,8 @@ const createURLByFile = async (file) => {
     const s3 = new AWS.S3();
     const randomString = Math.random().toString(36).substring(2, 15)
         + Math.random().toString(36).substring(2, 15);
-
-    const filenameParts = file.originalname.split('.');
-    const extension = filenameParts[filenameParts.length - 1];
-
-    const currentFileName = randomString + '.' + extension;
+    const extension = file.originalname.split('.').pop();
+    const currentFileName = `usersProfileFolder/${randomString}.${extension}`;
 
     const fileContent = file.buffer;
     const params = {
@@ -91,13 +89,14 @@ const createURLByFile = async (file) => {
                 reject(err);
             } else {
                 console.log("Successfully uploaded file to S3");
-                const url = `https://${bucketName}.s3.amazonaws.com/usersProfileFolder/${currentFileName}`;
+                const url = data.Location;  // Using the location returned by S3
                 console.log("File URL:", url);
                 resolve(url);
             }
         });
     });
 };
+
 
 export const createUser = async (
     firstName,

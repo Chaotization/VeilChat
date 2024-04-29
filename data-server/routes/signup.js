@@ -23,14 +23,10 @@ router.route("/").post(async (req, res) => {
     const result = await usersData.addUser(
       first_name,
       last_name,
-      user_name,
       email,
       password,
       dob,
-      gender,
-      city,
-      state,
-      country
+      gender
     );
     if (result) {
       return res.status(200).json({ message: "success" });

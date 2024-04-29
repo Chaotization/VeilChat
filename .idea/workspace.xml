@@ -5,7 +5,31 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d4a03713-3b19-4578-9690-4962f7cfceaa" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/data-server/data/chatServer.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/react-server/postcss.config.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/data/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/data/users.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/routes/search.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/routes/search.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/routes/signup.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/routes/signup.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/seed.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/seed.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react-server/.env" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react-server/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react-server/main.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/react-server/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react-server/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react-server/public/vite.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/react-server/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/App.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react-server/src/components/Chatroom.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/Chatroom.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react-server/src/components/SearchUsers.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/SearchUsers.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react-server/src/components/SignIn.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/SignIn.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react-server/src/components/SignUp.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/SignUp.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react-server/src/components/SocialSignIn.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/SocialSignIn.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react-server/src/context/AuthContext.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/context/AuthContext.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react-server/src/firebase/FirebaseFunctions.js" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/firebase/FirebaseFunctions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react-server/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react-server/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/tailwind.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,28 +51,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Node.js.searchEngine.js.executor&quot;: &quot;Debug&quot;,
-    &quot;Node.js.seed.js.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore_missing_gitignore&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/czhen/repos/VeilChat&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;npm.client.executor&quot;: &quot;Run&quot;,
-    &quot;npm.server.executor&quot;: &quot;Debug&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;D:\\JetBrains\\WebStorm 2024.1.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Node.js.searchEngine.js.executor": "Debug",
+    "Node.js.seed.js.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "Merging main",
+    "ignore_missing_gitignore": "true",
+    "last_opened_file_path": "C:/Users/czhen/repos/VeilChat",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "npm.client.executor": "Run",
+    "npm.server.executor": "Debug",
+    "ts.external.directory.path": "D:\\JetBrains\\WebStorm 2024.1.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\jinxi\git_repos\CS554-VeilChat\react-server" />
@@ -109,6 +133,12 @@
       <workItem from="1714138396986" duration="4595000" />
       <workItem from="1714433010077" duration="177000" />
       <workItem from="1714433197512" duration="130000" />
+      <workItem from="1713905625110" duration="980000" />
+      <workItem from="1713906640714" duration="296000" />
+      <workItem from="1713930294745" duration="790000" />
+      <workItem from="1713980308431" duration="1298000" />
+      <workItem from="1713981980357" duration="1051000" />
+      <workItem from="1714059867164" duration="20000" />
     </task>
     <servers />
   </component>

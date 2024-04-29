@@ -42,7 +42,6 @@ const SignIn=()=>
 
         try {
           const userCredentials=await doSignInWithEmailAndPassword(email, password);
-          console.log(userCredentials);
           navigate("/home")
       } catch (error) {
         //console.log(error.code)
