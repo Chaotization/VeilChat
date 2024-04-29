@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getDatabase, ref, push } from 'firebase/database';
+import { getAuth } from 'firebase/auth';
 import axios from 'axios';
 
 const UserFilter = () => {
@@ -9,6 +12,13 @@ const UserFilter = () => {
     const [userLocation, setUserLocation] = useState(null);
     const [locationAccessDenied, setLocationAccessDenied] = useState(false);
     const [filteredUsers, setFilteredUsers] = useState([]);
+    
+    //firebase
+    const [messages,setMessages] = useState([])
+    const [chatId, setChatId] = useState('')
+    const navigate = useNavigate();
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
 
     const handleLocationAccess = () => {
         if (navigator.geolocation) {
@@ -53,6 +63,31 @@ const UserFilter = () => {
             handleLocationAccess();
         }
     };
+
+
+    //firebase
+    const generateChatId = () => {
+        return 'chatId_' + Date.now() + Math.round(Math.random(0,10)*10)
+    };
+
+    const createNewChat = () => {
+        const newChatId = generateChatId();
+        setChatId(newChatId);
+        setMessages([]);
+        
+        const db = getDatabase();
+        const participantsRef = ref(db, `chats/${newChatId}/participants`);
+        push(participantsRef, { userId: currentUser.uid, joined: true });
+
+        navigate(`/chat/${newChatId}`)
+    };
+
+    const handleChatRedirect = () => {
+        console.log("inside chat redirect")
+        createNewChat()
+    }
+
+    
 
     return (
         <div>
@@ -108,6 +143,11 @@ const UserFilter = () => {
             </div>
             <div>
                 <button onClick={handleFilter}>Apply Filters</button>
+            </div>
+
+
+            <div>
+                <button className='btn btn-outline' onClick={handleChatRedirect}>Find a match</button>
             </div>
         </div>
     );
