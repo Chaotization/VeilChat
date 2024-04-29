@@ -6,22 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="d4a03713-3b19-4578-9690-4962f7cfceaa" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-server/config/settings.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-server/data/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/data/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-server/data/searchEngine.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/data/searchEngine.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-server/data/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/data/users.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-server/env" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-server/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-server/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-server/routes/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/routes/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-server/routes/login.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/routes/login.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-server/routes/search.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/routes/search.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-server/routes/signup.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/routes/signup.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-server/routes/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/routes/user.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-server/seed.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/seed.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-server/seed/seed.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-server/validation.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/validation.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/components/SearchUsers.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/SearchUsers.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,6 +36,7 @@
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore_missing_gitignore&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/czhen/repos/VeilChat&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -122,6 +107,8 @@
       <workItem from="1713975171214" duration="10589000" />
       <workItem from="1714053979370" duration="9715000" />
       <workItem from="1714138396986" duration="4595000" />
+      <workItem from="1714433010077" duration="177000" />
+      <workItem from="1714433197512" duration="130000" />
     </task>
     <servers />
   </component>
@@ -152,7 +139,6 @@
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/data-server/data/searchEngine.js</url>
           <line>25</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="29" />
         </line-breakpoint>
       </breakpoints>
