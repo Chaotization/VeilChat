@@ -15,8 +15,11 @@ function Chatroom(props) {
   const auth = getAuth()
   const currentUser = auth.currentUser
 
+  console.log("auth: ", auth)
+  console.log("current user: ",currentUser)
+
   const {providedChatId} = useParams()
-  console.log("provided chat Id", providedChatId)
+  //console.log("provided chat Id", providedChatId)
 
   const messagesEndRef = useRef(null);
 
@@ -46,6 +49,22 @@ function Chatroom(props) {
     return 'chatId_' + Date.now() + Math.round(Math.random(0,10)*10)
   };
 
+  const updateUserInMongoDB = async () => {
+    try {
+      const response = await fetch(`http://localhost:4000/login/${currentUser.uid}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: currentUser.email }),
+      });
+      const result = await response.json();
+      console.log('User updated in MongoDB:', result);
+    } catch (error) {
+      console.error('Error updating user in MongoDB:', error);
+    }
+  };
+
   const createNewChat = () => {
     const newChatId = generateChatId();
     setChatId(newChatId);
@@ -54,6 +73,8 @@ function Chatroom(props) {
     const db = getDatabase();
     const participantsRef = ref(db, `chats/${newChatId}/participants`);
     push(participantsRef, { userId: currentUser.uid, joined: true });
+
+    updateUserInMongoDB()
   };
 
   const joinChat = (chatId) => {
@@ -67,6 +88,8 @@ function Chatroom(props) {
 
     const participantsRef = ref(db, `chats/${chatId}/participants`);
     push(participantsRef, { userId: currentUser.uid, joined: true });
+
+    updateUserInMongoDB()
   };
 
   const handleImageUpload = async (e) => {

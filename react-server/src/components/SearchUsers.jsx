@@ -14,7 +14,7 @@ const UserFilter = () => {
     const [filteredUser, setFilteredUser] = useState([]);
     
     //firebase
-    const [messages,setMessagessetMessages] = useState([])
+    const [messages,setMessages] = useState([])
     const [chatId, setChatId] = useState('')
     const navigate = useNavigate();
     const auth = getAuth();
