@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@apollo/server": "4.10.3",
+    "aws-sdk": "2.1608.0",
     "axios": "^1.6.8",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.1",
@@ -31,6 +32,6 @@
     "redis": "^4.6.13",
     "socket.io": "^4.5.4",
     "uuid": "9.0.1",
-    "aws-sdk": "2.1608.0"
+    "xss": "^1.0.15"
   }
 }

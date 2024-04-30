@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getDatabase, ref, push } from 'firebase/database';
-import { getAuth } from 'firebase/auth';
+import  { useState } from 'react';
+// import { useNavigate } from 'react-router-dom';
+// import { getDatabase, ref, push } from 'firebase/database';
+// import { getAuth } from 'firebase/auth';
 import axios from 'axios';
 
 const UserFilter = () => {
@@ -11,14 +11,14 @@ const UserFilter = () => {
     const [distance, setDistance] = useState('');
     const [userLocation, setUserLocation] = useState(null);
     const [locationAccessDenied, setLocationAccessDenied] = useState(false);
-    const [filteredUsers, setFilteredUsers] = useState([]);
+    const [filteredUser, setFilteredUser] = useState([]);
     
     //firebase
-    const [messages,setMessages] = useState([])
-    const [chatId, setChatId] = useState('')
-    const navigate = useNavigate();
-    const auth = getAuth();
-    const currentUser = auth.currentUser;
+    // const [messages,setMessagessetMessages] = useState([])
+    // const [chatId, setChatId] = useState('')
+    // const navigate = useNavigate();
+    // const auth = getAuth();
+    // const currentUser = auth.currentUser;
 
     const handleLocationAccess = () => {
         if (navigator.geolocation) {
@@ -41,7 +41,7 @@ const UserFilter = () => {
     const handleFilter = async () => {
         try {
             const response = await axios.post('http://localhost:4000/search', {
-                _id: "662963ed13e649c284e1e50c",
+                _id: "662963e613e649c284e1e509",
                 gender,
                 age,
                 language,
@@ -49,7 +49,8 @@ const UserFilter = () => {
                 userLocation,
                });
 
-            setFilteredUsers(response.data.users);
+            setFilteredUser(response.data);
+            console.log(filteredUser[0]._id.toString());
         } catch (error) {
             console.error('Error filtering users:', error);
         }
@@ -66,26 +67,25 @@ const UserFilter = () => {
 
 
     //firebase
-    const generateChatId = () => {
-        return 'chatId_' + Date.now() + Math.round(Math.random(0,10)*10)
-    };
-
-    const createNewChat = () => {
-        const newChatId = generateChatId();
-        setChatId(newChatId);
-        setMessages([]);
-        
-        const db = getDatabase();
-        const participantsRef = ref(db, `chats/${newChatId}/participants`);
-        push(participantsRef, { userId: currentUser.uid, joined: true });
-
-        navigate(`/chat/${newChatId}`)
-    };
-
-    const handleChatRedirect = () => {
-        console.log("inside chat redirect")
-        createNewChat()
-    }
+    // const generateChatId = () => {
+    //     return 'chatId_' + Date.now() + Math.round(Math.random(0,10)*10)
+    // };
+    //
+    // const createNewChat = () => {
+    //     const newChatId = generateChatId();
+    //     setChatId(newChatId);
+    //     setMessages([]);
+    //     const db = getDatabase();
+    //     const participantsRef = ref(db, `chats/${newChatId}/participants`);
+    //     push(participantsRef, { userId: currentUser.uid, joined: true });
+    //
+    //     navigate(`/chat/${newChatId}`)
+    // };
+    //
+    // const handleChatRedirect = () => {
+    //     console.log("inside chat redirect")
+    //     createNewChat()
+    // }
 
     
 
@@ -146,9 +146,9 @@ const UserFilter = () => {
             </div>
 
 
-            <div>
-                <button className='btn btn-outline' onClick={handleChatRedirect}>Find a match</button>
-            </div>
+            {/*<div>*/}
+            {/*    <button className='btn btn-outline' onClick={handleChatRedirect}>Find a match</button>*/}
+            {/*</div>*/}
         </div>
     );
 };
