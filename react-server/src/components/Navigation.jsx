@@ -28,7 +28,7 @@ const NavigationAuth = () => {
         <NavLink to='/' className="btn btn-ghost normal-case text-xl">VeilChat</NavLink>
       </div>
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal">
+        <ul className="menu menu-horizontal space-x-1">
           <li className='btn'><NavLink to='/'>Landing</NavLink></li>
           <li className='btn'><NavLink to='/home'>Home</NavLink></li>
           <li className='btn'><NavLink to='/account'>Account</NavLink></li>
