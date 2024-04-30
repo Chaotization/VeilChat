@@ -17,11 +17,16 @@ import { getAuth } from 'firebase/auth';
 import 'tailwindcss/tailwind.css';
 import './output.css';
 import { useUserStore } from './context/userStore.jsx';
-import { onAuthStateChanged } from "firebase/auth";
+
 
 
 function App() {
-    
+    const initializeAuthListener = useUserStore(state => state.initializeAuthListener);
+
+    useEffect(() => {
+        initializeAuthListener();
+    }, [initializeAuthListener]);
+
     return (
         <AuthProvider>
             <div className='App'>

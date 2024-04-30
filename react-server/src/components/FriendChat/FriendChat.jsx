@@ -9,7 +9,7 @@ import { useUserStore } from '../../context/userStore.jsx';
 
 export default function FriendChat() {
   
-  if (isLoading) return <div className='loading'>Loading...</div>
+  
   return (
     <div>
       <div className="container">
