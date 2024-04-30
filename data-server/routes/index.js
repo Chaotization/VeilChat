@@ -3,12 +3,15 @@ import loginRoute from"./login.js"
 import logoutRoute from "./logout.js";
 import signupRoute from "./signup.js";
 import searchRoute from "./search.js"
+// import sendRouter from "./sendNotification.js"
 const constructorMethod = (app) => {
   app.use("/user", userRoutes);
   app.use("/login", loginRoute);
   app.use("/logout", logoutRoute);
   app.use("/signup", signupRoute);
   app.use("/search", searchRoute)
+  // app.use("/send", sendRouter);
+
   app.use("*", (req, res) => {
     res.status(404).json({ error: "Route Not found" });
   });

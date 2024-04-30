@@ -16,33 +16,6 @@ const exportedMethods = {
         return id;
     },
 
-    checkEmail(email) {
-        if (!email) throw "Please provide email";
-        if (typeof email !== "string" || email.trim().length <= 0) throw "Please provide a valid email";
-        email = email.trim().toLowerCase();
-        const emailPrefixRegex = /^[a-z0-9!#$%&'*+\-/=?^_`{|}~.]+@/i;
-        const emailPostfixRegex = /@stevens\.edu$/i;
-        if (!emailPrefixRegex.test(email)) {
-            throw "Email address should contain only letters, numbers, and common special symbols !#$%&'*+\\-/=?^_`{|} before the @ character"
-        }
-        if (!emailPostfixRegex.test(email)) {
-            throw "Error: Email address should end with stevens.edu";
-        }
-        return email;
-    },
-
-    checkPassword(password) {
-        if (!password) throw "Password not provided";
-        if (typeof password !== "string") throw "Password must be a string!";
-        password = password.trim();
-        if (password.length < 8 || password.length > 25) throw "Password must be at least 8 characters and less than 25 characters";
-        const spaceRegex = /\s/;
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)[a-zA-Z\d\W]{8,25}$/;
-        if (spaceRegex.test(password)) throw "Password must not contain whitespace";
-        if (!passwordRegex.test(password)) throw "Password must contain at least 1 uppercase character, 1 lowercase character, 1 number, and 1 special character";
-        return password;
-    },
-
     checkGender(gender){
         if(!gender) throw "Gender is not provided";
         if(typeof gender !== 'string') throw "Password must be a string!";
@@ -95,7 +68,7 @@ const exportedMethods = {
             return `${month}/${day}/${year}`;
         };
 
-        return { min: formatDate(minBirthYear), max: formatDate(maxBirthYear) };
+        return { min: new Date(formatDate(minBirthYear)), max : new Date(formatDate(maxBirthYear)) };
     },
 
     validateName(name, valName) {
@@ -137,6 +110,7 @@ const exportedMethods = {
         }
         return email;
     },
+
     validatePhoneNumber(phoneNumber) {
         if (!phoneNumber) {
             throw "Error: Phone number not supplied";
@@ -152,6 +126,7 @@ const exportedMethods = {
         }
         return phoneNumber;
     },
+
     validatePassword(password, valName) {
         if (!password) throw `Error: ${valName} not supplied`;
         if (typeof password !== "string" || password.trim().length <= 0) {
@@ -179,6 +154,7 @@ const exportedMethods = {
         }
         return password;
     },
+
     generateCurrentDate() {
         const date = new Date();
         const year = date.getFullYear();
@@ -188,6 +164,7 @@ const exportedMethods = {
         const minutes = date.getMinutes();
         return `${month}/${day}/${year} ${hour}:${minutes}`;
     },
+
     validateLanguages(languages){
         const topLanguages = [
             "chinese", "spanish", "english", "hindi", "bengali",
@@ -203,6 +180,7 @@ const exportedMethods = {
             return normalizedLanguage;
         });
     },
+
     validateDateTime(inputDate) {
         const dateRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/(19[0-9]{2}|20[0-9]{2})$/;
 
@@ -215,12 +193,14 @@ const exportedMethods = {
         }
         return new Date(inputDate);
     },
+
     validateGender(gender) {
         if (!gender) throw "Gender is not provided";
         gender = gender.trim().toLowerCase();
         if (gender !== 'male' && gender !== 'female') throw "Invalid gender provided. Gender must be either 'male' or 'female'.";
         return gender;
-    }
+    },
+
 
 }
 

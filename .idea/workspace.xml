@@ -5,36 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d4a03713-3b19-4578-9690-4962f7cfceaa" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/data-server/data/chatServer.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/react-server/postcss.config.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-server/data/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/data/users.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/data/searchEngine.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/data/searchEngine.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data-server/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data-server/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/routes/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/routes/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data-server/routes/search.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/routes/search.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-server/routes/signup.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/routes/signup.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-server/seed.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/seed.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/.env" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/main.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/public/vite.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/App.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/components/Chatroom.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/Chatroom.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/validation.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/validation.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/react-server/src/components/SearchUsers.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/SearchUsers.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/components/SignIn.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/SignIn.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/components/SignUp.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/SignUp.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/components/SocialSignIn.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/SocialSignIn.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/context/AuthContext.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/context/AuthContext.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/firebase/FirebaseFunctions.js" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/firebase/FirebaseFunctions.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/index.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/react-server/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/tailwind.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -53,13 +43,14 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "JavaScript Debug.client.executor": "Debug",
     "Node.js.searchEngine.js.executor": "Debug",
     "Node.js.seed.js.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
     "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "Merging main",
+    "git-widget-placeholder": "main",
     "ignore_missing_gitignore": "true",
     "last_opened_file_path": "C:/Users/czhen/repos/VeilChat",
     "node.js.detected.package.eslint": "true",
@@ -67,7 +58,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "npm.client.executor": "Run",
+    "npm.client.executor": "Debug",
     "npm.server.executor": "Debug",
     "ts.external.directory.path": "D:\\JetBrains\\WebStorm 2024.1.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
     "vue.rearranger.settings.migration": "true"
@@ -82,15 +73,8 @@
       <recent name="C:\Users\jinxi\git_repos\CS554-VeilChat\client\src" />
     </key>
   </component>
-  <component name="RunManager" selected="npm.server">
-    <configuration name="client" type="js.build_tools.npm">
-      <package-json value="$PROJECT_DIR$/react-server/package.json" />
-      <command value="run" />
-      <scripts>
-        <script value="dev" />
-      </scripts>
-      <node-interpreter value="project" />
-      <envs />
+  <component name="RunManager" selected="JavaScript Debug.client">
+    <configuration name="client" type="JavascriptDebugType" uri="http://localhost:5173/">
       <method v="2" />
     </configuration>
     <configuration name="server" type="js.build_tools.npm">
@@ -104,7 +88,7 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="npm.client" />
+      <item itemvalue="JavaScript Debug.client" />
       <item itemvalue="npm.server" />
     </list>
   </component>
@@ -152,24 +136,22 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/react-server/src/components/SearchUsers.jsx</url>
-          <line>13</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/react-server/src/components/SearchUsers.jsx</url>
-          <line>32</line>
-          <option name="timeStamp" value="2" />
+          <url>file://$PROJECT_DIR$/data-server/routes/login.js</url>
+          <line>10</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="35" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/data-server/data/searchEngine.js</url>
-          <line>48</line>
-          <option name="timeStamp" value="17" />
+          <line>112</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="75" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/data-server/data/searchEngine.js</url>
-          <line>25</line>
-          <option name="timeStamp" value="29" />
+          <url>file://$PROJECT_DIR$/react-server/src/components/SearchUsers.jsx</url>
+          <line>42</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="81" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
