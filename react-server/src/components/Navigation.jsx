@@ -21,6 +21,9 @@ const NavigationAuth = () => {
                 <li>
                     <NavLink to='/account'>Account</NavLink>
                 </li>
+                <li>
+                    <NavLink to='/friendchat'>Chat with Friends</NavLink>
+                </li>
                 {/* <li>
                     <SignOutButton />
                 </li> */}

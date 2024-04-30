@@ -14,5 +14,6 @@ const getCollectionFn = (collection) =>{
 };
 
 const users = getCollectionFn('users');
+const messages = getCollectionFn('messages');
 
-export default users;
+export default {users, messages};
