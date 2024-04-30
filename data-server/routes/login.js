@@ -4,12 +4,14 @@ import jwt from 'jsonwebtoken';
 const router = Router();
 
 router.route("/").post(async (req, res) => {
+    console.log("test ")
     if(req.session && req.session.loggedIn)
     {
         return res.status(400).json({message:"User already logged in, logout first"})
     }
   let email = req.body.email;
   let password = req.body.password;
+
   try{
     const [user,result] = await usersData.verifyUser(email, password);
     if(result){

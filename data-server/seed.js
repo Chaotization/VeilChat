@@ -1,4 +1,4 @@
-import {createUser} from "./data/users.js";
+import {createUser, getUserInfoByUserId} from "./data/users.js";
 
 const user1 = await createUser("Mike", "River", "mike.river12@example.com", ["chinese"], "male", "10/18/2000", "+19293335817", "Abc12345678!", "C:\\Users\\jinxi\\git_repos\\CS554-VeilChat\\data-server\\public\\images.jpg");
 const user2 = await createUser("John", "Doe", "john.doe1@example.com", ["english"], "male", "05/20/1998", "+123456789", "Passw0rd!", "");
@@ -11,3 +11,5 @@ const user8 = await createUser("Olivia", "Lopez", "olivia.lopez7@example.com", [
 const user9 = await createUser("Ethan", "Rodriguez", "ethan.rodriguez8@example.com", ["chinese"], "male", "11/13/2000", "+19876543210", "Passw0rd!", "")
 const user10 = await createUser("Ava", "Perez", "ava.perez9@example.com", ["english"], "female", "01/11/2011", "+17654328901", "Abc123456!", "")
 
+const userTest = getUserInfoByUserId()
+console.log();

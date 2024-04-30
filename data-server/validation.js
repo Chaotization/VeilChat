@@ -167,13 +167,28 @@ const exportedMethods = {
 
     validateLanguages(languages){
         const topLanguages = [
-            "chinese", "spanish", "english", "hindi", "bengali",
-            "portuguese", "russian", "japanese", "western punjabi", "marathi",
-            "telugu", "wu chinese", "turkish", "korean", "french",
-            "german", "vietnamese", "tamil", "urdu"];
+            "English",
+            "Arabic",
+            "Bengali",
+            "Chinese",
+            "French",
+            "German",
+            "Hindi",
+            "Indonesian",
+            "Japanese",
+            "Marathi",
+            "Nigerian Pidgin",
+            "Portuguese",
+            "Russian",
+            "Spanish",
+            "Tamil",
+            "Telugu",
+            "Turkish",
+            "Urdu",
+            "Vietnamese"];
 
         return languages.map(language => {
-            const normalizedLanguage = language.trim().toLowerCase();
+            const normalizedLanguage = language.trim();
             if (!topLanguages.includes(normalizedLanguage)) {
                 throw `Error: '${language}' is not a recognized top 20 language`;
             }
