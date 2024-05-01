@@ -4,15 +4,20 @@ import ChangePassword from './ChangePassword.jsx';
 import DeleteUserButton from './DeleteUser.jsx';
 
 function Account() {
-    return (
-        <div className='max-w-md mx-auto my-8'>
-            <h2 style={{fontWeight:"bold",textAlign:"center"}}>Account Page</h2>
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-base-200">
+      <div className="card w-96 bg-base-100 shadow-xl">
+        <div className="card-body">
+          <h2 className="card-title justify-center text-3xl font-bold mb-6">Account Page</h2>
+          <div className="space-y-4">
             <ChangePassword />
             <SignOutButton />
-            <br/>
-            <DeleteUserButton/>
+            <DeleteUserButton />
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 }
 
 export default Account;
