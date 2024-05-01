@@ -10,6 +10,7 @@ import { db } from '../firebase/FirebaseFunctions';
 import { setDoc, doc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import upload from "../context/upload.js";
 
 const storage = getStorage();
 
@@ -41,6 +42,7 @@ function SignUp() {
   ];
   const [availableLanguages, setAvailableLanguages]=useState(langs)
   const [formData, setFormData] = useState({
+    id: "",
     first_name: "",
     last_name: "",
     dob: "",
@@ -116,31 +118,6 @@ const AWS_SECRET_ACCESS_ID=import.meta.env.VITE_AWS_SECRET_ACCESS_ID
       'blob'
     );
     }
-
-    const uploadToFirebaseStorage = async (file) => {
-      try {
-        const storage = getStorage();
-        const storageRef = ref(storage, `user_avatars/${Date.now()}-${file.name}`);
-        const uploadTask = uploadBytesResumable(storageRef, file);
-    
-        uploadTask.on('state_changed',
-          (snapshot) => {},
-          (error) => {
-            console.error("Upload failed:", error);
-            setUploadError(error.message);
-          }, 
-          () => {
-            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-              console.log('File available at Firebase:', downloadURL);
-              setFirebaseProfilePictureLocation(downloadURL);
-            });
-          }
-        );
-      } catch (error) {
-        console.error("Error uploading file to Firebase:", error);
-      }
-    };
-
 
 
 const uploadToS3 = async () => {
@@ -235,7 +212,7 @@ const handleLanguages=(e)=>
   setLanguages([...languages,e.target.value])
     }
   }
-  console.log(languages);
+  //console.log(languages);
 }
 const handleLanguageRemove = (languageToRemove) => {
   setLanguages(languages.filter((lang) => lang !== languageToRemove));
@@ -290,15 +267,18 @@ const handleSignUp=async(e)=>
       try{
         const auth = getAuth()
         const currentUser = auth.currentUser
+        console.log(currentUser)
     
 
-        if (imageFile) {
-          const uploadUrl = await uploadToFirebaseStorage(imageFile);
-          setProfilePictureLocation(uploadUrl);  
+      let profilePictureUrl = ""
+      if (imageFile) {
+        profilePictureUrl = await upload(imageFile);
       }
+      
       // save to firebase db
       const userDocRef = doc(db, "users", currentUser.uid);
       await setDoc(userDocRef, {
+          id: currentUser.uid,
           firstName: formData.first_name.trim(),
           lastName: formData.last_name.trim(),
           email: formData.email.trim(),
@@ -307,7 +287,7 @@ const handleSignUp=async(e)=>
           phoneNumber: formData.phoneNumber,
           languages: languages,
           friends: [],
-          profilePictureLocation: firebaseProfilePictureLocation || ""
+          profilePictureLocation: profilePictureUrl || ""
       });
 
       await setDoc(doc(db, "userchats", currentUser.uid), {

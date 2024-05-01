@@ -11,7 +11,7 @@ export const useUserStore = create((set) => ({
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
+        
         const uid = user.uid;
         // Fetch user info
         const docRef = doc(db, "users", uid);

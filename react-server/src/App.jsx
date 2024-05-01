@@ -22,7 +22,7 @@ import { useUserStore } from './context/userStore.jsx';
 
 function App() {
     const initializeAuthListener = useUserStore(state => state.initializeAuthListener);
-
+    
     useEffect(() => {
         initializeAuthListener();
     }, [initializeAuthListener]);
