@@ -3,6 +3,7 @@ import axios from "axios";
 import redis from 'redis';
 import users from '../config/mongoCollections.js'
 import {ObjectId} from "mongodb";
+import {use} from "bcrypt/promises.js";
 
 const client = redis.createClient();
 client.connect().then(() => {
@@ -44,58 +45,92 @@ const findNearByUsers = async (users, lat, lng, distance) => {
 };
 
 let exportedMethods = {
-    async getUsersByGender(gender) {
+    async getUsersByGender(userId, gender) {
         try {
+            userId = validation.checkId(userId);
             gender = validation.checkGender(gender);
             const userCollection = await users();
 
-            let filteredUsers;
+            let allUsers = [];
             if (gender === 'others') {
-                filteredUsers = await userCollection.find().toArray();
+                allUsers = await userCollection.find({}).toArray();
             } else {
-                filteredUsers = await userCollection.find({ gender: gender }).toArray();
+                allUsers = await userCollection.find({gender: gender}).toArray();
             }
+
+            const exists = await client.exists('activeUsers');
+            let activeUsers = [];
+            if (exists) {
+                activeUsers = await client.json.get('activeUsers');
+            }
+
+            const filteredUsers = allUsers.filter(user =>
+                activeUsers.some(activeUser => activeUser._id === user._id.toString()) && user._id.toString() !== userId
+            );
 
             if (filteredUsers.length === 0) {
-                throw new Error(`User with gender ${gender} not found`);
+                throw new Error(`No active users with gender ${gender} found.`);
             }
 
-            return { users: filteredUsers };
+            return filteredUsers;
         } catch (error) {
             console.error(error);
             throw new Error(`Failed to fetch users by gender: ${error.message}`);
         }
     },
 
-    async getUsersByLanguage(language) {
+    async getUsersByLanguage(userId, language) {
         try {
+            userId = validation.checkId(userId);
             language = validation.checkLanguage(language);
             const userCollection = await users();
 
-            const filteredUsers = await userCollection.find({ languages: { $in: [language.toLowerCase()] } }).toArray();
+            const allUsers = await userCollection.find({ languages: { $in: [language.toLowerCase()] } }).toArray();
 
-            if (filteredUsers.length === 0) {
-                throw new Error(`User with language ${language} not found`);
+            const exists = await client.exists('activeUsers');
+            let activeUsers = [];
+            if (exists) {
+                activeUsers = await client.json.get('activeUsers');
             }
 
-            return { users: filteredUsers };
+            const filteredUsers = allUsers.filter(user =>
+                activeUsers.some(activeUser => activeUser._id === user._id.toString()) && user._id.toString() !== userId
+            );
+
+            if (filteredUsers.length === 0) {
+                throw new Error(`No active users with language ${language} found.`);
+            }
+
+            return filteredUsers;
         } catch (error) {
-            console.error(`Failed to fetch users by language: ${error.message}`);
+            console.error(error);
             throw new Error(`Failed to fetch users by language: ${error.message}`);
         }
     },
 
-    async getUsersByAge(age) {
+    async getUsersByAge(userId, age) {
         try {
+            userId = validation.checkId(userId);
             let { min, max } = validation.checkAgeRange(age);
 
             const userCollection = await users();
-            const filteredUsers = await userCollection.find({
+
+            const allUsers = await userCollection.find({
                 dob: {
-                    $gte: new Date(min),
-                    $lte: new Date(max)
+                    $gte: min,
+                    $lte: max
                 }
             }).toArray()
+
+            const exists = await client.exists('activeUsers');
+            let activeUsers = [];
+            if (exists) {
+                activeUsers = await client.json.get('activeUsers');
+            }
+
+            const filteredUsers = allUsers.filter(user =>
+                activeUsers.some(activeUser => activeUser._id === user._id.toString()) && user._id.toString() !== userId
+            );
 
             if (filteredUsers.length === 0) {
                 const minDateStr = min.toISOString().split('T')[0];
@@ -103,16 +138,17 @@ let exportedMethods = {
                 throw new Error(`No users found within the age range from ${minDateStr} to ${maxDateStr}`);
             }
 
-            return { users: filteredUsers };
+            return filteredUsers;
         } catch (error) {
             console.error(error);
-            throw new Error(`Failed to fetch users by age range: ${error.message}`);
+            throw new Error(`Failed to fetch users by age: ${error.message}`);
         }
     },
 
 
     async getUsersByMultiFields(userId, criteria){
         try {
+            userId = validation.checkId(userId)
             const userCollection = await users();
             const query = {};
 
@@ -126,7 +162,7 @@ let exportedMethods = {
             }
 
             if(criteria.language) {
-                const language = validation.checkLanguage(criteria.language);
+                const language = validation.validateLanguages(criteria.language);
                 query.languages = { $in: [language] };
             }
 
@@ -147,7 +183,7 @@ let exportedMethods = {
                 const exists = await client.exists('activeUsers');
                 if(exists){
                     const activeUsers = await client.json.get('activeUsers');
-                    const filteredUsers = activeUsers.filter((user) => user._id !== userId && user.position !== null);
+                    const filteredUsers = activeUsers.filter((user) => user._id !== userId && user.position);
                     if(!filteredUsers || filteredUsers.length === 0) return [];
                     const nearbyUsers = await findNearByUsers(filteredUsers, lat, lng, criteria.distance);
                     const nearbyUserIds = nearbyUsers.map(user => user._id);
@@ -159,9 +195,8 @@ let exportedMethods = {
             const filteredUsers = await userCollection.find(query).toArray();
             if (filteredUsers.length === 0) {
                 throw "Error: No users found matching the provided criteria.";
-            } else {
-                return { users: filteredUsers };
             }
+            return filteredUsers ;
         } catch (error) {
             throw error;
         }
@@ -213,11 +248,11 @@ let exportedMethods = {
 
         let filteredUsers = [];
         if (activeCriteria.gender) {
-            filteredUsers = await this.getUsersByGender(activeCriteria.gender);
+            filteredUsers = await this.getUsersByGender(userId, activeCriteria.gender);
         } else if (activeCriteria.language) {
-            filteredUsers = await this.getUsersByLanguage(activeCriteria.language);
+            filteredUsers = await this.getUsersByLanguage(userId, activeCriteria.language);
         } else if (activeCriteria.age) {
-            filteredUsers = await this.getUsersByAge(activeCriteria.age);
+            filteredUsers = await this.getUsersByAge(userId, activeCriteria.age);
         }
 
         const randomIndex = Math.floor(Math.random() * filteredUsers.length);

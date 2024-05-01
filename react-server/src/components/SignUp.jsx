@@ -547,7 +547,7 @@ return
     max={3} 
   >
   {availableLanguages.map((lang)=>(
-    <option value={lang}>{lang}</option>
+    <option key = {lang}value={lang}>{lang}</option>
   ))}
             </select>
           </div>

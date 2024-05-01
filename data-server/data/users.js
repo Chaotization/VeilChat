@@ -112,11 +112,14 @@ export const createUser = async (
     firstName = validation.validateName(firstName, "firstName");
     lastName = validation.validateName(lastName, "lastName");
     email = validation.validateEmail(email);
-    phoneNumber = validation.validatePhoneNumber(phoneNumber);
+    // phoneNumber = validation.validatePhoneNumber(phoneNumber);
     password = validation.validatePassword(password, "password");
     languages = validation.validateLanguages(languages);
     gender = validation.validateGender(gender);
+    console.log(dob)
     dob = validation.validateDateTime(dob);
+
+
 
     const userCollection = await users();
     const ifExist = await userCollection.findOne({email: email});
