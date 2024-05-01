@@ -6,6 +6,13 @@ import AuthContext from "./AuthContext.jsx";
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import Resizer from 'react-image-file-resizer';
 import SocialSignIn from './SocialSignIn.jsx';
+import { db } from '../firebase/FirebaseFunctions';
+import { setDoc, doc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import upload from "../context/upload.js";
+
+const storage = getStorage();
 
 function SignUp() {
   const { currentUser } = useContext(AuthContext);
@@ -35,14 +42,18 @@ function SignUp() {
   ];
   const [availableLanguages, setAvailableLanguages]=useState(langs)
   const [formData, setFormData] = useState({
+    id: "",
     first_name: "",
     last_name: "",
+    dob: "",
     email: "",
     gender:"",
+    languages:"",
     phoneNumber:""
   });
   const [errors, setErrors] = useState([]);
   const[profilePictureLocation, setProfilePictureLocation]=useState(null);
+  const [firebaseProfilePictureLocation, setFirebaseProfilePictureLocation] = useState(null);
   const [loading, setLoading]=useState([]);
   const [password, setPassword] = useState("");
   const [repeat_password, setRepeatPassword] = useState("");
@@ -83,7 +94,11 @@ const AWS_SECRET_ACCESS_ID=import.meta.env.VITE_AWS_SECRET_ACCESS_ID
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    console.log(file)
+    //set the image, but not upload
+    if(file) {
+      setImageFile(file);
+    }
+
     Resizer.imageFileResizer(
       file,
       150,
@@ -103,6 +118,7 @@ const AWS_SECRET_ACCESS_ID=import.meta.env.VITE_AWS_SECRET_ACCESS_ID
       'blob'
     );
     }
+
 
 const uploadToS3 = async () => {
   try {
@@ -196,18 +212,18 @@ const handleLanguages=(e)=>
   setLanguages([...languages,e.target.value])
     }
   }
-  console.log(languages);
+  //console.log(languages);
 }
 const handleLanguageRemove = (languageToRemove) => {
   setLanguages(languages.filter((lang) => lang !== languageToRemove));
 };
   
 
-        const handleSignUp=async(e)=>
-        {
-          e.preventDefault();
-          setErrors([]);
-          setMatch(false);
+const handleSignUp=async(e)=>
+  {
+    e.preventDefault();
+      setErrors([]);
+      setMatch(false);
       const regex = /^[A-Za-zÀ-ÿ ]+$/;
     if(!regex.test(formData.first_name.trim()))
     {
@@ -222,7 +238,7 @@ const handleLanguageRemove = (languageToRemove) => {
           });
     }
     
-    let dob=document.getElementById("dob").value;
+    let dob=document.getElementById("dob");
     dob=new Date(dob);
    
     let yearOfBirth=parseInt(dob.getFullYear());
@@ -244,28 +260,57 @@ const handleLanguageRemove = (languageToRemove) => {
     }
     let phone=document.getElementById("phoneNumber").value.trim();
 
-    if(!errors.length>0)
-    {
-    let response=await fetch("http://localhost:4000/signup",{
-        method:"POST",
-        headers: { 'Content-Type': 'application/json' },
-        body:JSON.stringify(
-            {
-                "firstName":formData.first_name.trim(),
-                "lastName":formData.last_name.trim(),
-                "email":formData.email.trim(),
-                "password":password,
-                "dob":dob,
-                "gender":formData.gender,
-                "languages":languages,
-                "phoneNumber":phone,
-                "profilePictureLocation":setImageFile|| ""
-            })
-    });
-    try
-    {
-    let data=await response.json()
-    if (!response.ok) {
+
+
+    if(!errors.length>0){
+
+      try{
+        const auth = getAuth()
+        const currentUser = auth.currentUser
+        console.log(currentUser)
+    
+
+      let profilePictureUrl = ""
+      if (imageFile) {
+        profilePictureUrl = await upload(imageFile);
+      }
+      
+      // save to firebase db
+      const userDocRef = doc(db, "users", currentUser.uid);
+      await setDoc(userDocRef, {
+          id: currentUser.uid,
+          firstName: formData.first_name.trim(),
+          lastName: formData.last_name.trim(),
+          email: formData.email.trim(),
+          dob: formData.dob,
+          gender: formData.gender,
+          phoneNumber: formData.phoneNumber,
+          languages: languages,
+          friends: [],
+          profilePictureLocation: profilePictureUrl || ""
+      });
+
+      await setDoc(doc(db, "userchats", currentUser.uid), {
+        chats: [],
+      })
+
+      let response = await fetch("http://localhost:4000/signup", {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    firstName: formData.first_name.trim(),
+                    lastName: formData.last_name.trim(),
+                    email: formData.email.trim(),
+                    dob: formData.dob,
+                    gender: formData.gender,
+                    phoneNumber: formData.phoneNumber,
+                    languages: languages,
+                    profilePictureLocation: profilePictureLocation || ""
+                })
+      });
+
+      let data=await response.json()
+      if (!response.ok) {
         if (data && data.message) {
             setErrors((prevState) => {
                 return [...prevState, data.message];
@@ -277,20 +322,19 @@ const handleLanguageRemove = (languageToRemove) => {
               });
             return
           }
-        }
-      else{
-        setErrors([]);
-        setContinuePage(false);
-        alert("Sucessfully created your profile");
-        navigate('/signin');}
-    }
-catch(e)
-{
-    setErrors((prevState) => {
-        return [...prevState, e.message];
-      });
-      return
-}}
+        }else{
+          setErrors([]);
+          setContinuePage(false);
+          alert("Sucessfully created your profile");
+          navigate('/signin');}
+      } catch(e){
+        setErrors((prevState) => {
+          return [...prevState, e.message];
+        });
+        return
+      }
+}
+    
 if(loading)
 {
   return <div>loading..</div>
@@ -439,7 +483,8 @@ return
           <input
               type="date"
               name="dob"
-              id="dob"
+              value={formData.dob}
+              onChange={e => setFormData({ ...formData, dob: e.target.value })}
               required
               min={1900}
               max={2024}
@@ -455,8 +500,10 @@ return
               type="tel"
               name="phoneNumber"
               id="phoneNumber"
-              placeholder="123-456-7890" pattern="[0-9]{10}"
+              placeholder="1234567890" pattern="[0-9]{10}"
               required
+              value={formData.phoneNumber}
+              onChange={e => setFormData({ ...formData, phoneNumber: e.target.value })}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
         </div>

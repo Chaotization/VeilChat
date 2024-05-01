@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 
 import {Route, Routes} from 'react-router-dom';
@@ -12,10 +12,21 @@ import {AuthProvider} from './context/AuthContext.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
 import UserFilter from './components/SearchUsers.jsx'
 import Chatroom from './components/Chatroom.jsx';
+import FriendChat from './components/FriendChat/FriendChat.jsx'
+import { getAuth } from 'firebase/auth';
 import 'tailwindcss/tailwind.css';
 import './output.css';
+import { useUserStore } from './context/userStore.jsx';
+
+
 
 function App() {
+    const initializeAuthListener = useUserStore(state => state.initializeAuthListener);
+    
+    useEffect(() => {
+        initializeAuthListener();
+    }, [initializeAuthListener]);
+
     return (
         <AuthProvider>
             <div className='App'>
@@ -24,6 +35,7 @@ function App() {
                 </header>
                 <Routes>
                     <Route path='/' element={<Landing />} />
+                    <Route path='/friendchat' element={<FriendChat/>} />
                     <Route path='/home' element={<PrivateRoute />}>
                         <Route path='/home' element={<Home />} />
                     </Route>
@@ -34,6 +46,7 @@ function App() {
                     <Route path='/signup' element={<SignUp />} />
                     <Route path='/search-user' element={<UserFilter/>} />
                     <Route path='/chat/:providedChatId' element={<Chatroom/>}/>
+                    <Route path='/friendchat' element={<FriendChat/>} />
                 </Routes>
             </div>
         </AuthProvider>

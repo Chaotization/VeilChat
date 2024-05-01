@@ -12,6 +12,9 @@ import {
     reauthenticateWithCredential,
     deleteUser
 } from 'firebase/auth';
+import app from './FirebaseConfig';
+import {getFirestore} from "firebase/firestore";
+import {getStorage} from "firebase/storage";
 import { useNavigate } from 'react-router-dom';
 
 async function doCreateUserWithEmailAndPassword(email, password, displayName) {
@@ -83,3 +86,6 @@ export {
     doDeleteUser,
     doChangePassword
 };
+
+export const db = getFirestore();
+export const storage = getStorage();
