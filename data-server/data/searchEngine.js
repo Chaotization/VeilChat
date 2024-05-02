@@ -239,6 +239,7 @@ let exportedMethods = {
             }
         }
 
+        console.log("a")
         if (numberOfActiveFilters > 1) {
             const filteredUsers = await this.getUsersByMultiFields(userId, activeCriteria);
             const randomIndex = Math.floor(Math.random() * filteredUsers.length);
