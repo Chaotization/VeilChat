@@ -1,31 +1,39 @@
-import React, { useEffect, useState } from 'react'
-
-
-import {Route, Routes} from 'react-router-dom';
-import Account from './components/Account.jsx';
-import Home from './components/ProtectedHome.jsx';
-import Landing from './components/Home.jsx';
+import React, { useEffect } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext.jsx';
+import { useUserStore } from './context/userStore.jsx';
 import Navigation from './components/Navigation.jsx';
+import Home from './components/ProtectedHome.jsx';
 import SignIn from './components/SignIn.jsx';
 import SignUp from './components/SignUp.jsx';
-import {AuthProvider} from './context/AuthContext.jsx';
+import Landing from './components/Home.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
-import UserFilter from './components/SearchUsers.jsx'
+import FriendChat from './components/FriendChat/FriendChat.jsx';
+import UserFilter from './components/SearchUsers.jsx';
 import Chatroom from './components/Chatroom.jsx';
-import FriendChat from './components/FriendChat/FriendChat.jsx'
-import { getAuth } from 'firebase/auth';
-import 'tailwindcss/tailwind.css';
-import './output.css';
-import { useUserStore } from './context/userStore.jsx';
-
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import Account from './components/Account.jsx';
 
 
 function App() {
-    const initializeAuthListener = useUserStore(state => state.initializeAuthListener);
-    
+    const { fetchUserInfo, currentUser, isLoading } = useUserStore();
+
     useEffect(() => {
-        initializeAuthListener();
-    }, [initializeAuthListener]);
+        const auth = getAuth();
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                fetchUserInfo(user.uid);
+            } else {
+                fetchUserInfo(null);
+            }
+        });
+
+        return () => unsubscribe();
+    }, [fetchUserInfo]);
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <AuthProvider>
@@ -35,7 +43,7 @@ function App() {
                 </header>
                 <Routes>
                     <Route path='/' element={<Landing />} />
-                    <Route path='/friendchat' element={<FriendChat/>} />
+                    <Route path='/friendchat' element={<FriendChat />} />
                     <Route path='/home' element={<PrivateRoute />}>
                         <Route path='/home' element={<Home />} />
                     </Route>
@@ -44,9 +52,8 @@ function App() {
                     </Route>
                     <Route path='/signin' element={<SignIn />} />
                     <Route path='/signup' element={<SignUp />} />
-                    <Route path='/search-user' element={<UserFilter/>} />
-                    <Route path='/chat/:providedChatId' element={<Chatroom/>}/>
-                    <Route path='/friendchat' element={<FriendChat/>} />
+                    <Route path='/search-user' element={<UserFilter />} />
+                    <Route path='/chat/:providedChatId' element={<Chatroom />} />
                 </Routes>
             </div>
         </AuthProvider>
