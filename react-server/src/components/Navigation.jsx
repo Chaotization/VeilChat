@@ -25,6 +25,7 @@ const NavigationAuth = () => {
             <li><NavLink to='/'>Landing</NavLink></li>
             <li><NavLink to='/home'>Home</NavLink></li>
             <li><NavLink to='/account'>Account</NavLink></li>
+            <li><NavLink to="/profile">Profile</NavLink></li>
           </ul>
         </div>
         <NavLink to='/' className="btn btn-ghost normal-case text-xl">VeilChat</NavLink>
@@ -34,6 +35,7 @@ const NavigationAuth = () => {
           <li className='btn'><NavLink to='/'>Landing</NavLink></li>
           <li className='btn'><NavLink to='/home'>Home</NavLink></li>
           <li className='btn'><NavLink to='/account'>Account</NavLink></li>
+          <li className='btn'><NavLink to='/profile'>Profile</NavLink></li>
         </ul>
       </div>
       <div className="navbar-end">

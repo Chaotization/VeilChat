@@ -6,13 +6,18 @@ import Navigation from './components/Navigation.jsx';
 import Home from './components/ProtectedHome.jsx';
 import SignIn from './components/SignIn.jsx';
 import SignUp from './components/SignUp.jsx';
-import Landing from './components/Home.jsx';
+import Landing from './components/Landing.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
 import FriendChat from './components/FriendChat/FriendChat.jsx';
 import UserFilter from './components/SearchUsers.jsx';
 import Chatroom from './components/Chatroom.jsx';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import Profile from './components/Profile.jsx';
 import Account from './components/Account.jsx';
+import CheckUser from './components/CheckUser.jsx';
+import 'tailwindcss/tailwind.css';
+import './output.css';
+
 
 
 function App() {
@@ -36,6 +41,7 @@ function App() {
     }
 
     return (
+        
         <AuthProvider>
             <div className='App'>
                 <header className='App-header card'>
@@ -52,11 +58,15 @@ function App() {
                     </Route>
                     <Route path='/signin' element={<SignIn />} />
                     <Route path='/signup' element={<SignUp />} />
-                    <Route path='/search-user' element={<UserFilter />} />
-                    <Route path='/chat/:providedChatId' element={<Chatroom />} />
+                    <Route path='/search-user' element={<UserFilter/>} />
+                    <Route path='/chat/:providedChatId' element={<Chatroom/>}/>
+                    <Route path='/profile' element={<Profile/>}/>
+                    <Route path='/friendchat' element={<FriendChat/>} />
+                    <Route path='/checker' element={<CheckUser/>}/>
                 </Routes>
             </div>
         </AuthProvider>
+        
     );
 }
 
