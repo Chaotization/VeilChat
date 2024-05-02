@@ -1,16 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react'
 import './ChatRoom.css'
+import { doc, onSnapshot} from "firebase/firestore";
+import { db } from '../../../firebase/FirebaseFunctions';
 
 const ChatRoom = () =>{
 
-
+  const [chat, setChats] = useState();
   const endRef = useRef(null)
 
   useEffect(()=>{
     endRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [])
 
-
+ 
   return (
       <div className="chat">
         <div className="top">

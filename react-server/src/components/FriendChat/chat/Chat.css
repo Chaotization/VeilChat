@@ -37,13 +37,17 @@
       }
   
       .add {
-        width: 36px;
-        height: 36px;
+        width: 48px;  /* Increased size */
+        height: 48px;  /* Increased size */
         background-color: rgba(17, 25, 40, 0.5);
         padding: 10px;
         border-radius: 10px;
         cursor: pointer;
-      }
+        border: none;  /* Remove border */
+        display: flex;  /* Center the icon */
+        align-items: center;  /* Center the icon */
+        justify-content: center;  /* Center the icon */
+    }
     }
   
     .item {
@@ -93,4 +97,26 @@
 .userInfo h2 {
     margin: 0; /* Removes default margin from h2 for better control */
     font-size: 18px; /* Adjust font size as needed */
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Dimmed background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it lays on top */
+}
+
+.modalContent {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  width: 90%; /* Adjust width as necessary */
+  max-width: 400px; /* Adjust maximum width as necessary */
 }
