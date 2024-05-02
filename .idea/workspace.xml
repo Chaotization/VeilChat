@@ -6,13 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="d4a03713-3b19-4578-9690-4962f7cfceaa" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/config/mongoCollections.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/config/mongoCollections.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data-server/data/searchEngine.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/data/searchEngine.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-server/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-server/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-server/routes/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/routes/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-server/routes/search.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/routes/search.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data-server/validation.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/validation.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/data/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/data/users.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data-server/routes/sendNotification.js" beforeDir="false" afterPath="$PROJECT_DIR$/data-server/routes/sendNotification.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/react-server/src/components/SearchUsers.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/SearchUsers.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react-server/src/components/notification.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/react-server/src/components/notification.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,7 +51,7 @@
     "dart.analysis.tool.window.visible": "false",
     "git-widget-placeholder": "main",
     "ignore_missing_gitignore": "true",
-    "last_opened_file_path": "C:/Users/czhen/repos/VeilChat",
+    "last_opened_file_path": "E:/CS/546/CS-546-Final-Project",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -73,7 +72,7 @@
       <recent name="C:\Users\jinxi\git_repos\CS554-VeilChat\client\src" />
     </key>
   </component>
-  <component name="RunManager" selected="JavaScript Debug.client">
+  <component name="RunManager" selected="npm.server">
     <configuration name="client" type="JavascriptDebugType" uri="http://localhost:5173/">
       <method v="2" />
     </configuration>
@@ -123,6 +122,10 @@
       <workItem from="1713980308431" duration="1298000" />
       <workItem from="1713981980357" duration="1051000" />
       <workItem from="1714059867164" duration="20000" />
+      <workItem from="1714512850353" duration="1221000" />
+      <workItem from="1714531099928" duration="1971000" />
+      <workItem from="1714579615942" duration="1533000" />
+      <workItem from="1714659158327" duration="9619000" />
     </task>
     <servers />
   </component>
@@ -138,20 +141,48 @@
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/data-server/routes/login.js</url>
           <line>10</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="35" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/data-server/data/searchEngine.js</url>
           <line>112</line>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="75" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/data-server/data/searchEngine.js</url>
+          <line>205</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="78" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/data-server/data/searchEngine.js</url>
+          <line>49</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="80" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/react-server/src/components/SearchUsers.jsx</url>
-          <line>42</line>
+          <line>51</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="81" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/data-server/data/searchEngine.js</url>
+          <line>83</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="82" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/react-server/src/components/SignIn.jsx</url>
+          <line>34</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="84" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/react-server/src/components/SignUp.jsx</url>
+          <line>65</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="87" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
