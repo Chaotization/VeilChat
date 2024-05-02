@@ -13,8 +13,7 @@ const getCollectionFn = (collection) => {
 	};
 };
 
-const users = getCollectionFn('users');
-const messages = getCollectionFn('messages');
-
+export const users = getCollectionFn('users');
+export const messages = getCollectionFn('messages');
 
 export {users, messages}

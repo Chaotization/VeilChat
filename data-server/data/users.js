@@ -1,4 +1,5 @@
 import {users} from "../config/mongoCollections.js";
+import {users} from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import bcrypt from "bcrypt";
 import validation from "../validation.js";
@@ -145,7 +146,8 @@ export const createUser = async (
         password: await bcrypt.hash(password, 15),
         userSince: validation.generateCurrentDate(),
         profilePictureLocation,
-        friends: {},
+        friends: [],
+        status:'inactive'
     };
 
     const insertUser = await userCollection.insertOne(user);
@@ -181,14 +183,17 @@ export const loginUser = async (email, password) => {
 
     const userCollection = await users();
     const user = await userCollection.findOne({
-        email: email,
+        email: email
     });
     if (!user) {
         throw "Error: Either the email address or password is invalid";
     }
-    const checkPassword = await bcrypt.compare(password, user.password);
+    const checkPassword = await bcrypt.compare(
+        password,
+        user.password
+    );
     if (!checkPassword) {
-        throw "Error: Either the email address or password is invalid";
+        throw "Error: Either the email address or password is invalid"
     } else {
         return {
             userId: user._id.toString(),
@@ -202,15 +207,19 @@ export const loginUser = async (email, password) => {
             userSince: user.userSince,
             profilePictureLocation: user.profilePictureLocation,
             friends: user.friends,
+            status:user.status
         };
     }
 };
 
-export const updateUserFirstName = async (userId, firstName) => {
+export const updateUserFirstName = async (
+    userId,
+    firstName
+) => {
     firstName = validation.validateName(firstName, "firstName");
     userId = validation.checkId(userId, "userId");
     const userCollection = await users();
-    const user = await userCollection.findOne({_id: new ObjectId(userId)});
+    const user = await userCollection.findOne({_id: new ObjectId(userId.trim())});
     if (!user) {
         throw `Error: User with ID ${userId} not found`;
     }
@@ -222,7 +231,7 @@ export const updateUserFirstName = async (userId, firstName) => {
         throw `Error: Failed to update last name for user with ID ${userId}`;
     }
     return {updated: true};
-};
+}
 
 export const updateUserLastName = async (userId, lastName) => {
     lastName = validation.validateName(lastName, "lastName");
@@ -233,7 +242,7 @@ export const updateUserLastName = async (userId, lastName) => {
         throw `Error: User with ID ${userId} not found`;
     }
     const updateUser = await userCollection.updateOne(
-        {_id: user._id},
+        {_id: new ObjectId(userId.trim())},
         {$set: {lastName}}
     );
     if (updateUser.modifiedCount === 0) {
@@ -266,7 +275,7 @@ export const updateUserPassword = async (userId, oldPassword, newPassword) => {
     const hashedNewPassword = await bcrypt.hash(newPassword, 15);
 
     const updateUser = await userCollection.updateOne(
-        {_id: user._id},
+        {_id: new ObjectId(userId)},
         {$set: {password: hashedNewPassword}}
     );
 
@@ -285,7 +294,7 @@ export const updateUserLanguages = async (userId, languages) => {
         throw `Error: User with ID ${userId} not found`;
     }
     const updateUser = await userCollection.updateOne(
-        {_id: user._id},
+        {_id: new ObjectId(userId.trim())},
         {$set: {languages}}
     );
     if (updateUser.modifiedCount === 0) {
@@ -303,7 +312,7 @@ export const updateUserPhoneNumber = async (userId, phoneNumber) => {
         throw `Error: User with ID ${userId} not found`;
     }
     const updateUser = await userCollection.updateOne(
-        {_id: user._id},
+        {_id: new ObjectId(userId)},
         {$set: {phoneNumber}}
     );
     if (updateUser.modifiedCount === 0) {
@@ -445,12 +454,14 @@ export const getUserInfoByEmail = async (email) => {
         lastName: user.lastName,
         email: user.email,
         phoneNumber: user.phoneNumber,
+        dob:user.dob,
         languages: user.languages,
         userSince: user.userSince,
         profilePictureLocation: user.profilePictureLocation,
         friends: user.friends,
+        status:user.status
     };
-};
+}
 
 export const getUserIdByEmail = async (email) => {
     email = validation.validateEmail(email);
@@ -481,3 +492,112 @@ export const getAllUsers = async () => {
     const user = await userCollection.find({}).toArray();
     return user;
 };
+
+export const setStatus=async(email, status)=>
+{
+    try{
+       let user= await getUserInfoByEmail(email);
+    const userCollection=await users();
+    const userUpdated=await userCollection.updateOne({email},{$set:{status:status}});
+    if(!userUpdated.acknowledged)
+    {
+        throw "Can't update status"
+    }
+    return {...user, status};
+    }
+    catch(e)
+    {
+        throw e;
+    }
+}
+export const updateUser=async(user)=>
+{   
+    try{
+        //let uid=user._id.trim();
+        const userCollection=await users();
+        let userInfo=await userCollection.findOne({email:user.email});
+        if(!userInfo)
+        {
+            throw "Couldn't fetch data from Db..."
+        }
+    if(user.firstName)
+    {
+        let fname=validation.validateName(user.firstName)
+       userInfo['firstName']=fname;
+    }
+    if(user.lastName)
+    {
+        let lname=validation.validateName(user.lastName)
+       userInfo['lastName']=lname;
+    }
+    if(user.phoneNumber)
+    {
+        const phoneNumber=validation.validatePhoneNumber(user.phoneNumber)
+       userInfo['phoneNumber']=phoneNumber
+    }
+    if(user.languages)
+    {
+        const languages=user.languages.map(validation.checkLanguage);
+      userInfo['languages']=languages;
+    }
+    if(user.dob)
+    {
+        const dob=validation.validateDateTime(user.dob)
+        userInfo['dob']=dob;
+    }
+    if(user.gender)
+    {
+        const gender=validation.checkGender(user.gender);
+        userInfo['gender']=gender;
+    }
+    let updatedUser=await userCollection.updateOne({email:user.email},{$set:userInfo});
+    if(!updatedUser.acknowledged)
+    {
+        throw "Couldn't update data";
+    }
+    userInfo=await getUserInfoByEmail(user.email);
+    return userInfo;
+}
+    catch(e)
+    {
+        throw e
+    }
+   
+}
+
+export const createAccountWithEmailAndPassword=async(email,password,_id)=>
+{
+	email=validation.validateEmail(email);
+	password=validation.validatePassword(password, "password");
+
+	const userCollection = await users();
+	const ifExist = await userCollection.findOne({ email: email });
+	if (ifExist) {
+		throw `Error: ${email} is already registered, Please Login`;
+	}
+	const user = {
+		_id:_id.trim(),
+        firstName:"",
+        lastName:"",
+        email,
+        languages:[],
+        gender:"",
+        dob:"",
+        phoneNumber:"",
+        password: await bcrypt.hash(password, 15),
+        userSince: validation.generateCurrentDate(),
+        profilePictureLocation:"",
+        friends: [],
+        status:'inactive'
+    };
+
+	const insertUser = await userCollection.insertOne(user);
+	if (!insertUser.acknowledged || !insertUser.insertedId) {
+		throw `Error: couldn't register the account: ${email}`;
+
+	}
+	const insertedUser=await getUserInfoByUserId(_id);
+	return insertedUser ;
+
+}
+
