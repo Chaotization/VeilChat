@@ -1,4 +1,4 @@
-import {createUser, getUserInfoByUserId} from "./data/users.js";
+import {createUser, getUserInfoByUserId, updateFriendStatus} from "./data/users.js";
 
 const user1 = await createUser("Mike", "River", "mike.river12@example.com", ["chinese"], "male", "10/18/2000", "+19293335817", "Abc12345678!", "C:\\Users\\jinxi\\git_repos\\CS554-VeilChat\\data-server\\public\\images.jpg");
 const user2 = await createUser("John", "Doe", "john.doe1@example.com", ["english"], "male", "05/20/1998", "+123456789", "Passw0rd!", "");
@@ -13,3 +13,15 @@ const user10 = await createUser("Ava", "Perez", "ava.perez9@example.com", ["engl
 
 const userTest = getUserInfoByUserId()
 console.log();
+
+
+
+const update1 = await updateFriendStatus("6633fe34ea15aaf2f1c704a9", "6633fe36ea15aaf2f1c704aa", "sent")
+
+const update2 = await updateFriendStatus("6633fe34ea15aaf2f1c704a9", "6633fe36ea15aaf2f1c704aa", "rejected")
+
+const update3 = await updateFriendStatus("6633fe34ea15aaf2f1c704a9", "6633fe36ea15aaf2f1c704aa", "sent")
+
+const update4 = await updateFriendStatus("6633fe36ea15aaf2f1c704aa", "6633fe34ea15aaf2f1c704a9", "connected")
+
+

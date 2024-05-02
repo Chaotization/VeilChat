@@ -56,6 +56,7 @@ function SignUp() {
   const [firebaseProfilePictureLocation, setFirebaseProfilePictureLocation] = useState(null);
   const [loading, setLoading]=useState([]);
   const [password, setPassword] = useState("");
+
   const [repeat_password, setRepeatPassword] = useState("");
   const [uploadError, setUploadError] = useState(null);
   const [imageFile, setImageFile] = useState(null); // Stores the uploaded image file
@@ -181,11 +182,11 @@ const uploadToS3 = async () => {
   if(!errors.length){
     
      try {
-           const userCredential= await doCreateUserWithEmailAndPassword(
-                formData.email,
-                password           
-            );
-            //console.log("User created successfully:", userCredential);           
+           // const userCredential= await doCreateUserWithEmailAndPassword(
+           //      formData.email,
+           //      password
+           //  );
+           //  console.log("User created successfully:", userCredential);
               setContinuePage(true);
               return
         } catch (error) {
@@ -268,14 +269,17 @@ const handleSignUp=async(e)=>
         const auth = getAuth()
         const currentUser = auth.currentUser
         console.log(currentUser)
-    
 
       let profilePictureUrl = ""
       if (imageFile) {
         profilePictureUrl = await upload(imageFile);
       }
-      
+        const userCredential= await doCreateUserWithEmailAndPassword(
+            formData.email,
+            password
+        );
       // save to firebase db
+
       const userDocRef = doc(db, "users", currentUser.uid);
       await setDoc(userDocRef, {
           id: currentUser.uid,
@@ -293,7 +297,17 @@ const handleSignUp=async(e)=>
       await setDoc(doc(db, "userchats", currentUser.uid), {
         chats: [],
       })
-
+      console.log({
+        firstName: formData.first_name.trim(),
+        lastName: formData.last_name.trim(),
+        email: formData.email.trim(),
+        languages: languages,
+        gender: formData.gender,
+        dob: formData.dob,
+        phoneNumber: formData.phoneNumber,
+        password: password,
+        profilePictureLocation: profilePictureLocation || ""
+      })
       let response = await fetch("http://localhost:4000/signup", {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
@@ -301,10 +315,11 @@ const handleSignUp=async(e)=>
                     firstName: formData.first_name.trim(),
                     lastName: formData.last_name.trim(),
                     email: formData.email.trim(),
-                    dob: formData.dob,
-                    gender: formData.gender,
-                    phoneNumber: formData.phoneNumber,
                     languages: languages,
+                    gender: formData.gender,
+                    dob: formData.dob,
+                    phoneNumber: formData.phoneNumber,
+                    password: formData.password,
                     profilePictureLocation: profilePictureLocation || ""
                 })
       });
@@ -553,7 +568,7 @@ return
           </div>
           <div className="container">
   {languages && languages.length > 0 && (
-    <div className="card mb-3"> 
+    <div className="card mb-3">
       <div className="card-body d-flex flex-wrap">
         {languages.map((language) => (
           <span key={language} className="me-2 mb-2">
