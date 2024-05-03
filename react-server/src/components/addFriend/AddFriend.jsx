@@ -2,12 +2,15 @@ import { useState } from "react";
 import { db } from '../../firebase/FirebaseFunctions';
 import {
   arrayUnion,
-  doc,
-  query,
-  getDocs,
   collection,
-  where,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  serverTimestamp,
+  setDoc,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { useUserStore } from "../../context/userStore";
 
@@ -43,33 +46,39 @@ const AddFriend = () => {
   const handleAddFriend = async () => {
     if (!friend) return;
 
+    // Creating a new chat document in the chats collection
+    const chatRef = collection(db, "chats");
+    const newChatRef = doc(chatRef);
+
+    // Create a new chat document with initial settings
+    await setDoc(newChatRef, {
+      createdAt: serverTimestamp(),
+      messages: [],
+      members: [currentUser.id, friend.id], // Both users are members of this chat
+      updatedAt: serverTimestamp(),
+      lastMessage: ""
+    });
+
+    // User chats reference for both users
     const userChatsRefCurrentUser = doc(db, "userchats", currentUser.id);
     const userChatsRefFriend = doc(db, "userchats", friend.id);
 
-    try {
-      // Update current user's chat list
-      await updateDoc(userChatsRefCurrentUser, {
-        chats: arrayUnion({
-          chatId: friend.id,  // Using friend's ID as chatId for simplicity
-          lastMessage: "",
-          receiverId: friend.id,
-          updatedAt: new Date(),
-        }),
-      });
+    // Update chat lists for both users
+    const chatInfo = {
+      chatId: newChatRef.id,
+      lastMessage: "",
+      updatedAt: new Date(),
+    };
 
-      // Update friend's chat list
-      await updateDoc(userChatsRefFriend, {
-        chats: arrayUnion({
-          chatId: currentUser.id,  // Using current user's ID as chatId for simplicity
-          lastMessage: "",
-          receiverId: currentUser.id,
-          updatedAt: new Date(),
-        }),
-      });
-    } catch (error) {
-      console.error("Error adding friend:", error);
-    }
-  };
+    await updateDoc(userChatsRefCurrentUser, {
+      chats: arrayUnion({...chatInfo, receiverId: friend.id}),
+    });
+
+    await updateDoc(userChatsRefFriend, {
+      chats: arrayUnion({...chatInfo, receiverId: currentUser.id}),
+    });
+};
+
 
   return (
     <div className="addFriend">

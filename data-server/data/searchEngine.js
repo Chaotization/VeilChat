@@ -3,7 +3,6 @@ import axios from "axios";
 import redis from 'redis';
 import {users} from '../config/mongoCollections.js'
 import {ObjectId} from "mongodb";
-import {use} from "bcrypt/promises.js";
 
 const client = redis.createClient();
 client.connect().then(() => {
