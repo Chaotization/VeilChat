@@ -1,5 +1,5 @@
 import { Router } from "express";
-import usersData from "../data/index.js";
+import {loginUser} from "../data/users.js";
 import jwt from "jsonwebtoken";
 const router = Router();
 
@@ -13,9 +13,10 @@ router.route("/").post(async (req, res) => {
 	let password = req.body.password;
 
 	try {
-		const [user, result] = await usersData.loginUser(email, password);
-		if (result) {
-			const userId = user._id;
+		const user = await loginUser(email, password);
+
+		if (user) {
+			const userId = user.userId;
 			const accessToken = jwt.sign(
 				{ userId },
 				(process.env.JWT_SECRET = "someSecret"),
