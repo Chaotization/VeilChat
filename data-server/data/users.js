@@ -541,7 +541,7 @@ export const updateUser=async(user)=>
         let userInfo=await userCollection.findOne({email:user.email});
         if(!userInfo)
         {
-            throw "Couldn't fetch data from Db..."
+            throw "Couldn't fetch data from the server"
         }
     if(user.firstName)
     {

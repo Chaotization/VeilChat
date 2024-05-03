@@ -55,7 +55,7 @@ router.route("/").put(async (req, res) => {
         if (updatedUser) {
             return res.status(200).json(updatedUser)
         } else {
-            return res.status(404).json({message: "No records found..."});
+            return res.status(404).json({message: "No records found"});
         }
     } catch (e) {
         return res.status(400).json({message: e});
