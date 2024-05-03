@@ -288,6 +288,7 @@ useEffect(() => {
       </button>
     </div>
        <ReactModal isOpen={openModal} contentLabel="editProfile" appElement={rootElement}>
+        <h2 className="text-center text-2xl font-medium mb-4">Editing profile Information</h2>
          <form
           onSubmit={handleEditForm}
           className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">

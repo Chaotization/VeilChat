@@ -188,7 +188,6 @@ const { currentUser, isLoading } = useUserStore();
                    profilePictureLocation: imageFile || ""
                 })
       });
-      console.log(response)
 
       let data=await response.json()
       if (!response.ok) {
@@ -205,7 +204,6 @@ const { currentUser, isLoading } = useUserStore();
           }
         }
         else{
-
           setErrors([]);
           return <Home tested={true} firstName={formData.first_name}/>
         }

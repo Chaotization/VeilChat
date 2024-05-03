@@ -1,5 +1,4 @@
 import {users} from "../config/mongoCollections.js";
-import {users} from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import bcrypt from "bcrypt";
 import validation from "../validation.js";
@@ -565,7 +564,7 @@ export const updateUser=async(user)=>
    
 }
 
-export const createAccountWithEmailAndPassword=async(email,password,_id)=>
+export const createAccountWithEmailAndPassword=async(email,password,id)=>
 {
 	email=validation.validateEmail(email);
 	password=validation.validatePassword(password, "password");
@@ -576,7 +575,7 @@ export const createAccountWithEmailAndPassword=async(email,password,_id)=>
 		throw `Error: ${email} is already registered, Please Login`;
 	}
 	const user = {
-		_id:_id.trim(),
+		_id:id.trim(),
         firstName:"",
         lastName:"",
         email,
@@ -596,7 +595,7 @@ export const createAccountWithEmailAndPassword=async(email,password,_id)=>
 		throw `Error: couldn't register the account: ${email}`;
 
 	}
-	const insertedUser=await getUserInfoByUserId(_id);
+	const insertedUser=await getUserInfoByEmail(email);
 	return insertedUser ;
 
 }

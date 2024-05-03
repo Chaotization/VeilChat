@@ -15,5 +15,3 @@ const getCollectionFn = (collection) => {
 
 export const users = getCollectionFn('users');
 export const messages = getCollectionFn('messages');
-
-export {users, messages}

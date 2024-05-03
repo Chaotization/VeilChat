@@ -185,12 +185,13 @@ const uploadToS3 = async () => {
     );
 
       if(userCreated){
+        console.log("In siignup user craeted",userCreated)
         setLoading(true)
         let response = await fetch("http://localhost:4000/user/createuserwithemail", {
           method: "POST",
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            _id:userCreated.uid,
+              id: userCreated.uid,
               email: formData.email.trim(),
               password:password,
           })
@@ -210,8 +211,7 @@ const uploadToS3 = async () => {
               return
             }
           }else{
-            setErrors([])
-           
+            setErrors([])           
             setLoading(false);
             setContinuePage(true);
           return}
