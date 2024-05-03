@@ -12,12 +12,12 @@ import {createUser, getUserInfoByUserId, updateFriendStatus} from "./data/users.
 // const user10 = await createUser("Ava", "Perez", "ava.perez9@example.com", ["english"], "female", "01/11/2011", "+17654328901", "Abc123456!", "")
 
 
-// const updatefriend = await updateFriendStatus("663471f8a58f64d05f17795e", "663471faa58f64d05f17795f", "send");
-// const updatefriend2 = await updateFriendStatus("663471faa58f64d05f17795f", "663471f8a58f64d05f17795e", "accept");
+const updatefriend1 = await updateFriendStatus("663471f8a58f64d05f17795e", "663471faa58f64d05f17795f", "send");
+const updatefriend2 = await updateFriendStatus("663471faa58f64d05f17795f", "663471f8a58f64d05f17795e", "accept");
 
-// const updatefriend = await updateFriendStatus("663471f8a58f64d05f17795e", "663471fba58f64d05f177960", "send");
-// const updatefriend2 = await updateFriendStatus("663471fba58f64d05f177960", "663471f8a58f64d05f17795e", "reject");
+const updatefriend3 = await updateFriendStatus("663471f8a58f64d05f17795e", "663471fba58f64d05f177960", "send");
+const updatefriend4 = await updateFriendStatus("663471fba58f64d05f177960", "663471f8a58f64d05f17795e", "reject");
 
-// const updatefriend = await updateFriendStatus("663471f8a58f64d05f17795e", "663471faa58f64d05f17795f", "delete");
+const updatefriend5 = await updateFriendStatus("663471f8a58f64d05f17795e", "663471faa58f64d05f17795f", "delete");
 
 

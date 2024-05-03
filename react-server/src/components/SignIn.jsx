@@ -4,7 +4,7 @@ import AuthContext from './AuthContext.jsx';
 import SocialSignIn from './SocialSignIn.jsx';
 import {
   doSignInWithEmailAndPassword,
-  doPasswordReset
+  doPasswordReset,
 } from '../firebase/FirebaseFunctions.js';
 
 const SignIn=()=>
@@ -42,9 +42,11 @@ const SignIn=()=>
 
         try {
           const userCredentials=await doSignInWithEmailAndPassword(email, password);
-          navigate("/home")
+          console.log(userCredentials);
+          navigate("/checker")
+          
       } catch (error) {
-        //console.log(error.code)
+
           alert(error.code);
       }
     }

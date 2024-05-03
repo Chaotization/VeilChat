@@ -16,6 +16,8 @@ const storage = getStorage();
 
 function SignUp() {
   const { currentUser } = useContext(AuthContext);
+  const auth=getAuth();
+  let userCreated=auth.currentUser
   const navigate = useNavigate();
   const [continuePage, setContinuePage]=useState(false);
   const [languages, setLanguages]=useState([]);
@@ -48,21 +50,17 @@ function SignUp() {
     dob: "",
     email: "",
     gender:"",
-    languages:"",
-    phoneNumber:""
+    languages:""
   });
   const [errors, setErrors] = useState([]);
   const[profilePictureLocation, setProfilePictureLocation]=useState(null);
   const [firebaseProfilePictureLocation, setFirebaseProfilePictureLocation] = useState(null);
-  const [loading, setLoading]=useState([]);
+  const [loading, setLoading]=useState(false);
   const [password, setPassword] = useState("");
 
   const [repeat_password, setRepeatPassword] = useState("");
   const [uploadError, setUploadError] = useState(null);
-  const [imageFile, setImageFile] = useState(null); // Stores the uploaded image file
-  const cropperRef = useRef(null);
-const AWS_ACCESS_KEY_ID=import.meta.env.VITE_AWS_ACCESS_KEY_ID
-const AWS_SECRET_ACCESS_ID=import.meta.env.VITE_AWS_SECRET_ACCESS_ID
+  const [imageFile, setImageFile] = useState(null); 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -105,10 +103,9 @@ const AWS_SECRET_ACCESS_ID=import.meta.env.VITE_AWS_SECRET_ACCESS_ID
       150,
       150,
       'JPEG',
-      100, // Image quality (0 to 100)
-      0, // Rotation (0 to 360)
+      100,
+      0,
       (resizedImage) => {
-        // Check the size of the resized image
         if (resizedImage.size / 1024 / 1024 > 5) {
           alert('Image size should be less than 5MB.');
           return;
@@ -182,23 +179,58 @@ const uploadToS3 = async () => {
   if(!errors.length){
     
      try {
-           // const userCredential= await doCreateUserWithEmailAndPassword(
-           //      formData.email,
-           //      password
-           //  );
-           //  console.log("User created successfully:", userCredential);
-              setContinuePage(true);
+       await doCreateUserWithEmailAndPassword(
+        formData.email,
+        password           
+    );
+
+      if(userCreated){
+        console.log("In siignup user craeted",userCreated)
+        setLoading(true)
+        let response = await fetch("http://localhost:4000/user/createuserwithemail", {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+              id: userCreated.uid,
+              email: formData.email.trim(),
+              password:password,
+          })
+        });
+  
+        let data=await response.json()
+        if (!response.ok) {
+          if (data && data.message) {
+              setErrors((prevState) => {
+                  return [...prevState, data.message];
+                });
               return
-        } catch (error) {
-            alert(error.code);
-            navigate('/signin');
+            } else {
+              setErrors((prevState) => {
+                  return [...prevState, "An error occurred while signing up"];
+                });
+              return
+            }
+          }else{
+            setErrors([])           
+            setLoading(false);
+            setContinuePage(true);
+          return}
         }
-        setLoading(false);
-        setContinuePage(true);
-  }
+        else
+        {
+          useNavigate('home');
+        }
+        } catch(e){
+          setErrors((prevState) => {
+            return [...prevState, e.message];
+          });
+          alert(e);
+
+            navigate('/signin');
+      }
   setLoading(false)
   return;
-}
+}}
 const handleLanguages=(e)=>
 {
  
@@ -243,7 +275,10 @@ const handleSignUp=async(e)=>
     dob=new Date(dob);
    
     let yearOfBirth=parseInt(dob.getFullYear());
-    let today=new Date()
+    const day = String(dob.getDate()).padStart(2, '0');
+    const year=yearOfBirth.toString();
+    const month = String(dob.getMonth() + 1).padStart(2, '0');
+    let today=new Date();
     let age=parseInt(today.getFullYear())-yearOfBirth;
     if(age<18){
       
@@ -266,19 +301,12 @@ const handleSignUp=async(e)=>
     if(!errors.length>0){
 
       try{
-        const auth = getAuth()
         const currentUser = auth.currentUser
-        console.log(currentUser)
 
       let profilePictureUrl = ""
       if (imageFile) {
         profilePictureUrl = await upload(imageFile);
       }
-        const userCredential= await doCreateUserWithEmailAndPassword(
-            formData.email,
-            password
-        );
-      // save to firebase db
 
       const userDocRef = doc(db, "users", currentUser.uid);
       await setDoc(userDocRef, {
@@ -286,9 +314,9 @@ const handleSignUp=async(e)=>
           firstName: formData.first_name.trim(),
           lastName: formData.last_name.trim(),
           email: formData.email.trim(),
-          dob: formData.dob,
+          dob: `${month}/${day}/${year}`,
           gender: formData.gender,
-          phoneNumber: formData.phoneNumber,
+          phoneNumber: "+1"+phone,
           languages: languages,
           friends: [],
           profilePictureLocation: profilePictureUrl || ""
@@ -297,29 +325,18 @@ const handleSignUp=async(e)=>
       await setDoc(doc(db, "userchats", currentUser.uid), {
         chats: [],
       })
-      console.log({
-        firstName: formData.first_name.trim(),
-        lastName: formData.last_name.trim(),
-        email: formData.email.trim(),
-        languages: languages,
-        gender: formData.gender,
-        dob: formData.dob,
-        phoneNumber: formData.phoneNumber,
-        password: password,
-        profilePictureLocation: profilePictureLocation || ""
-      })
-      let response = await fetch("http://localhost:4000/signup", {
+
+      let response = await fetch("http://localhost:4000/user/updateuser", {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     firstName: formData.first_name.trim(),
                     lastName: formData.last_name.trim(),
-                    email: formData.email.trim(),
-                    languages: languages,
+                    email: currentUser.email.trim(),
+                    dob: `${month}/${day}/${year}`,
                     gender: formData.gender,
-                    dob: formData.dob,
-                    phoneNumber: formData.phoneNumber,
-                    password: formData.password,
+                    phoneNumber: "+1"+phone,
+                    languages: languages,
                     profilePictureLocation: profilePictureLocation || ""
                 })
       });
@@ -333,7 +350,7 @@ const handleSignUp=async(e)=>
             return
           } else {
             setErrors((prevState) => {
-                return [...prevState, "An error occurred while logging in"];
+                return [...prevState, "An error occurred while signing up"];
               });
             return
           }
@@ -341,7 +358,7 @@ const handleSignUp=async(e)=>
           setErrors([]);
           setContinuePage(false);
           alert("Sucessfully created your profile");
-          navigate('/signin');}
+          navigate('/')}
       } catch(e){
         setErrors((prevState) => {
           return [...prevState, e.message];
@@ -360,10 +377,11 @@ return
   return ( 
   <div className="max-w-md mx-auto my-8">
     {!continuePage?
-    <div>
-      <h2 style={{textAlign:"center", fontWeight:"bold"}}>Create a new profile</h2>
+    <div  >
+      
       <div className='card'>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <h2 style={{textAlign:"center", fontWeight:"bold"}}>Create a new profile</h2>
                 <div className="mb-4">
             <label
               htmlFor="email"
@@ -472,8 +490,7 @@ return
               value={formData.first_name}
               required
               onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"/>
           </div>
           <div className="mb-4">
             <label
@@ -542,25 +559,26 @@ return
               </option>
               <option value="male">Male</option>
               <option value="female">Female</option>
-              <option value="non-binary">Non-Binary</option>
+              <option value="others">Non-Binary</option>
             </select>
           </div>
           <div className="mb-4">
             <label
               htmlFor="languages"
               className="block text-gray-700 text-sm font-bold mb-2">
-              Languages:(choose maximum 3)
+              Languages you know:(choose maximum 3)
             </label>
             <select
-    name="languages[]" 
-    id="languages"
-    required
-    className="border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-    value={languages}  
-    onChange={handleLanguages}
-    multiple
-    max={3} 
-  >
+              name="languages[]" 
+              id="languages"
+              required
+              className="border rounded py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              value={languages}  
+              onChange={handleLanguages}
+              multiple
+              max={3} 
+              style={{ height: '250px' }}
+            >
   {availableLanguages.map((lang)=>(
     <option key = {lang}value={lang}>{lang}</option>
   ))}
@@ -569,16 +587,13 @@ return
           <div className="container">
   {languages && languages.length > 0 && (
     <div className="card mb-3">
-      <div className="card-body d-flex flex-wrap">
         {languages.map((language) => (
-          <span key={language} className="me-2 mb-2">
-            
+          <span key={language} className="me-2 mb-2 inline-flex">          
             <button type="button" className="bg-blue-300 hover:bg-red-300 text-black  py-1 px-1 rounded focus:outline-none focus:shadow-outline" onClick={() => handleLanguageRemove(language)}>
             {language}
             </button>
           </span>
         ))}
-      </div>
     </div>
   )}
 </div>
@@ -605,7 +620,6 @@ return
         </div>
           <div className="mb-6">
             <div className="flex space-x-10">
-              <button type="button" className="bg-gray-500 hover:bg-gray-700 text-black font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline" onClick={()=>setContinuePage(false)}>back</button>
             <button
               type="submit"
               className="bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline">

@@ -11,7 +11,6 @@ router.route("/").post(async (req, res) => {
 	}
 	let email = req.body.email;
 	let password = req.body.password;
-
 	try {
 		const user = await loginUser(email, password);
 
@@ -37,15 +36,15 @@ router.route("/").post(async (req, res) => {
 });
 
 router.route("/:uid").post(async (req, res) => {
-	try {
-		const email = req.body.email;
-		const uid = req.params.uid;
-		const result = await usersData.addUid(uid, email);
+  try {
+    const email = req.body.email;
+    const uid = req.params.uid;
+    const result = await usersData.addUid(uid, email);
 
-		return res.json(result);
-	} catch (e) {
-		return res.json(e);
-	}
+    return res.json(result);
+  } catch (e) {
+    return res.json(e);
+  }
 });
 
 export default router;

@@ -1,7 +1,8 @@
-import React from 'react';
+import React,{useContext} from 'react';
 import '../App.css';
+import { useNavigate } from 'react-router-dom';
 
-function Landing() {
+function Landing() {   
   return (
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content flex-col lg:flex-row-reverse">
@@ -41,7 +42,7 @@ function Landing() {
         </div>
       </div>
     </div>
-  );
-}
+  );}
+
 
 export default Landing;
