@@ -13,7 +13,7 @@ const SignIn=()=>
     const [error, setError]=useState(null);
     const {currentUser} = useContext(AuthContext);
     if (currentUser) {
-      return <Navigate to='/home' />;
+      return <Navigate to='/' />;
   }
 
   const passwordReset = (event) => {
@@ -41,9 +41,8 @@ const SignIn=()=>
         }
 
         try {
-          const userCredentials=await doSignInWithEmailAndPassword(email, password);
-          console.log(userCredentials);
-          navigate("/checker")
+          await doSignInWithEmailAndPassword(email, password);
+          navigate("/")
           
       } catch (error) {
 

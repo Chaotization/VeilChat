@@ -162,11 +162,9 @@ router.route('/updateuser').post(async(req,res)=>{
 router.route("/createuserwithemail").post(async(req,res)=>
 {
     try{
-    let email=req.body.email;
-    let password=req.body.password;
-    let _id=req.body.id;
+    let user=req.body;
     
-    let createUser=await usersData.createAccountWithEmailAndPassword(email,password,_id);
+    let createUser=await usersData.createAccountWithEmailAndPassword(user);
     if(createUser)
     {
         return res.status(200).json(createUser);

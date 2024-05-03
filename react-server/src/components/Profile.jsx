@@ -52,13 +52,15 @@ useEffect(() => {
         });
   
         if (!response.ok) {
+         
           throw new Error(`Request failed`);
+         
         }
         const jsonData = await response.json();
         setData(jsonData);
         setLanguages(jsonData.languages)
-        
       } catch (error) {
+        
        setError(error);
       }
       setLoading(false);
@@ -231,7 +233,8 @@ useEffect(() => {
     }
 
   }
-  if(data){
+
+  if(data && data.firstName){
     console.log(data)
     const rootElement = document.getElementById('root');
     return(
@@ -442,9 +445,9 @@ useEffect(() => {
 }
 else
 {
-    return(<div>
-      <h4> Dear {currentUser.displayName || "user"}, fill this form to continue</h4>
-       <AddUser/>
+    return(<div >
+      <h4 style={{background:"white",color:"purple"}}className="text-center text-2xl font-medium mb-4"> Dear {currentUser.displayName || "user"}, fill this form to continue</h4>
+       <AddUser redirect="/profile"/>
        </div>)
 }
 }
