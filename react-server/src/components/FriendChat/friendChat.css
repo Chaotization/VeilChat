@@ -1,5 +1,8 @@
-body{
-    background-image: url("/imgs/back.jpg");
+body {
+    background-image: url("/public/imgs/back.jpg");
+    background-size: cover; /* Cover the entire viewport */
+    background-position: center; /* Center the background image */
+    background-repeat: no-repeat; /* Do not repeat the image */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -8,9 +11,9 @@ body{
 .container {
     width: 80vw;
     height: 90vh;
-    background-color: rgba(17, 25, 40, 0.75);
+    background-color: rgba(16, 26, 44, 0.75); /* Semi-transparent background */
     backdrop-filter: blur(19px) saturate(180%);
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.125);
     display: flex;
-  }
+}

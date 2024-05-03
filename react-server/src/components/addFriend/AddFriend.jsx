@@ -23,8 +23,8 @@ const AddFriend = () => {
   const handleSearch = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.target);
-    const firstName = formData.get("firstName").trim().toLowerCase();
-    const lastName = formData.get("lastName").trim().toLowerCase();
+    const firstName = formData.get("firstName").trim()
+    const lastName = formData.get("lastName").trim()
 
     
     const userRef = collection(db, "users");
@@ -77,7 +77,20 @@ const AddFriend = () => {
     await updateDoc(userChatsRefFriend, {
       chats: arrayUnion({...chatInfo, receiverId: currentUser.id}),
     });
+
+    // Update the friends list for both users
+    const currentUserRef = doc(db, "users", currentUser.id);
+    const friendRef = doc(db, "users", friend.id);
+
+    await updateDoc(currentUserRef, {
+      friends: arrayUnion(friend.id)
+    });
+
+    await updateDoc(friendRef, {
+      friends: arrayUnion(currentUser.id)
+    });
 };
+
 
 
   return (

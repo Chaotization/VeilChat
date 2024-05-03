@@ -5,13 +5,15 @@ import { useUserStore } from '../../../context/userStore';
 import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore"
 import { db } from '../../../firebase/FirebaseFunctions';
 import AddFriend from '../../addFriend/AddFriend';
+import {useChatStore} from '../../../context/chatStore';
 
 const Chat = () =>{
     const { currentUser, isLoading } = useUserStore();
-    
+    const { chatId, changeChat } = useChatStore();
     const [chats, setChats] = useState([]);
     const [searchInput, setsearchInput] = useState("");
     const [addMode, setAddMode] = useState(false);
+    
 
     useEffect(() => {
         const unSub = onSnapshot(
@@ -20,6 +22,10 @@ const Chat = () =>{
             const items = res.data().chats;
     
             const promises = items.map(async (item) => {
+              if (!item.receiverId) {
+                console.error("Missing receiver ID for item:", item);
+                return null;  // Continue to the next item if this one is faulty
+              }
               const userDocRef = doc(db, "users", item.receiverId);
               const userDocSnap = await getDoc(userDocRef);
     
@@ -77,18 +83,22 @@ const Chat = () =>{
                 </div>
           </div>
           <div className='search'>
-                    <div className="searchbar">
-                        <input type="text" placeholder='Search Chat' onChange={(e) => setsearchInput(e.target.value)} /> 
-                    </div>
-                    <img src='/imgs/plusSign.png' alt="" 
-                    className='add'
-                    onClick={() => setAddMode((prev) => !prev)}/>
-                </div>
+            <div className="searchBar">
+                <input type="text" placeholder='Search Chat' onChange={(e) => setsearchInput(e.target.value)} /> 
+            </div>
+            <img src='/imgs/plusSign.png' alt="" 
+            className='add'
+            onClick={() => setAddMode((prev) => !prev)}/>
+          </div>
            {chats.map(chat => (
-                    <div className="chatItem" key={chat.id} onClick={() => handleSelectChat(chat)}>
+                    <div className="chatItem" key={chat.id} onClick={() => handleSelectChat(chat)}
+                    style={{
+                      backgroundColor: chat?.isSeen ? "transparent" : "#5183fe",
+                    }}
+                    >
                         <img src={chat.user.profilePictureLocation || './public/imgs/default_avatar.png'} alt={chat.user.firstName} className="avatar" />
                         <div className="chatDetails">
-                            <div className="chatTop">
+                            <div className="texts">
                                 <span>{chat.user.firstName} {chat.user.lastName}</span>
                             </div>
                             <div className="chatBottom">
