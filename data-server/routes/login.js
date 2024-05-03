@@ -1,10 +1,9 @@
 import { Router } from "express";
-import usersData from "../data/index.js";
+import {loginUser} from "../data/users.js";
 import jwt from "jsonwebtoken";
 const router = Router();
 
 router.route("/").post(async (req, res) => {
-	console.log("test ");
 	if (req.session && req.session.loggedIn) {
 		return res
 			.status(400)
@@ -12,11 +11,11 @@ router.route("/").post(async (req, res) => {
 	}
 	let email = req.body.email;
 	let password = req.body.password;
-
 	try {
-		const [user, result] = await usersData.verifyUser(email, password);
-		if (result) {
-			const userId = user._id;
+		const user = await loginUser(email, password);
+
+		if (user) {
+			const userId = user.userId;
 			const accessToken = jwt.sign(
 				{ userId },
 				(process.env.JWT_SECRET = "someSecret"),
@@ -37,15 +36,15 @@ router.route("/").post(async (req, res) => {
 });
 
 router.route("/:uid").post(async (req, res) => {
-	try {
-		const email = req.body.email;
-		const uid = req.params.uid;
-		const result = await usersData.addUid(uid, email);
+  try {
+    const email = req.body.email;
+    const uid = req.params.uid;
+    const result = await usersData.addUid(uid, email);
 
-		return res.json(result);
-	} catch (e) {
-		return res.json(e);
-	}
+    return res.json(result);
+  } catch (e) {
+    return res.json(e);
+  }
 });
 
 export default router;

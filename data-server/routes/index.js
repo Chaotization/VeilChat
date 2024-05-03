@@ -4,6 +4,7 @@ import logoutRoute from "./logout.js";
 import signupRoute from "./signup.js";
 import searchRoute from "./search.js"
 import conversationRoute from './conversations.js'
+import friendRequestRoute from './friendRequests.js'
 // import sendRouter from "./sendNotification.js"
 const constructorMethod = (app) => {
   app.use("/user", userRoutes);
@@ -12,6 +13,7 @@ const constructorMethod = (app) => {
   app.use("/signup", signupRoute);
   app.use("/search", searchRoute)
   app.use("/conversation", conversationRoute);
+  app.use("/friendRequests", friendRequestRoute);
   // app.use("/send", sendRouter);
 
   app.use("*", (req, res) => {

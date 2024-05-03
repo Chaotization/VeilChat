@@ -15,9 +15,8 @@ import {
 import app from './FirebaseConfig';
 import {getFirestore} from "firebase/firestore";
 import {getStorage} from "firebase/storage";
-import { useNavigate } from 'react-router-dom';
 
-async function doCreateUserWithEmailAndPassword(email, password, displayName) {
+async function doCreateUserWithEmailAndPassword(email, password, displayName="user") {
     const auth = getAuth();
     await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(auth.currentUser, {displayName: displayName});
@@ -45,11 +44,6 @@ async function doDeleteUser(password) {
       await deleteUser(user.uid);
       //console.log("User account deleted successfully.");
     } catch (error) {
-      //console.error("Error deleting user account:", error.message);
-    //   if (error.code === "auth/network-request-failed") {
-    //     await new Promise(resolve => setTimeout(resolve, 3000)); // Wait for 3 seconds
-    //     await doDeleteUser(password); // Retry the operation
-    //   }
       alert('Could not delete your account right now, Signing you out');
       doSignOut();
     }

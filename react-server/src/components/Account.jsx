@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{ useState, useEffect} from 'react';
 import SignOutButton from './SignOut.jsx';
 import ChangePassword from './ChangePassword.jsx';
 import DeleteUserButton from './DeleteUser.jsx';
@@ -12,7 +12,8 @@ function Account() {
           <div className="space-y-4">
             <ChangePassword />
             <SignOutButton />
-            <DeleteUserButton />
+            <br/>
+            {/* <DeleteUserButton /> */}
           </div>
         </div>
       </div>

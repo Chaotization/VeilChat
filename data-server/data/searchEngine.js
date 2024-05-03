@@ -1,9 +1,8 @@
 import validation from "../validation.js";
 import axios from "axios";
 import redis from 'redis';
-import users from '../config/mongoCollections.js'
+import {users} from '../config/mongoCollections.js'
 import {ObjectId} from "mongodb";
-import {use} from "bcrypt/promises.js";
 
 const client = redis.createClient();
 client.connect().then(() => {
@@ -239,6 +238,7 @@ let exportedMethods = {
             }
         }
 
+        console.log("a")
         if (numberOfActiveFilters > 1) {
             const filteredUsers = await this.getUsersByMultiFields(userId, activeCriteria);
             const randomIndex = Math.floor(Math.random() * filteredUsers.length);
