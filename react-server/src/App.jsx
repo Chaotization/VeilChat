@@ -15,6 +15,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import Profile from './components/Profile.jsx';
 import Account from './components/Account.jsx';
 import CheckUser from './components/CheckUser.jsx';
+import Error from './components/Error.jsx';
 import 'tailwindcss/tailwind.css';
 import './output.css';
 
@@ -63,6 +64,7 @@ function App() {
                     <Route path='/profile' element={<Profile/>}/>
                     <Route path='/friendchat' element={<FriendChat/>} />
                     <Route path='/checker' element={<CheckUser/>}/>
+                    <Route path='*' element={<Error/>}/>
                 </Routes>
             </div>
         </AuthProvider>

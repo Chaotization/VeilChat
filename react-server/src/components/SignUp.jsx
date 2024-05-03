@@ -1,6 +1,5 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef,useState, useContext } from "react";
 import { useNavigate, Link, Navigate } from "react-router-dom";
-import { useState, useContext } from "react";
 import {doCreateUserWithEmailAndPassword} from '../firebase/FirebaseFunctions.js';
 import AuthContext from "./AuthContext.jsx";
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
@@ -17,7 +16,6 @@ const storage = getStorage();
 function SignUp() {
   const { currentUser } = useContext(AuthContext);
   const auth=getAuth();
-  let userCreated=auth.currentUser
   const navigate = useNavigate();
   const [continuePage, setContinuePage]=useState(false);
   const [languages, setLanguages]=useState([]);
@@ -57,18 +55,18 @@ function SignUp() {
   const [firebaseProfilePictureLocation, setFirebaseProfilePictureLocation] = useState(null);
   const [loading, setLoading]=useState(false);
   const [password, setPassword] = useState("");
-
   const [repeat_password, setRepeatPassword] = useState("");
   const [uploadError, setUploadError] = useState(null);
   const [imageFile, setImageFile] = useState(null); 
+  const [strength, setStrength] = useState("weak");
+  const [match, setMatch] = useState(false);
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
-  const [strength, setStrength] = useState("weak");
-  const [match, setMatch] = useState(false);
+  
   if (currentUser) {
-    return <Navigate to='/home' />;
+    navigate('/');
+    return
 }
   function handlePwdChange(e) {
     let newPwd = e.target.value;
@@ -93,10 +91,6 @@ function SignUp() {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    //set the image, but not upload
-    if(file) {
-      setImageFile(file);
-    }
 
     Resizer.imageFileResizer(
       file,
@@ -162,6 +156,7 @@ const uploadToS3 = async () => {
   if (currentUser) {
     return <Navigate to='/home' />;
 }
+let userCreated=null;
 
   const handleSubmit = async(e) => {
 
@@ -183,9 +178,9 @@ const uploadToS3 = async () => {
         formData.email,
         password           
     );
+    userCreated= auth.currentUser;
 
       if(userCreated){
-        console.log("In siignup user craeted",userCreated)
         setLoading(true)
         let response = await fetch("http://localhost:4000/user/createuserwithemail", {
           method: "POST",
@@ -203,12 +198,10 @@ const uploadToS3 = async () => {
               setErrors((prevState) => {
                   return [...prevState, data.message];
                 });
-              return
             } else {
               setErrors((prevState) => {
                   return [...prevState, "An error occurred while signing up"];
                 });
-              return
             }
           }else{
             setErrors([])           
@@ -218,15 +211,14 @@ const uploadToS3 = async () => {
         }
         else
         {
-          useNavigate('home');
+          navigate('/home');
         }
         } catch(e){
           setErrors((prevState) => {
             return [...prevState, e.message];
           });
-          alert(e);
-
-            navigate('/signin');
+          alert("You can finish the application on home page... Have fun!!!")
+            navigate('/home');
       }
   setLoading(false)
   return;
@@ -271,7 +263,7 @@ const handleSignUp=async(e)=>
           });
     }
     
-    let dob=document.getElementById("dob");
+    let dob=document.getElementById("dob").value;
     dob=new Date(dob);
    
     let yearOfBirth=parseInt(dob.getFullYear());
@@ -376,7 +368,7 @@ return
 
   return ( 
   <div className="max-w-md mx-auto my-8">
-    {!continuePage?
+    {!continuePage?(
     <div  >
       
       <div className='card'>
@@ -473,7 +465,7 @@ return
            
             <SocialSignIn />
             
-        </div></div>:( <div className="container">
+        </div></div>):( <div className="container">
        
          <form
           onSubmit={handleSignUp}

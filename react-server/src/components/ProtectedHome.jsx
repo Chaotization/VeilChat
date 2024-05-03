@@ -1,14 +1,10 @@
-import React, { useContext } from 'react';
-import { AuthContext } from '../context/AuthContext.jsx';
+import React, { useContext, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useUserStore } from '../context/userStore';
-import AddUser from './AddUser.jsx';
+
 import CheckUser from './CheckUser.jsx';
 function Home(props) {
-
   if(props && props.tested){
 
-    let {currentUser}=useUserStore();
   return (
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content text-center">
@@ -21,8 +17,8 @@ function Home(props) {
     </div>
   );}
   else
-  {
-    return <CheckUser/>
+  { 
+   return <div><CheckUser/></div>
   }
 }
 
