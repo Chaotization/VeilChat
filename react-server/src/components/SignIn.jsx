@@ -46,7 +46,6 @@ const SignIn=()=>
           navigate("/checker")
           
       } catch (error) {
-        //console.log(error.code)
 
           alert(error.code);
       }

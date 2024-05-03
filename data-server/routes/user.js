@@ -164,9 +164,9 @@ router.route("/createuserwithemail").post(async(req,res)=>
     try{
     let email=req.body.email;
     let password=req.body.password;
-    let _id=req.body._id;
+    let _id=req.body.id;
     
-    let createUser=await usersData.createAccountWithEmailAndPassword(_id,email,password);
+    let createUser=await usersData.createAccountWithEmailAndPassword(email,password,_id);
     if(createUser)
     {
         return res.status(200).json(createUser);
