@@ -246,6 +246,7 @@ export const logoutUser = async (userId) => {
         const onlineUsers = await client.json.get(onlineUsersKey);
         const filteredUsers = onlineUsers.filter(item => item !== userId.toString());
         if (filteredUsers.length !== onlineUsers.length) {
+            console.log("deleted the user from onlineUsers Readis Pool");
             await client.json.set(onlineUsersKey, '$', filteredUsers);
         }
     }
