@@ -43,7 +43,6 @@ const ChatRoom = () =>{
   };
 
   const handleSend = async () => {
-    console.log("Sending message:", { text, img });
   
     if (!text.trim() && !img.file) {
       console.log("No content to send.");
@@ -61,16 +60,16 @@ const ChatRoom = () =>{
       const messageData = {
         senderId: currentUser.id,
         text,
-        createdAt: new Date(),  // Consider using Firestore serverTimestamp here
+        createdAt: Date.now(),  // Consider using Firestore serverTimestamp here
         ...(imgUrl && { img: imgUrl }),
       };
   
-      console.log("Updating chat document...");
+      
       await updateDoc(doc(db, "chats", chatId), {
         messages: arrayUnion(messageData),
       });
   
-      console.log("Updating user chats...");
+      
       const userIDs = [currentUser.id, user.id];
       for (const id of userIDs) {
         const userChatsRef = doc(db, "userchats", id);
@@ -82,7 +81,7 @@ const ChatRoom = () =>{
           const chatIndex = userChatsData.chats.findIndex(c => c.chatId === chatId);
           if (chatIndex !== -1) {
             userChatsData.chats[chatIndex].lastMessage = text;
-            userChatsData.chats[chatIndex].updatedAt = new Date();
+            userChatsData.chats[chatIndex].updatedAt = Date.now();
             userChatsData.chats[chatIndex].isSeen = id === currentUser.id;
   
             await updateDoc(userChatsRef, {

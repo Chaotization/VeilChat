@@ -5,7 +5,7 @@ import { doc, getDoc, query, collection, where, setDoc, getDocs, updateDoc, arra
 import { db } from '../../../firebase/FirebaseFunctions';
 import {useChatStore} from '../../../context/chatStore';
 
-const FriendList = () => {
+const FriendList = ({triggerChatUpdate}) => {
   const { currentUser } = useUserStore();
   const [friends, setFriends] = useState([]);
   const { changeChat } = useChatStore();
@@ -18,14 +18,18 @@ const FriendList = () => {
         return docSnap.exists() ? docSnap.data() : null;
       });
       const friendsData = await Promise.all(promises);
-      setFriends(friendsData.filter(Boolean)); // Filter out any null results
+      const sortedFriends = friendsData.filter(Boolean).sort((a, b) => {
+        // Assuming the last name is stored under the key 'lastName'
+        return a.lastName.localeCompare(b.lastName);
+      });
+      setFriends(sortedFriends);
     }
-
+  
     if (currentUser && currentUser.friends) {
       fetchFriendsData();
     }
   }, [currentUser]);
-
+  
   const handleSelectFriend = async (friendId) => {
     // Query to find any existing chat between the two users
     const chatsRef = collection(db, "chats");
@@ -42,13 +46,28 @@ const FriendList = () => {
       const chatDoc = chatsWithFriend[0];
       const chatId = chatDoc.id;
       await updateDoc(doc(db, "chats", chatId), {
-        updatedAt: new Date()  
+        updatedAt: Date.now()
       })
+      const userIDs = [currentUser.id, friendId]
+      userIDs.forEach(async id => {
+        const userChatsRef = doc(db, "userchats", id);
+        const userChatsSnap = await getDoc(userChatsRef);
+        if (userChatsSnap.exists()) {
+          const userChatsData = userChatsSnap.data();
+          const updatedChats = userChatsData.chats.map(chat => {
+            if (chat.chatId === chatId) {
+              return { ...chat, updatedAt: Date.now() };
+            }
+            return chat;
+          });
+          await updateDoc(userChatsRef, { chats: updatedChats });
+        }
+      });
       // Fetch friend's data and set the active chat
       const friendDoc = await getDoc(doc(db, "users", friendId));
       const friendData = friendDoc.data();
       changeChat(chatId, { id: friendId, ...friendData });
-      
+      triggerChatUpdate(); 
     } else {
       // Create a new chat if it does not exist
       const newChatRef = doc(collection(db, "chats"));
@@ -67,7 +86,7 @@ const FriendList = () => {
             chatId: chatId,
             receiverId: id === currentUser.id ? friendId : currentUser.id,
             lastMessage: "",
-            updatedAt: new Date()
+            updatedAt: Date.now()
           })
         });
       });
