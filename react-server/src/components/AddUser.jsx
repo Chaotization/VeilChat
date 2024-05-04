@@ -3,10 +3,10 @@ import { getAuth } from 'firebase/auth';
 import Resizer from 'react-image-file-resizer';
 import { useUserStore } from '../context/userStore';
 import { useNavigate, Link, Navigate } from "react-router-dom";
-// import { db } from '../firebase/FirebaseFunctions';
-// import { setDoc, doc } from 'firebase/firestore';
-// import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-// import upload from "../context/upload.js";
+import { db } from '../firebase/FirebaseFunctions';
+import { setDoc, doc } from 'firebase/firestore';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import upload from "../context/upload.js";
 
 function AddUser(props)
 {
@@ -120,8 +120,7 @@ function AddUser(props)
     }
     
     let dob=document.getElementById("dob").value;
-    dob=new Date(dob);
-   
+    dob = new Date(dob)
     let yearOfBirth=parseInt(dob.getFullYear());
     const day = String(dob.getDate()).padStart(2, '0');
     const year=yearOfBirth.toString();
@@ -150,29 +149,29 @@ function AddUser(props)
 
       try{
     //I AM NOT FAMILIAR WITH THIS, THIS IS THROWING ERROR(MAYBE BCOZ OF PIC FILE), SO I COMMENTED IT, PLEASE REMOVE THIS WHEN YOU FIGURE IT OUT, THANK YOU-BNKVARMA
-          // let profilePictureUrl = ""
-          // if (imageFile) {
-          //   profilePictureUrl = await upload(imageFile);
-          // }
-          
-          // //save to firebase db
-          // const userDocRef = doc(db, "users", loggedUser.uid);
-          // await setDoc(userDocRef, {
-          //     id: loggedUser.uid,
-          //     firstName: formData.first_name.trim(),
-          //     lastName: formData.last_name.trim(),
-          //     email: loggedUser.email,
-          //     dob: `${month}/${day}/${year}`,
-          //     gender: formData.gender,
-          //     phoneNumber: "+1"+phone,
-          //     languages: languages,
-          //     friends: [],
-          //     profilePictureLocation: profilePictureUrl || ""
-          // });
+          let profilePictureUrl = ""
+          if (imageFile) {
+            profilePictureUrl = await upload(imageFile);
+          }
 
-          // await setDoc(doc(db, "userchats", loggedUser.uid), {
-          //   chats: [],
-          // });
+          //save to firebase db
+          const userDocRef = doc(db, "users", loggedUser.uid);
+          await setDoc(userDocRef, {
+              id: loggedUser.uid,
+              firstName: formData.first_name.trim(),
+              lastName: formData.last_name.trim(),
+              email: loggedUser.email,
+              dob: `${month}/${day}/${year}`,
+              gender: formData.gender,
+              phoneNumber: "+1"+phone,
+              languages: languages,
+              friends: [],
+              profilePictureLocation: profilePictureUrl || ""
+          });
+
+          await setDoc(doc(db, "userchats", loggedUser.uid), {
+            chats: [],
+          });
 
       let response = await fetch("http://localhost:4000/user/updateuser", {
                 method: "POST",

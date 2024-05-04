@@ -1,4 +1,4 @@
-import {createUser, getUserInfoByUserId, updateFriendStatus} from "./data/users.js";
+import {createUser, getUserInfoByUserId, updateFriendStatus, loginUser, logoutUser} from "./data/users.js";
 //
 // const user1 = await createUser("Mike", "River", "mike.river12@example.com", ["chinese"], "male", "10/18/2000", "+19293335817", "Abc12345678!", "C:\\Users\\jinxi\\git_repos\\CS554-VeilChat\\data-server\\public\\images.jpg");
 // const user2 = await createUser("John", "Doe", "john.doe1@example.com", ["english"], "male", "05/20/1998", "+123456789", "Passw0rd!", "");
@@ -12,12 +12,15 @@ import {createUser, getUserInfoByUserId, updateFriendStatus} from "./data/users.
 // const user10 = await createUser("Ava", "Perez", "ava.perez9@example.com", ["english"], "female", "01/11/2011", "+17654328901", "Abc123456!", "")
 
 
-const updatefriend1 = await updateFriendStatus("663471f8a58f64d05f17795e", "663471faa58f64d05f17795f", "send");
-const updatefriend2 = await updateFriendStatus("663471faa58f64d05f17795f", "663471f8a58f64d05f17795e", "accept");
+// const updatefriend1 = await updateFriendStatus("663471f8a58f64d05f17795e", "663471faa58f64d05f17795f", "send");
+// const updatefriend2 = await updateFriendStatus("663471faa58f64d05f17795f", "663471f8a58f64d05f17795e", "accept");
+//
+// const updatefriend3 = await updateFriendStatus("663471f8a58f64d05f17795e", "663471fba58f64d05f177960", "send");
+// const updatefriend4 = await updateFriendStatus("663471fba58f64d05f177960", "663471f8a58f64d05f17795e", "reject");
+//
+// const updatefriend5 = await updateFriendStatus("663471f8a58f64d05f17795e", "663471faa58f64d05f17795f", "delete");
 
-const updatefriend3 = await updateFriendStatus("663471f8a58f64d05f17795e", "663471fba58f64d05f177960", "send");
-const updatefriend4 = await updateFriendStatus("663471fba58f64d05f177960", "663471f8a58f64d05f17795e", "reject");
 
-const updatefriend5 = await updateFriendStatus("663471f8a58f64d05f17795e", "663471faa58f64d05f17795f", "delete");
-
-
+const login1=await loginUser("mike.river12@example.com", "Abc12345678!");
+const login2=await loginUser("john.doe1@example.com", "Passw0rd!");
+const logout1= await logoutUser( '663471f8a58f64d05f17795e' );

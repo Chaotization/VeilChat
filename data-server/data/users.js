@@ -5,7 +5,11 @@ import validation from "../validation.js";
 // import redis from "redis";
 import AWS from "aws-sdk";
 import fs from "fs";
+import redis from 'redis';
 
+const client = redis.createClient();
+client.connect().then(() => {
+});
 /**
  * @param {ObjectId} _id - A globally unique identifier to represent the user.
  * @param {string} firstName - First name of the user.
@@ -145,8 +149,7 @@ export const createUser = async (
         password: await bcrypt.hash(password, 15),
         userSince: validation.generateCurrentDate(),
         profilePictureLocation,
-        friends: [],
-        status:'inactive'
+        friends: [], status: 'inactive'
     };
 
     const insertUser = await userCollection.insertOne(user);
@@ -194,6 +197,20 @@ export const loginUser = async (email, password) => {
     if (!checkPassword) {
         throw "Error: Either the email address or password is invalid"
     } else {
+        const userId = user._id.toString();
+        const onlineUsersKey = 'onlineUsers';
+
+        let exist = await client.exists(onlineUsersKey);
+        if (!exist) {
+            await client.json.set(onlineUsersKey, '$', [userId]);
+        } else {
+            const onlineUsers = await client.json.get(onlineUsersKey);
+            if (!onlineUsers.includes(userId)) {
+                await client.json.set(onlineUsersKey, '$', [...onlineUsers, userId]);
+                console.log("added the login user to onlineUsers Readis Pool");
+            }
+        }
+
         return {
             userId: user._id.toString(),
             firstName: user.firstName,
@@ -205,10 +222,33 @@ export const loginUser = async (email, password) => {
             languages: user.languages,
             userSince: user.userSince,
             profilePictureLocation: user.profilePictureLocation,
-            friends: user.friends,
-            status:user.status
+            friends: user.friends, status: user.status
         };
     }
+};
+
+export const logoutUser = async (userId) => {
+    userId = validation.checkId(userId);
+    const userCollection = await users();
+    const user = await userCollection.findOne({
+        _id: new ObjectId(userId)
+    });
+    if (!user) {
+        throw "Error: Either the email address or password is invalid";
+    }
+
+    const onlineUsersKey = 'onlineUsers';
+    let exist = await client.exists(onlineUsersKey);
+    if (exist) {
+        const onlineUsers = await client.json.get(onlineUsersKey);
+        const filteredUsers = onlineUsers.filter(item => item !== userId.toString());
+        if (filteredUsers.length !== onlineUsers.length) {
+            await client.json.set(onlineUsersKey, '$', filteredUsers);
+        }
+    }
+    return {
+        logoutUser: true
+    };
 };
 
 export const updateUserFirstName = async (
@@ -381,7 +421,7 @@ export const updateFriendStatus = async (userId, friendId, newStatus) => {
             updatedStatus: true,
             message: `User ${userId} marked as rejected and removed from user ${friendId}'s friend list`,
         };
-    } else if(newStatus === "accept") {
+    } else if (newStatus === "accept") {
         // if accepted, update the user's friend status to accepted
         const userUpdateResult = await userCollection.updateOne(
             {_id: userId},
@@ -402,7 +442,7 @@ export const updateFriendStatus = async (userId, friendId, newStatus) => {
             updatedStatus: true,
             message: `Friend status updated accepted to ${newStatus} for both users`,
         };
-    } else if (newStatus === "send"){
+    } else if (newStatus === "send") {
         const sendFriendFromUser = await userCollection.updateOne(
             {_id: userId},
             {$set: {[`friends.${friendId}`]: "sent"}}
@@ -422,7 +462,7 @@ export const updateFriendStatus = async (userId, friendId, newStatus) => {
             updatedStatus: true,
             message: `Friend status updated both users`,
         };
-    }else if (newStatus === "delete"){
+    } else if (newStatus === "delete") {
         // if user send a friend request, update the user's friend status to sent
         const deleteFriendFromUser = await userCollection.updateOne(
             {_id: userId},
@@ -516,87 +556,77 @@ export const getAllUsers = async () => {
     return user;
 };
 
-export const setStatus=async(email, status)=>
-{
-    try{
-       let user= await getUserInfoByEmail(email);
-    const userCollection=await users();
-    const userUpdated=await userCollection.updateOne({email},{$set:{status:status}});
-    if(!userUpdated.acknowledged)
-    {
-        throw "Can't update status"
-    }
-    return {...user, status};
-    }
-    catch(e)
-    {
+export const setStatus = async (email, status) => {
+    try {
+        let user = await getUserInfoByEmail(email);
+        const userCollection = await users();
+        const userUpdated = await userCollection.updateOne({email}, {$set: {status: status}});
+        if (!userUpdated.acknowledged) {
+            throw "Can't update status"
+        }
+        return {...user, status};
+    } catch (e) {
         throw e;
     }
 }
-export const updateUser=async(user)=>
+
+
+export const updateUser = async (user) =>
 {   
     try{
         //let uid=user._id.trim();
-        const userCollection=await users();
-        let userInfo=await userCollection.findOne({email:user.email});
-        if(!userInfo)
-        {
+        const userCollection = await users();
+        let userInfo = await userCollection.findOne({email: user.email});
+        if (!userInfo) {
             throw "Couldn't fetch data from Db..."
         }
         if (user.firstName) {
-            let fname=validation.validateName(user.firstName)
-            userInfo['firstName']=fname;
+            let fname = validation.validateName(user.firstName)
+            userInfo['firstName'] = fname;
         }
-        if(user.lastName)
-        {
-            let lname=validation.validateName(user.lastName)
-            userInfo['lastName']=lname;
+        if (user.lastName) {
+            let lname = validation.validateName(user.lastName)
+            userInfo['lastName'] = lname;
         }
-        if(user.phoneNumber)
-        {
-            const phoneNumber=validation.validatePhoneNumber(user.phoneNumber)
-           userInfo['phoneNumber']=phoneNumber
+        if (user.phoneNumber) {
+            const phoneNumber = validation.validatePhoneNumber(user.phoneNumber)
+            userInfo['phoneNumber'] = phoneNumber
         }
-        if(user.languages)
-        {
-            const languages=user.languages.map(validation.checkLanguage);
-          userInfo['languages']=languages;
+        if (user.languages) {
+            const languages = user.languages.map(validation.checkLanguage);
+            userInfo['languages'] = languages;
         }
-        if(user.dob)
-        {
-            const dob=validation.validateDateTime(user.dob)
-            userInfo['dob']=dob;
+        if (user.dob) {
+            const dob = validation.validateDateTime(user.dob)
+            userInfo['dob'] = dob;
         }
-        if(user.gender)
-        {
-            const gender=validation.checkGender(user.gender);
-            userInfo['gender']=gender;
+        if (user.gender) {
+            const gender = validation.checkGender(user.gender);
+            userInfo['gender'] = gender;
         }
-        let updatedUser=await userCollection.updateOne({email:user.email},{$set:userInfo});
-        if(!updatedUser.acknowledged)
-        {
+        let updatedUser = await userCollection.updateOne({email: user.email}, {$set: userInfo});
+        if (!updatedUser.acknowledged) {
             throw "Couldn't update data";
         }
-        userInfo=await getUserInfoByEmail(user.email);
+        userInfo = await getUserInfoByEmail(user.email);
         return userInfo;
-    } catch(e) {
+    } catch (e) {
         throw e
     }
 }
 
 export const createAccountWithEmailAndPassword=async(user)=>
 {
-	if(!user)
-	{
+    if (!user) {
 		throw "Login credentials must be provided"
 	}
-    let userId = user.id.trim().toString()
+    let uId = user.uId.trim().toString()
 	let email=validation.validateEmail(user.email);
 	let password="";
 	if(user.password)
 	{
-	password=validation.validatePassword(user.password, "password");
-	password=await bcrypt.hash(password, 15);
+        password = validation.validatePassword(user.password, "password");
+        password = await bcrypt.hash(password, 15);
 	}
 
 	const userCollection = await users();
@@ -605,7 +635,7 @@ export const createAccountWithEmailAndPassword=async(user)=>
 		throw `Error: ${email} is already registered, Please Login`;
 	}
 	const new_user = {
-		_id: userId,
+        _id: new ObjectId(), uId: uId,
         firstName:"",
         lastName:"",
         email,
