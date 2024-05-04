@@ -148,11 +148,7 @@ const FriendList = ({triggerChatUpdate}) => {
 
   return (
     <div className="friendList">
-      <div className='search'>
-        <div className="searchbar">
-          <input type="text" placeholder='Search Friend' />
-        </div>
-      </div>
+      
       {friends.map(friend => (
         <div key={friend.id} className="item" onClick={() => handleSelectFriend(friend.id)}>
           <img src={friend.profilePictureLocation || './public/imgs/default_avatar.png'} alt={friend.firstName} />

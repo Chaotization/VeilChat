@@ -19,6 +19,7 @@ const Chat = ({updateTrigger}) =>{
         const unSub = onSnapshot(
           doc(db, "userchats", currentUser.id),
           async (res) => {
+           
             const items = res.data().chats;
     
             const promises = items.map(async (item) => {
