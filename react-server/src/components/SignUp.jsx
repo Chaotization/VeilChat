@@ -186,7 +186,7 @@ let userCreated=null;
           method: "POST",
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-              id: userCreated.uid,
+              uId: userCreated.uid,
               email: formData.email.trim(),
               password:password,
           })
@@ -263,7 +263,7 @@ const handleSignUp=async(e)=>
           });
     }
     
-    let dob=document.getElementById("dob");
+    let dob=document.getElementById("dob").value;
    
     let yearOfBirth=parseInt(dob.getFullYear());
     const day = String(dob.getDate()).padStart(2, '0');
@@ -324,7 +324,7 @@ const handleSignUp=async(e)=>
                     firstName: formData.first_name.trim(),
                     lastName: formData.last_name.trim(),
                     email: currentUser.email.trim(),
-                    dob: new Date(`${month}/${day}/${year}`),
+                    dob: `${month}/${day}/${year}`,
                     gender: formData.gender,
                     phoneNumber: "+1"+phone,
                     languages: languages,
