@@ -165,12 +165,12 @@ function Chatroom(props) {
 
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <div className="container mx-auto p-4 bg-white rounded-lg shadow-lg w-full max-w-xl flex flex-col">
-        <div className="py-4 px-6 bg-primary text-white flex items-center justify-between">
+    <div className="flex justify-center items-center max-h-screen bg-base-100">
+      <div className="container mx-auto p-4 bg-base-100 my-10 rounded-lg shadow-lg w-full max-w-xl flex flex-col">
+        <div className="py-4 px-6 bg-primary flex items-center justify-between">
           <div className="flex items-center">
               <div className="w-12 h-12 rounded-full bg-gray-300 mr-4"></div>
-            <h2 className="text-xl font-bold">Anonymous User</h2>
+            <h2 className="text-xl font-bold text-white">Anonymous User</h2>
           </div>
           <div>
             <button className="text-white" onClick={handleSendFriendRequest}>
