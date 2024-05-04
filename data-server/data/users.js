@@ -1,5 +1,5 @@
 import {users} from "../config/mongoCollections.js";
-import { ObjectId } from "mongodb";
+import {ObjectId} from "mongodb";
 import bcrypt from "bcrypt";
 import validation from "../validation.js";
 // import redis from "redis";
@@ -364,14 +364,14 @@ export const updateFriendStatus = async (userId, friendId, newStatus) => {
     const userCollection = await users();
     if (newStatus === "reject") {
         const rejectUpdateResult = await userCollection.updateOne(
-            {_id: new ObjectId(friendId)},
+            {_id: friendId},
             {$set: {[`friends.${userId}`]: "rejected"}}
         );
         if (rejectUpdateResult.modifiedCount === 0) {
             throw `Error: Failed to update rejected friend status for user ${userId} to ${friendId}`;
         }
         const removeUpdateResult = await userCollection.updateOne(
-            {_id: new ObjectId(userId)},
+            {_id: userId},
             {$unset: {[`friends.${friendId}`]: ""}}
         );
         if (removeUpdateResult.modifiedCount === 0) {
@@ -384,7 +384,7 @@ export const updateFriendStatus = async (userId, friendId, newStatus) => {
     } else if(newStatus === "accept") {
         // if accepted, update the user's friend status to accepted
         const userUpdateResult = await userCollection.updateOne(
-            {_id: new ObjectId(userId)},
+            {_id: userId},
             {$set: {[`friends.${friendId}`]: "connected"}}
         );
         if (userUpdateResult.modifiedCount === 0) {
@@ -392,7 +392,7 @@ export const updateFriendStatus = async (userId, friendId, newStatus) => {
         }
         //and add the friend to the other user's friend list and mark status accepted
         const friendUpdateResult = await userCollection.updateOne(
-            {_id: new ObjectId(friendId)},
+            {_id: friendId},
             {$set: {[`friends.${userId}`]: "connected"}}
         );
         if (friendUpdateResult.modifiedCount === 0) {
@@ -404,7 +404,7 @@ export const updateFriendStatus = async (userId, friendId, newStatus) => {
         };
     } else if (newStatus === "send"){
         const sendFriendFromUser = await userCollection.updateOne(
-            {_id: new ObjectId(userId)},
+            {_id: userId},
             {$set: {[`friends.${friendId}`]: "sent"}}
         );
         if (sendFriendFromUser.modifiedCount === 0) {
@@ -412,7 +412,7 @@ export const updateFriendStatus = async (userId, friendId, newStatus) => {
         }
 
         const receiveduserFromFriend = await userCollection.updateOne(
-            {_id: new ObjectId(friendId)},
+            {_id: friendId},
             {$set: {[`friends.${userId}`]: "received"}}
         );
         if (receiveduserFromFriend.modifiedCount === 0) {
@@ -425,7 +425,7 @@ export const updateFriendStatus = async (userId, friendId, newStatus) => {
     }else if (newStatus === "delete"){
         // if user send a friend request, update the user's friend status to sent
         const deleteFriendFromUser = await userCollection.updateOne(
-            {_id: new ObjectId(userId)},
+            {_id: userId},
             {$unset: {[`friends.${friendId}`]: ""}}
         );
         if (deleteFriendFromUser.modifiedCount === 0) {
@@ -433,7 +433,7 @@ export const updateFriendStatus = async (userId, friendId, newStatus) => {
         }
         // and update the friend's friend status to received
         const deleteUserFromFriend = await userCollection.updateOne(
-            {_id: new ObjectId(friendId)},
+            {_id: friendId},
             {$unset: {[`friends.${userId}`]: ""}}
         );
         if (deleteUserFromFriend.modifiedCount === 0) {
@@ -543,49 +543,45 @@ export const updateUser=async(user)=>
         {
             throw "Couldn't fetch data from Db..."
         }
-    if(user.firstName)
-    {
-        let fname=validation.validateName(user.firstName)
-       userInfo['firstName']=fname;
-    }
-    if(user.lastName)
-    {
-        let lname=validation.validateName(user.lastName)
-       userInfo['lastName']=lname;
-    }
-    if(user.phoneNumber)
-    {
-        const phoneNumber=validation.validatePhoneNumber(user.phoneNumber)
-       userInfo['phoneNumber']=phoneNumber
-    }
-    if(user.languages)
-    {
-        const languages=user.languages.map(validation.checkLanguage);
-      userInfo['languages']=languages;
-    }
-    if(user.dob)
-    {
-        const dob=validation.validateDateTime(user.dob)
-        userInfo['dob']=dob;
-    }
-    if(user.gender)
-    {
-        const gender=validation.checkGender(user.gender);
-        userInfo['gender']=gender;
-    }
-    let updatedUser=await userCollection.updateOne({email:user.email},{$set:userInfo});
-    if(!updatedUser.acknowledged)
-    {
-        throw "Couldn't update data";
-    }
-    userInfo=await getUserInfoByEmail(user.email);
-    return userInfo;
-}
-    catch(e)
-    {
+        if (user.firstName) {
+            let fname=validation.validateName(user.firstName)
+            userInfo['firstName']=fname;
+        }
+        if(user.lastName)
+        {
+            let lname=validation.validateName(user.lastName)
+            userInfo['lastName']=lname;
+        }
+        if(user.phoneNumber)
+        {
+            const phoneNumber=validation.validatePhoneNumber(user.phoneNumber)
+           userInfo['phoneNumber']=phoneNumber
+        }
+        if(user.languages)
+        {
+            const languages=user.languages.map(validation.checkLanguage);
+          userInfo['languages']=languages;
+        }
+        if(user.dob)
+        {
+            const dob=validation.validateDateTime(user.dob)
+            userInfo['dob']=dob;
+        }
+        if(user.gender)
+        {
+            const gender=validation.checkGender(user.gender);
+            userInfo['gender']=gender;
+        }
+        let updatedUser=await userCollection.updateOne({email:user.email},{$set:userInfo});
+        if(!updatedUser.acknowledged)
+        {
+            throw "Couldn't update data";
+        }
+        userInfo=await getUserInfoByEmail(user.email);
+        return userInfo;
+    } catch(e) {
         throw e
     }
-   
 }
 
 export const createAccountWithEmailAndPassword=async(user)=>
@@ -594,6 +590,7 @@ export const createAccountWithEmailAndPassword=async(user)=>
 	{
 		throw "Login credentials must be provided"
 	}
+    let userId = user.id.trim().toString()
 	let email=validation.validateEmail(user.email);
 	let password="";
 	if(user.password)
@@ -608,7 +605,7 @@ export const createAccountWithEmailAndPassword=async(user)=>
 		throw `Error: ${email} is already registered, Please Login`;
 	}
 	const new_user = {
-		_id:user.id.trim(),
+		_id: userId,
         firstName:"",
         lastName:"",
         email,

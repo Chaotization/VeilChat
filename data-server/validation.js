@@ -9,9 +9,6 @@ const exportedMethods = {
       throw `The id provided is not a string or an  empty string`;
     }
     id = id.trim();
-    if (!ObjectId.isValid(id)) {
-      throw `Invalid Object ID`;
-    }
     return id;
   },
 
@@ -231,7 +228,7 @@ const exportedMethods = {
       throw "Invalid date format. Must be in MM/DD/YYYY format.";
     }
     //return new Date(inputDate);
-    return inputDate;
+    return new Date(inputDate);
   },
 
   validateGender(gender) {

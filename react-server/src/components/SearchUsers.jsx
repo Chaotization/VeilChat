@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { getDatabase, ref, push } from 'firebase/database';
 import { getAuth } from 'firebase/auth';
 import axios from 'axios';
-
 const UserFilter = () => {
     const [gender, setGender] = useState('');
     const [age, setAge] = useState('');
@@ -41,7 +40,7 @@ const UserFilter = () => {
     const handleFilter = async () => {
         try {
             const response = await axios.post('http://localhost:4000/search', {
-                _id: "662963ea13e649c284e1e50a",
+                _id: currentUser.uid,
                 gender,
                 age,
                 language,
