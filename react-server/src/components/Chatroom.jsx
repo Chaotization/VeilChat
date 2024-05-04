@@ -10,7 +10,6 @@ function Chatroom(props) {
   const [chatId, setChatId] = useState('')
   const [showFriendRequestModal, setShowFriendRequestModal] = useState(false)
   const [joinChatId, setJoinChatId] = useState('')
-  const [otherUserId, setOtherUserId] = useState('');
 
   const navigate = useNavigate()
   const auth = getAuth()
@@ -28,28 +27,19 @@ function Chatroom(props) {
     messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
   }
 
-  useEffect(() => {
-    const db = getDatabase();
-  
-    if (providedChatId) {
-      setChatId(providedChatId);
-      joinChat(providedChatId);
-  
+  useEffect(()=>{
+    const db = getDatabase()
+
+    if(providedChatId){
+      setChatId(providedChatId)
+      joinChat(providedChatId)
+
       const participantsRef = ref(db, `chats/${providedChatId}/participants`);
-      onValue(participantsRef, (snapshot) => {
-        const participants = snapshot.val();
-        if (participants) {
-          const participantIds = Object.keys(participants);
-          const otherParticipantId = participantIds.find((id) => id !== currentUser.uid);
-          setOtherUserId(otherParticipantId);
-          console.log("current user id",currentUser.uid)
-          console.log("other user id",otherUserId)
-        }
-      });
-    } else {
-      createNewChat();
+    }else{
+      createNewChat()
     }
-  }, [props.chatId]);
+
+  },[props.chatId])
 
   useEffect(()=>{
     scrollToBottom()
@@ -141,7 +131,6 @@ function Chatroom(props) {
   const handleSendFriendRequest = () => {
     // Implement the logic to send a friend request
     console.log('Sending friend request');
-
     toggleFriendRequestModal();
   };
 
@@ -176,12 +165,12 @@ function Chatroom(props) {
 
 
   return (
-    <div className="flex justify-center items-center max-h-screen bg-base-100">
-      <div className="container mx-auto p-4 bg-base-100 my-10 rounded-lg shadow-lg w-full max-w-xl flex flex-col">
-        <div className="py-4 px-6 bg-primary flex items-center justify-between">
+    <div className="flex justify-center items-center h-screen bg-gray-100">
+      <div className="container mx-auto p-4 bg-white rounded-lg shadow-lg w-full max-w-xl flex flex-col">
+        <div className="py-4 px-6 bg-primary text-white flex items-center justify-between">
           <div className="flex items-center">
               <div className="w-12 h-12 rounded-full bg-gray-300 mr-4"></div>
-            <h2 className="text-xl font-bold text-white">Anonymous User</h2>
+            <h2 className="text-xl font-bold">Anonymous User</h2>
           </div>
           <div>
             <button className="text-white" onClick={handleSendFriendRequest}>

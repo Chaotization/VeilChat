@@ -11,7 +11,6 @@ const UserFilter = () => {
     const [userLocation, setUserLocation] = useState(null);
     const [locationAccessDenied, setLocationAccessDenied] = useState(false);
     const [filteredUser, setFilteredUser] = useState([]);
-    const [loading, setLoading] = useState(false)
     
     //firebase
     const [messages,setMessages] = useState([])
@@ -51,11 +50,8 @@ const UserFilter = () => {
 
             setFilteredUser(response.data);
             console.log(filteredUser[0]._id.toString());
-            createNewChat(filteredUser[0]._id.toString())
         } catch (error) {
             console.error('Error filtering users:', error);
-        }finally{
-          setLoading(false)
         }
     };
 
@@ -74,14 +70,13 @@ const UserFilter = () => {
         return 'chatId_' + Date.now() + Math.round(Math.random(0,10)*10)
     };
     
-    const createNewChat = (uid) => {
+    const createNewChat = () => {
         const newChatId = generateChatId();
         setChatId(newChatId);
         setMessages([]);
         const db = getDatabase();
         const participantsRef = ref(db, `chats/${newChatId}/participants`);
         push(participantsRef, { userId: currentUser.uid, joined: true });
-        push(participantsRef, { userId: uid, joined: false });
     
         navigate(`/chat/${newChatId}`)
     };
@@ -159,15 +154,11 @@ const UserFilter = () => {
           </select>
         </div>
         <div className="flex justify-between">
-          {loading ? (
-              <button className="btn btn-primary loading">Finding a match...</button>
-          ) : (
-              <button className="btn btn-primary" onClick={handleFilter}>
-                  Apply Filters
-              </button>
-          )}
+          <button className="btn btn-primary" onClick={handleFilter}>
+            Apply Filters
+          </button>
           <button className="btn btn-outline" onClick={handleChatRedirect}>
-              Find a match
+            Find a match
           </button>
         </div>
       </div>

@@ -264,10 +264,6 @@ const handleSignUp=async(e)=>
     }
     
     let dob=document.getElementById("dob");
-<<<<<<< HEAD
-=======
-    dob=new Date(dob);
->>>>>>> 1e6a6dc7d4e6c0ba300779c2c85f555c4b8bfc65
    
     let yearOfBirth=parseInt(dob.getFullYear());
     const day = String(dob.getDate()).padStart(2, '0');
