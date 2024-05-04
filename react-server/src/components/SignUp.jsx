@@ -264,7 +264,6 @@ const handleSignUp=async(e)=>
     }
     
     let dob=document.getElementById("dob");
-    dob=new Date(dob);
    
     let yearOfBirth=parseInt(dob.getFullYear());
     const day = String(dob.getDate()).padStart(2, '0');
@@ -325,7 +324,7 @@ const handleSignUp=async(e)=>
                     firstName: formData.first_name.trim(),
                     lastName: formData.last_name.trim(),
                     email: currentUser.email.trim(),
-                    dob: `${month}/${day}/${year}`,
+                    dob: new Date(`${month}/${day}/${year}`),
                     gender: formData.gender,
                     phoneNumber: "+1"+phone,
                     languages: languages,

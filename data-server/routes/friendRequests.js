@@ -4,7 +4,7 @@ import {updateFriendStatus} from "../data/users.js";
 
 const router = Router();
 
-router.route("/sendFriendRequest/:id").post(async (req, res) => {
+router.route("/:id").post(async (req, res) => {
     try {
         const userData = req.session.user;
         if (userData) {

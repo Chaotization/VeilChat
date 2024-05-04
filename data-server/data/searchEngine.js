@@ -49,7 +49,7 @@ let exportedMethods = {
             userId = validation.checkId(userId);
             gender = validation.checkGender(gender);
             const userCollection = await users();
-
+            const currentUser = await userCollection.findOne({_id: userId});
             let allUsers = [];
             if (gender === 'others') {
                 allUsers = await userCollection.find({}).toArray();
@@ -64,7 +64,9 @@ let exportedMethods = {
             }
 
             const filteredUsers = allUsers.filter(user =>
-                activeUsers.some(activeUser => activeUser._id === user._id.toString()) && user._id.toString() !== userId
+                activeUsers.some(activeUser => activeUser._id === user._id.toString())
+                && user._id.toString() !== userId
+                && !currentUser.friends.hasOwnProperty(user._id.toString())
             );
 
             if (filteredUsers.length === 0) {
@@ -83,7 +85,7 @@ let exportedMethods = {
             userId = validation.checkId(userId);
             language = validation.checkLanguage(language);
             const userCollection = await users();
-
+            const currentUser = await userCollection.findOne({_id: userId});
             const allUsers = await userCollection.find({ languages: { $in: [language.toLowerCase()] } }).toArray();
 
             const exists = await client.exists('activeUsers');
@@ -93,7 +95,9 @@ let exportedMethods = {
             }
 
             const filteredUsers = allUsers.filter(user =>
-                activeUsers.some(activeUser => activeUser._id === user._id.toString()) && user._id.toString() !== userId
+                activeUsers.some(activeUser => activeUser._id === user._id.toString())
+                && user._id.toString() !== userId
+                && !currentUser.friends.hasOwnProperty(user._id.toString())
             );
 
             if (filteredUsers.length === 0) {
@@ -113,7 +117,7 @@ let exportedMethods = {
             let { min, max } = validation.checkAgeRange(age);
 
             const userCollection = await users();
-
+            const currentUser = await userCollection.findOne({_id: userId});
             const allUsers = await userCollection.find({
                 dob: {
                     $gte: min,
@@ -127,9 +131,12 @@ let exportedMethods = {
                 activeUsers = await client.json.get('activeUsers');
             }
 
-            const filteredUsers = allUsers.filter(user =>
-                activeUsers.some(activeUser => activeUser._id === user._id.toString()) && user._id.toString() !== userId
+            let filteredUsers = allUsers.filter(user =>
+                activeUsers.some(activeUser => activeUser._id === user._id.toString())
+                && user._id.toString() !== userId
+                && !currentUser.friends.hasOwnProperty(user._id.toString())
             );
+
 
             if (filteredUsers.length === 0) {
                 const minDateStr = min.toISOString().split('T')[0];
@@ -149,6 +156,7 @@ let exportedMethods = {
         try {
             userId = validation.checkId(userId)
             const userCollection = await users();
+            const currentUser = await userCollection.findOne({_id: userId});
             const query = {};
 
             if (criteria.gender) {
@@ -191,7 +199,9 @@ let exportedMethods = {
                 }
 
             }
-            const filteredUsers = await userCollection.find(query).toArray();
+            const allUsers = await userCollection.find(query).toArray();
+            const filteredUsers = allUsers.filter(user => !currentUser.friends.hasOwnProperty(user._id.toString())
+            );
             if (filteredUsers.length === 0) {
                 throw "Error: No users found matching the provided criteria.";
             }
