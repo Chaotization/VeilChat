@@ -3,18 +3,18 @@ import { getAuth } from 'firebase/auth';
 import Resizer from 'react-image-file-resizer';
 import { useUserStore } from '../context/userStore';
 import { useNavigate, Link, Navigate } from "react-router-dom";
-import { db } from '../firebase/FirebaseFunctions';
-import { setDoc, doc } from 'firebase/firestore';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import upload from "../context/upload.js";
-import Home from "./ProtectedHome.jsx";
-function AddUser()
+// import { db } from '../firebase/FirebaseFunctions';
+// import { setDoc, doc } from 'firebase/firestore';
+// import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+// import upload from "../context/upload.js";
+
+function AddUser(props)
 {
 
     const auth =getAuth();
     const navigate=useNavigate();
     const loggedUser=auth.currentUser;
-const { currentUser, isLoading } = useUserStore();
+//const { currentUser, isLoading } = useUserStore();
   const [languages, setLanguages]=useState("");
   const [uploadError, setUploadError] = useState(null);
   const [imageFile, setImageFile] = useState(null); 
@@ -193,7 +193,7 @@ const { currentUser, isLoading } = useUserStore();
       if (!response.ok) {
         if (data && data.message) {
             setErrors((prevState) => {
-                return [...prevState, data.message];
+                return [...prevState, "Trouble with the server"];
               });
             return
           } else {
@@ -205,7 +205,9 @@ const { currentUser, isLoading } = useUserStore();
         }
         else{
           setErrors([]);
-          return <Home tested={true} firstName={formData.first_name}/>
+          let redr=props.redirect;
+          navigate('/checker')
+           return
         }
       } catch(e){
         setErrors((prevState) => {
@@ -345,7 +347,7 @@ return(
 </div>
 <div className="container">
       <label className="block text-gray-700 text-sm font-bold mb-2">Upload your Profile picture:</label>
-        <input type="file" accept="image/*" onChange={handleImageChange} required/>
+        <input type="file" accept="image/*" onChange={handleImageChange}/>
         {uploadError &&<p style={{color:"red"}}>{uploadError}</p>}
         {imageFile && (
         <div>

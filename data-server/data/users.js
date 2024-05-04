@@ -588,18 +588,27 @@ export const updateUser=async(user)=>
    
 }
 
-export const createAccountWithEmailAndPassword=async(email,password,id)=>
+export const createAccountWithEmailAndPassword=async(user)=>
 {
-	email=validation.validateEmail(email);
-	password=validation.validatePassword(password, "password");
+	if(!user)
+	{
+		throw "Login credentials must be provided"
+	}
+	let email=validation.validateEmail(user.email);
+	let password="";
+	if(user.password)
+	{
+	password=validation.validatePassword(user.password, "password");
+	password=await bcrypt.hash(password, 15);
+	}
 
 	const userCollection = await users();
 	const ifExist = await userCollection.findOne({ email: email });
 	if (ifExist) {
 		throw `Error: ${email} is already registered, Please Login`;
 	}
-	const user = {
-		_id:id.trim(),
+	const new_user = {
+		_id:user.id.trim(),
         firstName:"",
         lastName:"",
         email,
@@ -607,14 +616,14 @@ export const createAccountWithEmailAndPassword=async(email,password,id)=>
         gender:"",
         dob:"",
         phoneNumber:"",
-        password: await bcrypt.hash(password, 15),
+        password:password ,
         userSince: validation.generateCurrentDate(),
         profilePictureLocation:"",
         friends: [],
         status:'inactive'
     };
 
-	const insertUser = await userCollection.insertOne(user);
+	const insertUser = await userCollection.insertOne(new_user);
 	if (!insertUser.acknowledged || !insertUser.insertedId) {
 		throw `Error: couldn't register the account: ${email}`;
 
