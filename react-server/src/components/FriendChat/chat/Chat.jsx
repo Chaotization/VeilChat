@@ -7,13 +7,13 @@ import { db } from '../../../firebase/FirebaseFunctions';
 import AddFriend from '../../addFriend/AddFriend';
 import {useChatStore} from '../../../context/chatStore';
 
-const Chat = () =>{
+const Chat = ({updateTrigger}) =>{
     const { currentUser, isLoading } = useUserStore();
     const { chatId, changeChat } = useChatStore();
     const [chats, setChats] = useState([]);
     const [searchInput, setsearchInput] = useState("");
     const [addMode, setAddMode] = useState(false);
-    
+
 
     useEffect(() => {
         const unSub = onSnapshot(
@@ -36,14 +36,17 @@ const Chat = () =>{
     
             const chatData = await Promise.all(promises);
     
-            setChats(chatData.sort((a, b) => b.updatedAt - a.updatedAt));
+            chatData.sort((a, b) => b.updatedAt - a.updatedAt);
+            
+            setChats(chatData);
+            
           }
         );
     
         return () => {
           unSub();
         };
-      }, [currentUser.id]);
+      }, [currentUser.id, updateTrigger]);
 
     if (isLoading || !currentUser) {
         return <div>Loading...</div>; 
