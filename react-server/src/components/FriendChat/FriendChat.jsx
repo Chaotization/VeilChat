@@ -21,7 +21,7 @@ export default function FriendChat() {
       <div className="container">
         <Chat/>
         <ChatRoom/>
-        <FriendList triggerChatUpdate={triggerChatUpdate}/>  // Passing triggerChatUpdate here
+        <FriendList triggerChatUpdate={triggerChatUpdate}/>  
       </div>
     </div>
   )
