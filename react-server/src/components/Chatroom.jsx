@@ -10,6 +10,7 @@ function Chatroom(props) {
   const [chatId, setChatId] = useState('')
   const [showFriendRequestModal, setShowFriendRequestModal] = useState(false)
   const [joinChatId, setJoinChatId] = useState('')
+  const [otherUserId, setOtherUserId] = useState('');
 
   const navigate = useNavigate()
   const auth = getAuth()
@@ -27,19 +28,28 @@ function Chatroom(props) {
     messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
   }
 
-  useEffect(()=>{
-    const db = getDatabase()
-
-    if(providedChatId){
-      setChatId(providedChatId)
-      joinChat(providedChatId)
-
+  useEffect(() => {
+    const db = getDatabase();
+  
+    if (providedChatId) {
+      setChatId(providedChatId);
+      joinChat(providedChatId);
+  
       const participantsRef = ref(db, `chats/${providedChatId}/participants`);
-    }else{
-      createNewChat()
+      onValue(participantsRef, (snapshot) => {
+        const participants = snapshot.val();
+        if (participants) {
+          const participantIds = Object.keys(participants);
+          const otherParticipantId = participantIds.find((id) => id !== currentUser.uid);
+          setOtherUserId(otherParticipantId);
+          console.log("current user id",currentUser.uid)
+          console.log("other user id",otherUserId)
+        }
+      });
+    } else {
+      createNewChat();
     }
-
-  },[props.chatId])
+  }, [props.chatId]);
 
   useEffect(()=>{
     scrollToBottom()
@@ -131,6 +141,7 @@ function Chatroom(props) {
   const handleSendFriendRequest = () => {
     // Implement the logic to send a friend request
     console.log('Sending friend request');
+
     toggleFriendRequestModal();
   };
 
