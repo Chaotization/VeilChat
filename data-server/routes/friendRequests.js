@@ -8,7 +8,7 @@ router.route("/:id").post(async (req, res) => {
     try {
         const userData = req.session.user;
         if (userData) {
-            const userId = userData.userId;
+            const userId = userData.uId;
             const targetUserId = req.params.id;
             const sendRequest = await updateFriendStatus(userId, targetUserId, "send");
             if (sendRequest.updatedStatus) {

@@ -263,8 +263,8 @@ const handleSignUp=async(e)=>
           });
     }
     
-    let dob=document.getElementById("dob").value;
-   
+    let dob=document.getElementById("dob");
+    dob = new Date(dob)
     let yearOfBirth=parseInt(dob.getFullYear());
     const day = String(dob.getDate()).padStart(2, '0');
     const year=yearOfBirth.toString();

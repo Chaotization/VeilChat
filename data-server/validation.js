@@ -14,7 +14,7 @@ const exportedMethods = {
 
   checkGender(gender) {
     if (!gender) throw "Gender is not provided";
-    if (typeof gender !== "string") throw "Password must be a string!";
+    if (typeof gender !== "string") throw "Gender must be a string!";
     gender = gender.trim();
     const validGenders = ["male", "female", "others"];
     if (!validGenders.includes(gender))

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import './FriendList.css';
 import { useUserStore } from '../../../context/userStore'; // Adjust the path as necessary
 import { doc, getDoc, query, collection, where, setDoc, getDocs, updateDoc, arrayUnion, arrayRemove, deleteDoc} from "firebase/firestore";
 import { db } from '../../../firebase/FirebaseFunctions';

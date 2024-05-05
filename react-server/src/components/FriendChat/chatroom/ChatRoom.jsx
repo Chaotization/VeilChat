@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react'
-import './ChatRoom.css'
 import { arrayUnion, doc, getDoc, onSnapshot, updateDoc} from "firebase/firestore";
 import { db } from '../../../firebase/FirebaseFunctions';
 import {useChatStore} from '../../../context/chatStore';

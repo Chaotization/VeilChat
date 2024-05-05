@@ -1,4 +1,3 @@
-import './Chat.css'
 import { AuthContext } from '../../../context/AuthContext';
 import { useContext, useEffect, useState } from 'react';
 import { useUserStore } from '../../../context/userStore';

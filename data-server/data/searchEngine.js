@@ -49,7 +49,7 @@ let exportedMethods = {
             userId = validation.checkId(userId);
             gender = validation.checkGender(gender);
             const userCollection = await users();
-            const currentUser = await userCollection.findOne({_id: userId});
+            const currentUser = await userCollection.findOne({uId: userId});
             let allUsers = [];
             if (gender === 'others') {
                 allUsers = await userCollection.find({}).toArray();
@@ -64,9 +64,9 @@ let exportedMethods = {
             }
 
             const filteredUsers = allUsers.filter(user =>
-                activeUsers.some(activeUser => activeUser._id === user._id.toString())
-                && user._id.toString() !== userId
-                && !currentUser.friends.hasOwnProperty(user._id.toString())
+                activeUsers.some(activeUser => activeUser.uId === user.uId)
+                && user.uId.toString() !== userId
+                && !currentUser.friends.includes(userId)
             );
 
             if (filteredUsers.length === 0) {
@@ -85,7 +85,7 @@ let exportedMethods = {
             userId = validation.checkId(userId);
             language = validation.checkLanguage(language);
             const userCollection = await users();
-            const currentUser = await userCollection.findOne({_id: userId});
+            const currentUser = await userCollection.findOne({uId: userId});
             const allUsers = await userCollection.find({ languages: { $in: [language.toLowerCase()] } }).toArray();
 
             const exists = await client.exists('activeUsers');
@@ -95,9 +95,9 @@ let exportedMethods = {
             }
 
             const filteredUsers = allUsers.filter(user =>
-                activeUsers.some(activeUser => activeUser._id === user._id.toString())
-                && user._id.toString() !== userId
-                && !currentUser.friends.hasOwnProperty(user._id.toString())
+                activeUsers.some(activeUser => activeUser.uId === user.uId)
+                && user.uId.toString() !== userId
+                && !currentUser.friends.includes(userId)
             );
 
             if (filteredUsers.length === 0) {
@@ -117,7 +117,7 @@ let exportedMethods = {
             let { min, max } = validation.checkAgeRange(age);
 
             const userCollection = await users();
-            const currentUser = await userCollection.findOne({_id: userId});
+            const currentUser = await userCollection.findOne({uId: userId});
             const allUsers = await userCollection.find({
                 dob: {
                     $gte: min,
@@ -131,10 +131,10 @@ let exportedMethods = {
                 activeUsers = await client.json.get('activeUsers');
             }
 
-            let filteredUsers = allUsers.filter(user =>
-                activeUsers.some(activeUser => activeUser._id === user._id.toString())
-                && user._id.toString() !== userId
-                && !currentUser.friends.hasOwnProperty(user._id.toString())
+            const filteredUsers = allUsers.filter(user =>
+                activeUsers.some(activeUser => activeUser.uId === user.uId)
+                && user.uId.toString() !== userId
+                && !currentUser.friends.includes(userId)
             );
 
 
@@ -156,7 +156,7 @@ let exportedMethods = {
         try {
             userId = validation.checkId(userId)
             const userCollection = await users();
-            const currentUser = await userCollection.findOne({_id: userId});
+            const currentUser = await userCollection.findOne({uId: userId});
             const query = {};
 
             if (criteria.gender) {
@@ -190,11 +190,11 @@ let exportedMethods = {
                 const exists = await client.exists('activeUsers');
                 if(exists){
                     const activeUsers = await client.json.get('activeUsers');
-                    const filteredUsers = activeUsers.filter((user) => user._id !== userId && user.position);
+                    const filteredUsers = activeUsers.filter((user) => user.uId !== userId && user.position);
                     if(!filteredUsers || filteredUsers.length === 0) return [];
                     const nearbyUsers = await findNearByUsers(filteredUsers, lat, lng, criteria.distance);
-                    const nearbyUserIds = nearbyUsers.map(user => user._id);
-                    const userQueries = nearbyUserIds.map(id => ({ _id: new ObjectId(id) }));
+                    const nearbyUserIds = nearbyUsers.map(user => user.uId);
+                    const userQueries = nearbyUserIds.map(id => ({ uId: new ObjectId(id) }));
                     query.$or = userQueries;
                 }
 
@@ -211,8 +211,7 @@ let exportedMethods = {
         }
     },
 
-    async filtering(userId, { gender = '', language = '', age = '', distance = 0, position = {} }) {
-        const criteria = {gender, language, age, distance, position};
+    async filtering(userId,  {gender = '', language = '', age = '', distance = 0, position = {}} ) {
         let activeCriteria = {};
 
         let user = {};
@@ -231,14 +230,14 @@ let exportedMethods = {
         if (numberOfActiveFilters === 0) {
             return [];
         }else{
-            user._id = userId;
+            user.uId = userId;
             user.status = 'active';
             const exists = await client.exists('activeUsers');
             if(exists){
                 const activeUsers = await client.json.get('activeUsers');
-                const existUser = activeUsers.find((u) => u._id === userId);
+                const existUser = activeUsers.find((u) => u.uId === userId);
                 if(existUser){
-                    const updatedUsers = activeUsers.map(u => u._id === userId ? user : u);
+                    const updatedUsers = activeUsers.map(u => u.uId === userId ? user : u);
                     client.json.set('activeUsers', '$', updatedUsers);
                 }else{
                     client.json.set('activeUsers', '$', [...activeUsers, user]);
@@ -248,7 +247,6 @@ let exportedMethods = {
             }
         }
 
-        console.log("a")
         if (numberOfActiveFilters > 1) {
             const filteredUsers = await this.getUsersByMultiFields(userId, activeCriteria);
             const randomIndex = Math.floor(Math.random() * filteredUsers.length);

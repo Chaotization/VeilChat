@@ -41,7 +41,7 @@ const UserFilter = () => {
     const handleFilter = async () => {
         try {
             const response = await axios.post('http://localhost:4000/search', {
-                _id: currentUser.uid,
+                uId: currentUser.uid,
                 gender,
                 age,
                 language,
