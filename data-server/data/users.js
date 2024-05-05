@@ -403,23 +403,25 @@ export const updateFriendStatus = async (userId, friendId, newStatus) => {
         throw `Error: Invalid status '${newStatus}'`;
     }
     const userCollection = await users();
+    const user = await userCollection.findOne({uId: userId});
+    const friend = await userCollection.findOne({uId: friendId});
+
+    let exist = user.friends.hasOwnProperty(friendId) && friend.friends.hasOwnProperty(userId);
+    if(exist){
+        return "The friend already exist"
+    }
+
     if (newStatus === "reject") {
         const rejectUpdateResult = await userCollection.updateOne(
-            {uId: friendId},
-            {
-                $push: { friends: userId },
-                $set: { status: "reject" }
-            }
+            { uId: friendId },
+            { $set: { [`friends.${userId}`]: "sent" } }
         );
         if (rejectUpdateResult.modifiedCount === 0) {
             throw `Error: Failed to update rejected friend status for user ${userId} to ${friendId}`;
         }
         const removeUpdateResult = await userCollection.updateOne(
-            {uId: userId},
-            {
-                $pull: { friends: friendId },
-                $set: { status: "reject" }
-            }
+            { uId: userId },
+            { $unset: { [`friends.${friendId}`]: "sent" } }
         );
         if (removeUpdateResult.modifiedCount === 0) {
             throw `Error: Failed to remove reject user ${userId} from user ${friendId}'s friend list`;
@@ -431,22 +433,16 @@ export const updateFriendStatus = async (userId, friendId, newStatus) => {
     } else if (newStatus === "accept") {
         // if accepted, update the user's friend status to accepted
         const userUpdateResult = await userCollection.updateOne(
-            {uId: userId},
-            {
-                $push: { friends: friendId },
-                $set: { status: "accept" }
-            }
+            { uId: userId },
+            { $set: { [`friends.${friendId}`]: "connected" } }
         );
         if (userUpdateResult.modifiedCount === 0) {
             throw `Error: Failed to update accepted friend status for user ${userId} to ${friendId}`;
         }
         //and add the friend to the other user's friend list and mark status accepted
         const friendUpdateResult = await userCollection.updateOne(
-            {uId: friendId},
-            {
-                $pull: { friends: userId },
-                $set: { status: "accept" }
-            }
+            { uId: friendId },
+            { $set: { [`friends.${userId}`]: "connected" } }
         );
         if (friendUpdateResult.modifiedCount === 0) {
             throw `Error: Failed to update accepted friend status for user ${friendId} to ${userId}`;
@@ -458,21 +454,15 @@ export const updateFriendStatus = async (userId, friendId, newStatus) => {
     } else if (newStatus === "send") {
         const sendFriendFromUser = await userCollection.updateOne(
             { uId: userId },
-            {
-                $push: { friends: friendId },
-                $set: { status: "send" }
-            }
+            { $set: { [`friends.${friendId}`]: "sent" } }
         );
-        if (!sendFriendFromUser.modifiedCount === 0) {
+        if (sendFriendFromUser.modifiedCount === 0) {
             throw `Error: Failed to send friend request for user ${userId} to ${friendId}`;
         }
 
         const receivedUserFromFriend = await userCollection.updateOne(
-            {uId: friendId},
-            {
-                $pull: { friends: userId },
-                $set: { status: "send" }
-            }
+            { uId: friendId },
+            { $set: { [`friends.${userId}`]: "received" } }
         );
         if (receivedUserFromFriend.modifiedCount === 0) {
             throw `Error: Failed to receive a friend request for friend ${friendId} to ${userId}`;
@@ -484,22 +474,16 @@ export const updateFriendStatus = async (userId, friendId, newStatus) => {
     } else if (newStatus === "delete") {
         // if user send a friend request, update the user's friend status to sent
         const deleteFriendFromUser = await userCollection.updateOne(
-            {uId: userId},
-            {
-                $pull: { friends: friendId },
-                $set: { status: "delete" }
-            }
+            { uId: userId },
+            { $unset: { [`friends.${friendId}`]: "" } }
         );
         if (deleteFriendFromUser.modifiedCount === 0) {
             throw `Error: Failed to update sent friend status for user ${userId} to ${friendId}`;
         }
         // and update the friend's friend status to received
         const deleteUserFromFriend = await userCollection.updateOne(
-            {uId: friendId},
-            {
-                $pull: { friends: userId },
-                $set: { status: "delete" }
-            }
+            { uId: friendId },
+            { $set: { [`friends.${userId}`]: "connected" } }
         );
         if (deleteUserFromFriend.modifiedCount === 0) {
             throw `Error: Failed to update received friend status for user ${friendId} to ${userId}`;

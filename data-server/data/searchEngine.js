@@ -65,12 +65,12 @@ let exportedMethods = {
 
             const filteredUsers = allUsers.filter(user =>
                 activeUsers.some(activeUser => activeUser.uId === user.uId)
+                && !currentUser.friends[user.uId]
                 && user.uId.toString() !== userId
-                && !currentUser.friends.includes(userId)
             );
 
             if (filteredUsers.length === 0) {
-                throw new Error(`No active users with gender ${gender} found.`);
+                return [];
             }
 
             return filteredUsers;
@@ -97,11 +97,11 @@ let exportedMethods = {
             const filteredUsers = allUsers.filter(user =>
                 activeUsers.some(activeUser => activeUser.uId === user.uId)
                 && user.uId.toString() !== userId
-                && !currentUser.friends.includes(userId)
+                && !currentUser.friends.hasOwnProperty(userId)
             );
 
             if (filteredUsers.length === 0) {
-                throw new Error(`No active users with language ${language} found.`);
+                return [];
             }
 
             return filteredUsers;
@@ -134,14 +134,12 @@ let exportedMethods = {
             const filteredUsers = allUsers.filter(user =>
                 activeUsers.some(activeUser => activeUser.uId === user.uId)
                 && user.uId.toString() !== userId
-                && !currentUser.friends.includes(userId)
+                && !currentUser.friends.hasOwnProperty(userId)
             );
 
 
             if (filteredUsers.length === 0) {
-                const minDateStr = min.toISOString().split('T')[0];
-                const maxDateStr = max.toISOString().split('T')[0];
-                throw new Error(`No users found within the age range from ${minDateStr} to ${maxDateStr}`);
+                return [];
             }
 
             return filteredUsers;
@@ -183,7 +181,7 @@ let exportedMethods = {
                 });
 
                 if (!results || results.length === 0) {
-                    throw new Error("Unable to find address for the provided coordinates");
+                    return "Unable to find address for the provided coordinates";
                 }
 
                 const userAddress = results[0].formatted_address;
@@ -203,7 +201,7 @@ let exportedMethods = {
             const filteredUsers = allUsers.filter(user => !currentUser.friends.hasOwnProperty(user._id.toString())
             );
             if (filteredUsers.length === 0) {
-                throw "Error: No users found matching the provided criteria.";
+                return [];
             }
             return filteredUsers ;
         } catch (error) {
@@ -228,7 +226,7 @@ let exportedMethods = {
         const numberOfActiveFilters = Object.keys(activeCriteria).length;
 
         if (numberOfActiveFilters === 0) {
-            return [];
+            return "Please fill some of form to find the match users";
         }else{
             user.uId = userId;
             user.status = 'active';
@@ -263,8 +261,21 @@ let exportedMethods = {
             filteredUsers = await this.getUsersByAge(userId, activeCriteria.age);
         }
 
+        if (filteredUsers.length === 0) {
+            return {userFound: false, filteredUsers: []}
+        }
         const randomIndex = Math.floor(Math.random() * filteredUsers.length);
-        return [filteredUsers[randomIndex]];
+        if (filteredUsers.length > 0) {
+            return {
+                userFound: true,
+                selectedUser: filteredUsers[randomIndex]
+            };
+        } else {
+            return {
+                userFound: false,
+                selectedUser: null
+            };
+        }
     },
 }
 

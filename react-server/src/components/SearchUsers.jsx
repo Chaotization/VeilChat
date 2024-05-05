@@ -50,10 +50,10 @@ const UserFilter = () => {
                });
 
             setFilteredUser(response.data);
-            console.log(filteredUser[0]._id.toString());
-            createNewChat(filteredUser[0]._id.toString())
+            console.log(filteredUser);
+            createNewChat(filteredUser.uId)
         } catch (error) {
-            console.error('Error filtering users:', error);
+            console.error('Error filtering users:', error.message);
         }finally{
             setLoading(false)
         }
