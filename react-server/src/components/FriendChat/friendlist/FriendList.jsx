@@ -10,6 +10,8 @@ const FriendList = ({triggerChatUpdate}) => {
   const { changeChat } = useChatStore();
   const [showConfirm, setShowConfirm] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
+  const [showProfile, setShowProfile] = useState(false);
+  const [viewingFriend, setViewingFriend] = useState(null);
 
   useEffect(() => {
     async function fetchFriendsData() {
@@ -157,7 +159,11 @@ const FriendList = ({triggerChatUpdate}) => {
           <div className="texts flex-grow">
             <span className="font-bold">{friend.firstName} {friend.lastName}</span>
           </div>
-          <img src="./imgs/option.png" alt="Options" className="w-6 h-6 cursor-pointer" onClick={() => {
+          <img src="./imgs/friendprofile.png" alt="Profile" className="w-6 h-6 cursor-pointer mr-2" onClick={() => {
+            setViewingFriend(friend);
+            setShowProfile(true);
+          }} />
+          <img src="./imgs/delete.png" alt="Options" className="w-6 h-6 cursor-pointer" onClick={() => {
             setShowConfirm(true);
             setSelectedFriend(friend);
           }} />
@@ -173,6 +179,18 @@ const FriendList = ({triggerChatUpdate}) => {
           </div>
         </div>
       )}
+      {showProfile && (
+        <div className="profileDialog bg-white shadow-md rounded-lg p-4 fixed inset-0 flex flex-col justify-center items-center">
+        <h2 className="mb-4">{viewingFriend.firstName} {viewingFriend.lastName}'s Profile</h2>
+        <img src={viewingFriend.profilePictureLocation || './public/imgs/default_avatar.png'} alt={viewingFriend.firstName} className="w-20 h-20 rounded-full mb-4" />
+        <p>Email: {viewingFriend.email}</p>
+        <p>Gender: {viewingFriend.gender}</p>
+        <p>Languages: {viewingFriend.languages.join(', ')}</p> 
+      <div className="flex justify-center">
+      <button className="btn btn-secondary" onClick={() => setShowProfile(false)}>Close</button>
+    </div>
+  </div>
+)}
     </div>
   );
 };
