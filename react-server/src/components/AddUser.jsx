@@ -3,10 +3,10 @@ import { getAuth } from 'firebase/auth';
 import Resizer from 'react-image-file-resizer';
 import { useUserStore } from '../context/userStore';
 import { useNavigate, Link, Navigate } from "react-router-dom";
-// import { db } from '../firebase/FirebaseFunctions';
-// import { setDoc, doc } from 'firebase/firestore';
-// import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-// import upload from "../context/upload.js";
+import { db } from '../firebase/FirebaseFunctions';
+import { setDoc, doc, updateDoc, getDoc } from 'firebase/firestore';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import upload from "../context/upload.js";
 
 function AddUser(props)
 {
@@ -14,7 +14,7 @@ function AddUser(props)
     const auth =getAuth();
     const navigate=useNavigate();
     const loggedUser=auth.currentUser;
-//const { currentUser, isLoading } = useUserStore();
+  const { currentUser} = useUserStore();
   const [languages, setLanguages]=useState("");
   const [uploadError, setUploadError] = useState(null);
   const [imageFile, setImageFile] = useState(null); 
@@ -43,7 +43,7 @@ function AddUser(props)
   const [errors, setErrors] = useState([]);
   const[profilePictureLocation, setProfilePictureLocation]=useState(null);
   const [formData, setFormData] = useState({
-    id: "",
+    uId: "",
     first_name: "",
     last_name: "",
     dob: "",
@@ -120,8 +120,7 @@ function AddUser(props)
     }
     
     let dob=document.getElementById("dob").value;
-    dob=new Date(dob);
-   
+    dob = new Date(dob)
     let yearOfBirth=parseInt(dob.getFullYear());
     const day = String(dob.getDate()).padStart(2, '0');
     const year=yearOfBirth.toString();
@@ -149,35 +148,34 @@ function AddUser(props)
     if(!errors.length>0){
 
       try{
-    //I AM NOT FAMILIAR WITH THIS, THIS IS THROWING ERROR(MAYBE BCOZ OF PIC FILE), SO I COMMENTED IT, PLEASE REMOVE THIS WHEN YOU FIGURE IT OUT, THANK YOU-BNKVARMA
-          // let profilePictureUrl = ""
-          // if (imageFile) {
-          //   profilePictureUrl = await upload(imageFile);
-          // }
-          
-          // //save to firebase db
-          // const userDocRef = doc(db, "users", loggedUser.uid);
-          // await setDoc(userDocRef, {
-          //     id: loggedUser.uid,
-          //     firstName: formData.first_name.trim(),
-          //     lastName: formData.last_name.trim(),
-          //     email: loggedUser.email,
-          //     dob: `${month}/${day}/${year}`,
-          //     gender: formData.gender,
-          //     phoneNumber: "+1"+phone,
-          //     languages: languages,
-          //     friends: [],
-          //     profilePictureLocation: profilePictureUrl || ""
-          // });
+          let profilePictureUrl = ""
+          if (imageFile) {
+            profilePictureUrl = await upload(imageFile);
+          }
 
-          // await setDoc(doc(db, "userchats", loggedUser.uid), {
-          //   chats: [],
-          // });
+          //save to firebase db
+          const userDocRef = doc(db, "users", loggedUser.uid);
+          await updateDoc(userDocRef, {
+              firstName: formData.first_name.trim(),
+              lastName: formData.last_name.trim(),
+              dob: `${month}/${day}/${year}`,
+              gender: formData.gender,
+              phoneNumber: "+1"+phone,
+              languages: languages,
+              profilePictureLocation: profilePictureUrl || ""
+          });
+
+          const userChatsRef = doc(db, "userchats", loggedUser.uid);
+          const userChatsSnap = await getDoc(userChatsRef);
+          if (!userChatsSnap.exists()) {
+              await setDoc(userChatsRef, { chats: [] });
+          }
 
       let response = await fetch("http://localhost:4000/user/updateuser", {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                  uId:loggedUser.uid,
                     firstName: formData.first_name.trim(),
                     lastName: formData.last_name.trim(),
                     email: loggedUser.email,
@@ -220,7 +218,7 @@ function AddUser(props)
   }
 return(
     <div>
-
+      <h4 style={{background:"white",color:"purple"}}className="text-center text-2xl font-medium mb-4"> Dear {props.firstName || "user"}, fill this form to continue</h4>
     <form
           onSubmit={handleSignUp}
           className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">

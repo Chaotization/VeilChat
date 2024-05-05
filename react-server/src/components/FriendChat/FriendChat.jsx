@@ -17,11 +17,11 @@ export default function FriendChat() {
   const {chatId} = useChatStore();
 
   return (
-    <div>
-      <div className="container">
-        <Chat/>
-        <ChatRoom/>
-        <FriendList triggerChatUpdate={triggerChatUpdate}/>  // Passing triggerChatUpdate here
+    <div className="container mx-auto">
+      <div className="grid grid-cols-3 gap-4">
+        <Chat />
+        <ChatRoom />
+        <FriendList triggerChatUpdate={triggerChatUpdate} />
       </div>
     </div>
   )

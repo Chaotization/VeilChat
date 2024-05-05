@@ -49,7 +49,7 @@ let exportedMethods = {
             userId = validation.checkId(userId);
             gender = validation.checkGender(gender);
             const userCollection = await users();
-
+            const currentUser = await userCollection.findOne({uId: userId});
             let allUsers = [];
             if (gender === 'others') {
                 allUsers = await userCollection.find({}).toArray();
@@ -64,11 +64,13 @@ let exportedMethods = {
             }
 
             const filteredUsers = allUsers.filter(user =>
-                activeUsers.some(activeUser => activeUser._id === user._id.toString()) && user._id.toString() !== userId
+                activeUsers.some(activeUser => activeUser.uId === user.uId)
+                && !currentUser.friends[user.uId]
+                && user.uId.toString() !== userId
             );
 
             if (filteredUsers.length === 0) {
-                throw new Error(`No active users with gender ${gender} found.`);
+                return [];
             }
 
             return filteredUsers;
@@ -83,7 +85,7 @@ let exportedMethods = {
             userId = validation.checkId(userId);
             language = validation.checkLanguage(language);
             const userCollection = await users();
-
+            const currentUser = await userCollection.findOne({uId: userId});
             const allUsers = await userCollection.find({ languages: { $in: [language.toLowerCase()] } }).toArray();
 
             const exists = await client.exists('activeUsers');
@@ -93,11 +95,13 @@ let exportedMethods = {
             }
 
             const filteredUsers = allUsers.filter(user =>
-                activeUsers.some(activeUser => activeUser._id === user._id.toString()) && user._id.toString() !== userId
+                activeUsers.some(activeUser => activeUser.uId === user.uId)
+                && user.uId.toString() !== userId
+                && !currentUser.friends.hasOwnProperty(userId)
             );
 
             if (filteredUsers.length === 0) {
-                throw new Error(`No active users with language ${language} found.`);
+                return [];
             }
 
             return filteredUsers;
@@ -113,7 +117,7 @@ let exportedMethods = {
             let { min, max } = validation.checkAgeRange(age);
 
             const userCollection = await users();
-
+            const currentUser = await userCollection.findOne({uId: userId});
             const allUsers = await userCollection.find({
                 dob: {
                     $gte: min,
@@ -128,13 +132,14 @@ let exportedMethods = {
             }
 
             const filteredUsers = allUsers.filter(user =>
-                activeUsers.some(activeUser => activeUser._id === user._id.toString()) && user._id.toString() !== userId
+                activeUsers.some(activeUser => activeUser.uId === user.uId)
+                && user.uId.toString() !== userId
+                && !currentUser.friends.hasOwnProperty(userId)
             );
 
+
             if (filteredUsers.length === 0) {
-                const minDateStr = min.toISOString().split('T')[0];
-                const maxDateStr = max.toISOString().split('T')[0];
-                throw new Error(`No users found within the age range from ${minDateStr} to ${maxDateStr}`);
+                return [];
             }
 
             return filteredUsers;
@@ -149,6 +154,7 @@ let exportedMethods = {
         try {
             userId = validation.checkId(userId)
             const userCollection = await users();
+            const currentUser = await userCollection.findOne({uId: userId});
             const query = {};
 
             if (criteria.gender) {
@@ -175,25 +181,27 @@ let exportedMethods = {
                 });
 
                 if (!results || results.length === 0) {
-                    throw new Error("Unable to find address for the provided coordinates");
+                    return "Unable to find address for the provided coordinates";
                 }
 
                 const userAddress = results[0].formatted_address;
                 const exists = await client.exists('activeUsers');
                 if(exists){
                     const activeUsers = await client.json.get('activeUsers');
-                    const filteredUsers = activeUsers.filter((user) => user._id !== userId && user.position);
+                    const filteredUsers = activeUsers.filter((user) => user.uId !== userId && user.position);
                     if(!filteredUsers || filteredUsers.length === 0) return [];
                     const nearbyUsers = await findNearByUsers(filteredUsers, lat, lng, criteria.distance);
-                    const nearbyUserIds = nearbyUsers.map(user => user._id);
-                    const userQueries = nearbyUserIds.map(id => ({ _id: new ObjectId(id) }));
+                    const nearbyUserIds = nearbyUsers.map(user => user.uId);
+                    const userQueries = nearbyUserIds.map(id => ({ uId: new ObjectId(id) }));
                     query.$or = userQueries;
                 }
 
             }
-            const filteredUsers = await userCollection.find(query).toArray();
+            const allUsers = await userCollection.find(query).toArray();
+            const filteredUsers = allUsers.filter(user => !currentUser.friends.hasOwnProperty(user._id.toString())
+            );
             if (filteredUsers.length === 0) {
-                throw "Error: No users found matching the provided criteria.";
+                return [];
             }
             return filteredUsers ;
         } catch (error) {
@@ -201,8 +209,7 @@ let exportedMethods = {
         }
     },
 
-    async filtering(userId, { gender = '', language = '', age = '', distance = 0, position = {} }) {
-        const criteria = {gender, language, age, distance, position};
+    async filtering(userId,  {gender = '', language = '', age = '', distance = 0, position = {}} ) {
         let activeCriteria = {};
 
         let user = {};
@@ -219,16 +226,16 @@ let exportedMethods = {
         const numberOfActiveFilters = Object.keys(activeCriteria).length;
 
         if (numberOfActiveFilters === 0) {
-            return [];
+            return "Please fill some of form to find the match users";
         }else{
-            user._id = userId;
+            user.uId = userId;
             user.status = 'active';
             const exists = await client.exists('activeUsers');
             if(exists){
                 const activeUsers = await client.json.get('activeUsers');
-                const existUser = activeUsers.find((u) => u._id === userId);
+                const existUser = activeUsers.find((u) => u.uId === userId);
                 if(existUser){
-                    const updatedUsers = activeUsers.map(u => u._id === userId ? user : u);
+                    const updatedUsers = activeUsers.map(u => u.uId === userId ? user : u);
                     client.json.set('activeUsers', '$', updatedUsers);
                 }else{
                     client.json.set('activeUsers', '$', [...activeUsers, user]);
@@ -254,8 +261,21 @@ let exportedMethods = {
             filteredUsers = await this.getUsersByAge(userId, activeCriteria.age);
         }
 
+        if (filteredUsers.length === 0) {
+            return {userFound: false, filteredUsers: []}
+        }
         const randomIndex = Math.floor(Math.random() * filteredUsers.length);
-        return [filteredUsers[randomIndex]];
+        if (filteredUsers.length > 0) {
+            return {
+                userFound: true,
+                selectedUser: filteredUsers[randomIndex]
+            };
+        } else {
+            return {
+                userFound: false,
+                selectedUser: null
+            };
+        }
     },
 }
 

@@ -11,7 +11,7 @@ const [data, setData] = useState("");
 const [openModal,setOpenModal]=useState(false);
 const [loading, setLoading]=useState(false);
 const[error, setError]=useState(null);
- 
+ const navigate=useNavigate();
 
   const [languages, setLanguages]=useState("");
   const [uploadError, setUploadError] = useState(null);
@@ -62,6 +62,10 @@ useEffect(() => {
       } catch (error) {
         
        setError(error);
+       setLoading('false')
+       alert('There was some problem processing your data')
+       navigate('/home')
+       return
       }
       setLoading(false);
     };
@@ -206,12 +210,12 @@ useEffect(() => {
       if (!response.ok) {
           if (data && data.message) {
               setErrors((prevState) => {
-                  return [...prevState, data.message];
+                  return [...prevState, data.message+" Refresh this page and try again"];
                 });
               return
             } else {
               setErrors((prevState) => {
-                  return [...prevState, "An error occurred while updating..."];
+                  return [...prevState, "An error occurred while updating"];
                 });
               return
             }
@@ -226,9 +230,9 @@ useEffect(() => {
   catch(e)
   {
       setErrors((prevState) => {
-          return [...prevState, e];
+          return [...prevState, e+" Refresh and try again..."];
         });
-        return
+      return
   }
     }
 
@@ -236,6 +240,8 @@ useEffect(() => {
 
   if(data && data.firstName){
     console.log(data)
+    let dob=new Date(data.dob);
+     let dateOfBirth=String(dob.getMonth() + 1).padStart(2, '0').toString()+"-"+String(dob.getDate()).padStart(2, '0').toString()+"-"+parseInt(dob.getFullYear().toString());
     const rootElement = document.getElementById('root');
     return(
         <div className="container">
@@ -254,7 +260,7 @@ useEffect(() => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
           <p className="text-sm text-gray-600">Mobile: {data.phoneNumber}</p>
           <p className="text-sm text-gray-600">Email: {data.email}</p>
-          <p className="text-sm text-gray-600">Born on: {data.dob}</p>
+          <p className="text-sm text-gray-600">Born on: {dateOfBirth}</p>
         </div>
         <p className="text-sm text-gray-600 mt-4">
           Languages you know:
@@ -445,10 +451,9 @@ useEffect(() => {
 }
 else
 {
-    return(<div >
-      <h4 style={{background:"white",color:"purple"}}className="text-center text-2xl font-medium mb-4"> Dear {currentUser.displayName || "user"}, fill this form to continue</h4>
-       <AddUser redirect="/profile"/>
-       </div>)
+  return(<div>
+    <AddUser  firstName={currentUser.displayName}redirect="/profile"/>
+    </div>)
 }
 }
 

@@ -9,15 +9,12 @@ const exportedMethods = {
       throw `The id provided is not a string or an  empty string`;
     }
     id = id.trim();
-    if (!ObjectId.isValid(id)) {
-      throw `Invalid Object ID`;
-    }
     return id;
   },
 
   checkGender(gender) {
     if (!gender) throw "Gender is not provided";
-    if (typeof gender !== "string") throw "Password must be a string!";
+    if (typeof gender !== "string") throw "Gender must be a string!";
     gender = gender.trim();
     const validGenders = ["male", "female", "others"];
     if (!validGenders.includes(gender))
@@ -231,7 +228,7 @@ const exportedMethods = {
       throw "Invalid date format. Must be in MM/DD/YYYY format.";
     }
     //return new Date(inputDate);
-    return inputDate;
+    return new Date(inputDate);
   },
 
   validateGender(gender) {

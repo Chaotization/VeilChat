@@ -11,6 +11,7 @@ import {getAuth} from 'firebase/auth';
 import {getStorage, ref, uploadBytesResumable, getDownloadURL} from "firebase/storage";
 import upload from "../context/upload.js";
 
+const storage = getStorage();
 const s3Client = new S3Client({
     region: 'us-east-1',
     credentials: {
@@ -18,9 +19,6 @@ const s3Client = new S3Client({
         secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_ID,
     },
 });
-
-const storage = getStorage();
-
 function SignUp() {
     const {currentUser} = useContext(AuthContext);
     const auth = getAuth();
@@ -167,8 +165,8 @@ function SignUp() {
 
         e.preventDefault();
         setLoading(true);
-
         setErrors([]);
+
         if (password !== repeat_password) {
             setErrors((prevState) => {
                 return [...prevState, "Passwords don't match"];
@@ -187,17 +185,34 @@ function SignUp() {
 
                 if (userCreated) {
                     setLoading(true)
+                    const userDocRef = doc(db, "users", userCreated.uid);
+                    await setDoc(userDocRef, {
+                        id: userCreated.uid,
+                        firstName: "",
+                        lastName: "",
+                        email: formData.email.trim(),
+                        dob: "",
+                        gender: "",
+                        phoneNumber: "",
+                        languages: [],
+                        friends: [],
+                        profilePictureLocation: ""
+                    });
+
+                    await setDoc(doc(db, "userchats", userCreated.uid), {
+                        chats: [],
+                    });
+
                     let response = await fetch("http://localhost:4000/user/createuserwithemail", {
                         method: "POST",
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({
-                            id: userCreated.uid,
+                            uId: userCreated.uid,
                             email: formData.email.trim(),
                             password: password,
                         })
                     });
-
-                    let data = await response.json()
+                    let data = await response.json();
                     if (!response.ok) {
                         if (data && data.message) {
                             setErrors((prevState) => {
@@ -248,18 +263,6 @@ function SignUp() {
         e.preventDefault();
         setErrors([]);
         setMatch(false);
-
-
-        let profilePictureUrl = "https://veilchat-s3.s3.amazonaws.com/usersProfileFolder/defaultUserProfilePicture.jpg";
-
-        if (imageFile) {
-            profilePictureUrl = await uploadToS3();
-            if (!profilePictureUrl) {
-                setErrors(prevState => [...prevState, "Failed to upload image to S3"]);
-                return;
-            }
-        }
-
         const regex = /^[A-Za-zÀ-ÿ ]+$/;
         if (!regex.test(formData.first_name.trim())) {
             setErrors((prevState) => {
@@ -272,8 +275,8 @@ function SignUp() {
             });
         }
 
-        let dob = document.getElementById("dob");
-        dob = new Date(dob);
+        let dob = document.getElementById("dob").value;
+        dob = new Date(dob)
 
         let yearOfBirth = parseInt(dob.getFullYear());
         const day = String(dob.getDate()).padStart(2, '0');
@@ -297,16 +300,17 @@ function SignUp() {
         let phone = document.getElementById("phoneNumber").value.trim();
 
 
-        if (!errors.length > 0) {
+        if (errors.length === 0) {
 
             try {
                 const currentUser = auth.currentUser
 
-                // let profilePictureUrl = ""
-                // if (imageFile) {
-                //     profilePictureUrl = await upload(imageFile);
-                // }
-                console.log("finally", profilePictureUrl)
+                let profilePictureUrl = ""
+                if (imageFile) {
+                    profilePictureUrl = await uploadToS3();
+
+                }
+
                 const userDocRef = doc(db, "users", currentUser.uid);
                 await setDoc(userDocRef, {
                     id: currentUser.uid,
@@ -324,8 +328,6 @@ function SignUp() {
                 await setDoc(doc(db, "userchats", currentUser.uid), {
                     chats: [],
                 })
-
-                console.log(profilePictureUrl)
 
                 let response = await fetch("http://localhost:4000/user/updateuser", {
                     method: "POST",
@@ -372,18 +374,7 @@ function SignUp() {
         if (loading) {
             return <div>loading..</div>
         }
-    };
-
-    const renderErrors = () => {
-        return errors.length > 0 ? (
-            <ul>
-                {errors.map((error, index) => (
-                    <li key={index} style={{color: "red"}}>
-                        {typeof error === "object" ? error.message : error.toString()}
-                    </li>
-                ))}
-            </ul>
-        ) : null;
+        return
     };
 
     return (
@@ -456,7 +447,13 @@ function SignUp() {
               </span>
                                 )}
                             </div>
-                            {renderErrors()}
+                            {errors.length > 0 && <ul>
+                                {errors.map((error) => (
+                                    <li key={error} style={{color: "red"}}>
+                                        {error}
+                                    </li>
+                                ))}
+                            </ul>}
                             <div className="flex justify-between items-center">
                                 <button
                                     className="bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline"
@@ -522,6 +519,7 @@ function SignUp() {
                         </label>
                         <input
                             type="date"
+                            id="dob"
                             name="dob"
                             value={formData.dob}
                             onChange={e => setFormData({...formData, dob: e.target.value})}

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import './FriendList.css';
 import { useUserStore } from '../../../context/userStore'; // Adjust the path as necessary
-import { doc, getDoc, query, collection, where, setDoc, getDocs, updateDoc, arrayUnion } from "firebase/firestore";
+import { doc, getDoc, query, collection, where, setDoc, getDocs, updateDoc, arrayUnion, arrayRemove, deleteDoc} from "firebase/firestore";
 import { db } from '../../../firebase/FirebaseFunctions';
 import {useChatStore} from '../../../context/chatStore';
 
@@ -9,6 +8,10 @@ const FriendList = ({triggerChatUpdate}) => {
   const { currentUser } = useUserStore();
   const [friends, setFriends] = useState([]);
   const { changeChat } = useChatStore();
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [selectedFriend, setSelectedFriend] = useState(null);
+  const [showProfile, setShowProfile] = useState(false);
+  const [viewingFriend, setViewingFriend] = useState(null);
 
   useEffect(() => {
     async function fetchFriendsData() {
@@ -92,24 +95,102 @@ const FriendList = ({triggerChatUpdate}) => {
       });
     }
   };
-  
-  
+
+  const handleDeleteFriend = async () => {
+    const userRef = doc(db, "users", currentUser.id);
+    const friendRef = doc(db, "users", selectedFriend.id);
+
+
+    await updateDoc(userRef, {
+      friends: arrayRemove(selectedFriend.id)
+    });
+    await updateDoc(friendRef, {
+      friends: arrayRemove(currentUser.id)
+    });
+
+    const userChatRef = doc(db, "userchats", currentUser.id);
+    const userChatSnapshot = await getDoc(userChatRef);
+    const userChatData = userChatSnapshot.data();
+    const userFdata = userChatData.chats.find(chat => chat.receiverId === selectedFriend.id);
+    const userchatDRef = doc(db, "chats", userFdata.id)
+    const userChatDocRef = doc(db, "userchats", "currentUser.id");
+
+    try {
+      await updateDoc(userChatDocRef,{
+        chats: arrayRemove(userFdata)
+      } );
+    } catch (error) {
+      console.error("Error deleting document:", error);
+    }
+    try {
+      await deleteDoc(userchatDRef);
+    } catch (e){
+      console.log(e)
+    }
+    const friendChatRef = doc(db, "userchats", selectedFriend.id);
+    const friendChatSnapshot = await getDoc(friendChatRef);
+    const friendChatData = friendChatSnapshot.data();
+    const FriendFdata = friendChatData.chats.find(chat => chat.receiverId === currentUser.id);
+    const friendChatDocRef = doc(db, "userchats", selectedFriend.id);
+    try {
+      await updateDoc(friendChatDocRef,{
+        chats: arrayRemove(FriendFdata)
+      } );
+    } catch (error) {
+      console.error("Error deleting document:", error);
+    }
+
+
+
+    setShowConfirm(false);
+    setFriends(friends.filter(friend => friend.id !== selectedFriend.id));
+  };
 
   return (
-    <div className="friendList">
-      <div className='search'>
+    <div className="friendList bg-white shadow-md rounded-lg p-4">
+      <div className="search mb-4">
         <div className="searchbar">
-          <input type="text" placeholder='Search Friend' />
+          <input type="text" placeholder="Search Friend" className="input input-bordered w-full" />
         </div>
       </div>
       {friends.map(friend => (
-        <div key={friend.id} className="item" onClick={() => handleSelectFriend(friend.id)}>
-          <img src={friend.profilePictureLocation || './public/imgs/default_avatar.png'} alt={friend.firstName} />
-          <div className='texts'>
-            <span>{friend.firstName} {friend.lastName}</span>
+        <div key={friend.id} className="item flex items-center mb-2 cursor-pointer" onClick={() => handleSelectFriend(friend.id)}>
+          <img src={friend.profilePictureLocation || './public/imgs/default_avatar.png'} alt={friend.firstName} className="w-10 h-10 rounded-full mr-4" />
+          <div className="texts flex-grow">
+            <span className="font-bold">{friend.firstName} {friend.lastName}</span>
           </div>
+          <img src="./imgs/friendprofile.png" alt="Profile" className="w-6 h-6 cursor-pointer mr-2" onClick={() => {
+            setViewingFriend(friend);
+            setShowProfile(true);
+          }} />
+          <img src="./imgs/delete.png" alt="Options" className="w-6 h-6 cursor-pointer" onClick={() => {
+            setShowConfirm(true);
+            setSelectedFriend(friend);
+          }} />
         </div>
       ))}
+      {showConfirm && (
+        <div className="confirmDialog bg-white shadow-md rounded-lg p-4 fixed inset-0 flex flex-col justify-center items-center">
+          <p className="mb-4">Are you sure you want to delete {selectedFriend.firstName} {selectedFriend.lastName}?</p>
+          <img src={selectedFriend.profilePictureLocation || './public/imgs/default_avatar.png'} alt={selectedFriend.firstName} className="w-20 h-20 rounded-full mb-4" />
+          <div className="flex justify-center">
+            <button className="btn btn-error mr-2" onClick={handleDeleteFriend}>Delete</button>
+            <button className="btn btn-secondary" onClick={() => setShowConfirm(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
+      {showProfile && (
+        <div className="profileDialog bg-white shadow-md rounded-lg p-4 fixed inset-0 flex flex-col justify-center items-center">
+        <h2 className="mb-4">{viewingFriend.firstName} {viewingFriend.lastName}'s Profile</h2>
+        <img src={viewingFriend.profilePictureLocation || './public/imgs/default_avatar.png'} alt={viewingFriend.firstName} className="w-20 h-20 rounded-full mb-4" />
+        <p>Email: {viewingFriend.email}</p>
+        <p>Gender: {viewingFriend.gender}</p>
+        <p>Languages: {viewingFriend.languages.join(', ')}</p> 
+      <div className="flex justify-center">
+      <button className="btn btn-secondary" onClick={() => setShowProfile(false)}>Close</button>
+    </div>
+  </div>
+)}
     </div>
   );
 };

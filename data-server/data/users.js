@@ -149,8 +149,7 @@ export const createUser = async (
         password: await bcrypt.hash(password, 15),
         userSince: validation.generateCurrentDate(),
         profilePictureLocation,
-        friends: [],
-        status: 'inactive'
+        friends: [], status: 'inactive'
     };
 
     const insertUser = await userCollection.insertOne(user);
@@ -204,7 +203,7 @@ export const loginUser = async (email, password) => {
         let exist = await client.exists(onlineUsersKey);
         if (!exist) {
             await client.json.set(onlineUsersKey, '$', [userId]);
-        }else{
+        } else {
             const onlineUsers = await client.json.get(onlineUsersKey);
             if (!onlineUsers.includes(userId)) {
                 await client.json.set(onlineUsersKey, '$', [...onlineUsers, userId]);
@@ -214,6 +213,7 @@ export const loginUser = async (email, password) => {
 
         return {
             userId: user._id.toString(),
+            uId: user.uId,
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
@@ -223,12 +223,10 @@ export const loginUser = async (email, password) => {
             languages: user.languages,
             userSince: user.userSince,
             profilePictureLocation: user.profilePictureLocation,
-            friends: user.friends,
-            status: user.status
+            friends: user.friends, status: user.status
         };
     }
 };
-
 
 export const logoutUser = async (userId) => {
     userId = validation.checkId(userId);
@@ -246,7 +244,6 @@ export const logoutUser = async (userId) => {
         const onlineUsers = await client.json.get(onlineUsersKey);
         const filteredUsers = onlineUsers.filter(item => item !== userId.toString());
         if (filteredUsers.length !== onlineUsers.length) {
-            console.log("deleted the user from onlineUsers Readis Pool");
             await client.json.set(onlineUsersKey, '$', filteredUsers);
         }
     }
@@ -254,7 +251,6 @@ export const logoutUser = async (userId) => {
         logoutUser: true
     };
 };
-
 
 export const updateUserFirstName = async (
     userId,
@@ -407,17 +403,25 @@ export const updateFriendStatus = async (userId, friendId, newStatus) => {
         throw `Error: Invalid status '${newStatus}'`;
     }
     const userCollection = await users();
+    const user = await userCollection.findOne({uId: userId});
+    const friend = await userCollection.findOne({uId: friendId});
+
+    let exist = user.friends.hasOwnProperty(friendId) && friend.friends.hasOwnProperty(userId);
+    if(exist){
+        return "The friend already exist"
+    }
+
     if (newStatus === "reject") {
         const rejectUpdateResult = await userCollection.updateOne(
-            {_id: new ObjectId(friendId)},
-            {$set: {[`friends.${userId}`]: "rejected"}}
+            { uId: friendId },
+            { $set: { [`friends.${userId}`]: "sent" } }
         );
         if (rejectUpdateResult.modifiedCount === 0) {
             throw `Error: Failed to update rejected friend status for user ${userId} to ${friendId}`;
         }
         const removeUpdateResult = await userCollection.updateOne(
-            {_id: new ObjectId(userId)},
-            {$unset: {[`friends.${friendId}`]: ""}}
+            { uId: userId },
+            { $unset: { [`friends.${friendId}`]: "sent" } }
         );
         if (removeUpdateResult.modifiedCount === 0) {
             throw `Error: Failed to remove reject user ${userId} from user ${friendId}'s friend list`;
@@ -429,16 +433,16 @@ export const updateFriendStatus = async (userId, friendId, newStatus) => {
     } else if (newStatus === "accept") {
         // if accepted, update the user's friend status to accepted
         const userUpdateResult = await userCollection.updateOne(
-            {_id: new ObjectId(userId)},
-            {$set: {[`friends.${friendId}`]: "connected"}}
+            { uId: userId },
+            { $set: { [`friends.${friendId}`]: "connected" } }
         );
         if (userUpdateResult.modifiedCount === 0) {
             throw `Error: Failed to update accepted friend status for user ${userId} to ${friendId}`;
         }
         //and add the friend to the other user's friend list and mark status accepted
         const friendUpdateResult = await userCollection.updateOne(
-            {_id: new ObjectId(friendId)},
-            {$set: {[`friends.${userId}`]: "connected"}}
+            { uId: friendId },
+            { $set: { [`friends.${userId}`]: "connected" } }
         );
         if (friendUpdateResult.modifiedCount === 0) {
             throw `Error: Failed to update accepted friend status for user ${friendId} to ${userId}`;
@@ -449,18 +453,18 @@ export const updateFriendStatus = async (userId, friendId, newStatus) => {
         };
     } else if (newStatus === "send") {
         const sendFriendFromUser = await userCollection.updateOne(
-            {_id: new ObjectId(userId)},
-            {$set: {[`friends.${friendId}`]: "sent"}}
+            { uId: userId },
+            { $set: { [`friends.${friendId}`]: "sent" } }
         );
         if (sendFriendFromUser.modifiedCount === 0) {
             throw `Error: Failed to send friend request for user ${userId} to ${friendId}`;
         }
 
-        const receiveduserFromFriend = await userCollection.updateOne(
-            {_id: new ObjectId(friendId)},
-            {$set: {[`friends.${userId}`]: "received"}}
+        const receivedUserFromFriend = await userCollection.updateOne(
+            { uId: friendId },
+            { $set: { [`friends.${userId}`]: "received" } }
         );
-        if (receiveduserFromFriend.modifiedCount === 0) {
+        if (receivedUserFromFriend.modifiedCount === 0) {
             throw `Error: Failed to receive a friend request for friend ${friendId} to ${userId}`;
         }
         return {
@@ -470,16 +474,16 @@ export const updateFriendStatus = async (userId, friendId, newStatus) => {
     } else if (newStatus === "delete") {
         // if user send a friend request, update the user's friend status to sent
         const deleteFriendFromUser = await userCollection.updateOne(
-            {_id: new ObjectId(userId)},
-            {$unset: {[`friends.${friendId}`]: ""}}
+            { uId: userId },
+            { $unset: { [`friends.${friendId}`]: "" } }
         );
         if (deleteFriendFromUser.modifiedCount === 0) {
             throw `Error: Failed to update sent friend status for user ${userId} to ${friendId}`;
         }
         // and update the friend's friend status to received
         const deleteUserFromFriend = await userCollection.updateOne(
-            {_id: new ObjectId(friendId)},
-            {$unset: {[`friends.${userId}`]: ""}}
+            { uId: friendId },
+            { $set: { [`friends.${userId}`]: "connected" } }
         );
         if (deleteUserFromFriend.modifiedCount === 0) {
             throw `Error: Failed to update received friend status for user ${friendId} to ${userId}`;
@@ -522,12 +526,12 @@ export const getUserInfoByEmail = async (email) => {
         lastName: user.lastName,
         email: user.email,
         phoneNumber: user.phoneNumber,
-        dob: user.dob,
+        dob:user.dob,
         languages: user.languages,
         userSince: user.userSince,
         profilePictureLocation: user.profilePictureLocation,
         friends: user.friends,
-        status: user.status
+        status:user.status
     };
 }
 
@@ -574,13 +578,17 @@ export const setStatus = async (email, status) => {
         throw e;
     }
 }
-export const updateUser = async (user) => {
-    try {
+
+
+export const updateUser = async (user) =>
+{   
+    try{
         //let uid=user._id.trim();
-        const userCollection = await users();
-        let userInfo = await userCollection.findOne({email: user.email});
-        if (!userInfo) {
-            throw "Couldn't fetch data from Db..."
+        const userCollection=await users();
+        let userInfo=await userCollection.findOne({email:user.email});
+        if(!userInfo)
+        {
+            throw "Couldn't fetch data from the server"
         }
         if (user.firstName) {
             let fname = validation.validateName(user.firstName)
@@ -618,48 +626,51 @@ export const updateUser = async (user) => {
     } catch (e) {
         throw e
     }
-
 }
 
-export const createAccountWithEmailAndPassword = async (user) => {
+export const createAccountWithEmailAndPassword=async(user)=>
+{
     if (!user) {
-        throw "Login credentials must be provided"
-    }
-    let email = validation.validateEmail(user.email);
-    let password = "";
-    if (user.password) {
+		throw "Login credentials must be provided"
+	}
+    let uId = user.uId.trim().toString()
+	let email=validation.validateEmail(user.email);
+	let password="";
+	if(user.password)
+	{
         password = validation.validatePassword(user.password, "password");
         password = await bcrypt.hash(password, 15);
-    }
+	}
 
-    const userCollection = await users();
-    const ifExist = await userCollection.findOne({email: email});
-    if (ifExist) {
-        throw `Error: ${email} is already registered, Please Login`;
-    }
-    const new_user = {
-        _id: user.id.trim(),
-        firstName: "",
-        lastName: "",
+	const userCollection = await users();
+	const ifExist = await userCollection.findOne({ email: email });
+	if (ifExist) {
+		throw `Error: ${email} is already registered, Please Login`;
+	}
+	const new_user = {
+        _id: new ObjectId(), 
+        uId: uId,
+        firstName:"",
+        lastName:"",
         email,
-        languages: [],
-        gender: "",
-        dob: "",
-        phoneNumber: "",
-        password: password,
+        languages:[],
+        gender:"",
+        dob:"",
+        phoneNumber:"",
+        password:password ,
         userSince: validation.generateCurrentDate(),
-        profilePictureLocation: "",
+        profilePictureLocation:"",
         friends: [],
-        status: 'inactive'
+        status:'inactive'
     };
 
-    const insertUser = await userCollection.insertOne(new_user);
-    if (!insertUser.acknowledged || !insertUser.insertedId) {
-        throw `Error: couldn't register the account: ${email}`;
+	const insertUser = await userCollection.insertOne(new_user);
+	if (!insertUser.acknowledged || !insertUser.insertedId) {
+		throw `Error: couldn't register the account: ${email}`;
 
-    }
-    const insertedUser = await getUserInfoByEmail(email);
-    return insertedUser;
+	}
+	const insertedUser=await getUserInfoByEmail(email);
+	return insertedUser ;
 
 }
 
