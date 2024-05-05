@@ -43,7 +43,7 @@ function AddUser(props)
   const [errors, setErrors] = useState([]);
   const[profilePictureLocation, setProfilePictureLocation]=useState(null);
   const [formData, setFormData] = useState({
-    id: "",
+    uId: "",
     first_name: "",
     last_name: "",
     dob: "",
@@ -175,6 +175,7 @@ function AddUser(props)
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                  uId:loggedUser.uid,
                     firstName: formData.first_name.trim(),
                     lastName: formData.last_name.trim(),
                     email: loggedUser.email,
@@ -217,7 +218,7 @@ function AddUser(props)
   }
 return(
     <div>
-
+      <h4 style={{background:"white",color:"purple"}}className="text-center text-2xl font-medium mb-4"> Dear {props.firstName || "user"}, fill this form to continue</h4>
     <form
           onSubmit={handleSignUp}
           className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">

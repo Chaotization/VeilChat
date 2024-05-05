@@ -600,10 +600,11 @@ export const updateUser = async (user) =>
 {   
     try{
         //let uid=user._id.trim();
-        const userCollection = await users();
-        let userInfo = await userCollection.findOne({email: user.email});
-        if (!userInfo) {
-            throw "Couldn't fetch data from Db..."
+        const userCollection=await users();
+        let userInfo=await userCollection.findOne({email:user.email});
+        if(!userInfo)
+        {
+            throw "Couldn't fetch data from the server"
         }
         if (user.firstName) {
             let fname = validation.validateName(user.firstName)
@@ -660,7 +661,8 @@ export const createAccountWithEmailAndPassword=async(user)=>
 		throw `Error: ${email} is already registered, Please Login`;
 	}
 	const new_user = {
-        _id: new ObjectId(), uId: uId,
+        _id: new ObjectId(), 
+        uId: uId,
         firstName:"",
         lastName:"",
         email,

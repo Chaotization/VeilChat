@@ -11,7 +11,7 @@ const [data, setData] = useState("");
 const [openModal,setOpenModal]=useState(false);
 const [loading, setLoading]=useState(false);
 const[error, setError]=useState(null);
- 
+ const navigate=useNavigate();
 
   const [languages, setLanguages]=useState("");
   const [uploadError, setUploadError] = useState(null);
@@ -62,6 +62,10 @@ useEffect(() => {
       } catch (error) {
         
        setError(error);
+       setLoading('false')
+       alert('There was some problem processing your data')
+       navigate('/home')
+       return
       }
       setLoading(false);
     };
@@ -206,12 +210,12 @@ useEffect(() => {
       if (!response.ok) {
           if (data && data.message) {
               setErrors((prevState) => {
-                  return [...prevState, data.message];
+                  return [...prevState, data.message+" Refresh this page and try again"];
                 });
               return
             } else {
               setErrors((prevState) => {
-                  return [...prevState, "An error occurred while updating..."];
+                  return [...prevState, "An error occurred while updating"];
                 });
               return
             }
@@ -226,9 +230,9 @@ useEffect(() => {
   catch(e)
   {
       setErrors((prevState) => {
-          return [...prevState, e];
+          return [...prevState, e+" Refresh and try again..."];
         });
-        return
+      return
   }
     }
 
@@ -445,10 +449,9 @@ useEffect(() => {
 }
 else
 {
-    return(<div >
-      <h4 style={{background:"white",color:"purple"}}className="text-center text-2xl font-medium mb-4"> Dear {currentUser.displayName || "user"}, fill this form to continue</h4>
-       <AddUser redirect="/profile"/>
-       </div>)
+  return(<div>
+    <AddUser  firstName={currentUser.displayName}redirect="/profile"/>
+    </div>)
 }
 }
 
