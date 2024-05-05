@@ -606,6 +606,9 @@ export const updateUser = async (user) => {
             const gender = validation.checkGender(user.gender);
             userInfo['gender'] = gender;
         }
+        if (user.profilePictureLocation) {
+            userInfo['profilePictureLocation'] = user.profilePictureLocation;
+        }
         let updatedUser = await userCollection.updateOne({email: user.email}, {$set: userInfo});
         if (!updatedUser.acknowledged) {
             throw "Couldn't update data";
