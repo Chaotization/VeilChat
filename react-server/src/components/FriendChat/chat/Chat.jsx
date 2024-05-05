@@ -1,4 +1,3 @@
-import './Chat.css'
 import { AuthContext } from '../../../context/AuthContext';
 import { useContext, useEffect, useState } from 'react';
 import { useUserStore } from '../../../context/userStore';
@@ -19,6 +18,7 @@ const Chat = ({updateTrigger}) =>{
         const unSub = onSnapshot(
           doc(db, "userchats", currentUser.id),
           async (res) => {
+           
             const items = res.data().chats;
     
             const promises = items.map(async (item) => {

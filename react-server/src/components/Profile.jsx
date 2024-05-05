@@ -63,6 +63,7 @@ useEffect(() => {
         
        setError(error);
        setLoading('false')
+       alert('There was some problem processing your data')
        navigate('/home')
        return
       }
@@ -448,10 +449,9 @@ useEffect(() => {
 }
 else
 {
-    return(<div >
-      <h4 style={{background:"white",color:"purple"}}className="text-center text-2xl font-medium mb-4"> Dear {currentUser.displayName || "user"}, fill this form to continue</h4>
-       <AddUser redirect="/profile"/>
-       </div>)
+  return(<div>
+    <AddUser  firstName={currentUser.displayName}redirect="/profile"/>
+    </div>)
 }
 }
 

@@ -59,7 +59,7 @@ function App() {
                     </Route>
                     <Route path='/signin' element={<SignIn />} />
                     <Route path='/signup' element={<SignUp />} />
-                    <Route path='/search-user' element={<UserFilter/>} />
+                    <Route path='/searchuser' element={<UserFilter/>} />
                     <Route path='/chat/:providedChatId' element={<Chatroom/>}/>
                     <Route path='/profile' element={<Profile/>}/>
                     <Route path='/friendchat' element={<FriendChat/>} />

@@ -1,5 +1,4 @@
-import Router, {json} from "express";
-import bcrypt from "bcrypt";
+import Router from "express";
 
 import usersData from '../data/index.js';
 
@@ -140,14 +139,11 @@ router.route('/changestatus').post(async(req,res)=>
 router.route('/updateuser').post(async(req,res)=>{
     let user=req.body;
     try{
-    if(user)
-    {
+    if(user) {
         let updatedUser=await usersData.updateUser(user);
-        if(updatedUser)
-        {
+        if(updatedUser) {
             return res.status(200).json(updatedUser)
-        }
-        else
+        } else
         {
             return res.status(404).json({message:"Couldn't update user"})
         }
