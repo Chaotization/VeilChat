@@ -124,55 +124,42 @@ const ChatRoom = () =>{
   }
 
   return (
-      <div className="chat">
-        <div className="top">
-          <div className="user">
-            <img src = {user?.profilePictureLocation  || "/imgs/avatar.png"} alt="" />
-            <div className='texts'>
-            <span>{user?.firstName}  {user?.lastName}</span>
-            </div>
+    <div className="chat bg-white shadow-md rounded-lg p-4">
+      <div className="top flex items-center mb-4">
+        <div className="user flex items-center">
+          <img src={user?.profilePictureLocation || "/imgs/avatar.png"} alt="" className="w-12 h-12 rounded-full mr-4" />
+          <div className="texts">
+            <span className="font-bold">{user?.firstName} {user?.lastName}</span>
           </div>
         </div>
-        <div className="center">
-          {chat?.messages?.map(message=>(
-            <div className={
-              message.senderId === currentUser?.id ? "message own" : "message"
-            } key = {message?.creatAt}>
+      </div>
+      <div className="center overflow-y-auto max-h-80">
+        {chat?.messages?.map(message => (
+          <div
+            className={`message ${message.senderId === currentUser?.id ? 'own bg-primary text-white' : 'bg-gray-200'} rounded-lg p-2 mb-2`}
+            key={message?.creatAt}
+          >
             <div className="texts">
-              {message.img && <img src={message.img} alt="" />}
+              {message.img && <img src={message.img} alt="" className="w-full mb-2 rounded-lg" />}
               <p>{message.text}</p>
-              {/* <span>{format(message.createdAt.toDate())}</span> */}
             </div>
           </div>
-          ))}
-          {img.url && (
-          <div className="message own">
+        ))}
+        {img.url && (
+          <div className="message own bg-primary text-white rounded-lg p-2 mb-2">
             <div className="texts">
-              <img src={img.url} alt="" />
+              <img src={img.url} alt="" className="w-full mb-2 rounded-lg" />
             </div>
           </div>
         )}
-          {/* Auto scroll down to last message */}
-          <div ref={endRef}></div>
-        </div>
-        <div className="bottom">
-          
-          <input type = 'text' placeholder='Type a message...' value={text} onChange={(e) => setText(e.target.value)}/>
-          <div className="icons">
-          <label htmlFor="file">
-          <img src="/imgs/plus.png" alt="" />
-          </label>
-          <input
-          type="file"
-          id="file"
-          style={{ display: "none" }}
-          onChange={handleFileUpload}
-          accept="image/*,video/*,audio/*,application/zip"
-          />
-          </div>
-          <button className='sendButton' onClick={handleSend}>Send</button>
-        </div>
+        <div ref={endRef}></div>
       </div>
+      <div className="bottom flex items-center mt-4">
+        <div className="icons"></div>
+        <input type="text" placeholder="Type a message..." value={text} onChange={(e) => setText(e.target.value)} className="input input-bordered flex-grow mr-2" />
+        <button className="sendButton btn btn-primary" onClick={handleSend}>Send</button>
+      </div>
+    </div>
   )
 }
 

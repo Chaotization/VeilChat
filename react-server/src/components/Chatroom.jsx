@@ -2,6 +2,7 @@ import React,{ useState , useEffect, useRef } from 'react';
 import { getDatabase, ref , push , onChildAdded , onValue } from 'firebase/database';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
+import axios from 'axios';
 
 function Chatroom(props) {
   const [messages,setMessages] = useState([])
@@ -138,9 +139,22 @@ function Chatroom(props) {
     setShowFriendRequestModal(!showFriendRequestModal);
   };
 
-  const handleSendFriendRequest = () => {
-    // Implement the logic to send a friend request
-    console.log('Sending friend request');
+  const handleSendFriendRequest = async () => {
+    try {
+      const response = await axios.put('http://localhost:4000/friendRequest', {
+        senderId: currentUser.uid,
+        receiverId: otherUserId,
+      });
+  
+      if (response.status === 200) {
+        console.log('Friend request sent successfully');
+      } else {
+        console.error('Failed to send friend request');
+      }
+    } catch (error) {
+      console.error('Error sending friend request:', error);
+    }
+  
     toggleFriendRequestModal();
   };
 
