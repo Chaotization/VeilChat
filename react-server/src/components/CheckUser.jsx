@@ -35,7 +35,7 @@ const url=useParams();
                   method: "POST",
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({
-                    id: currentUser.uid,
+                    uId: currentUser.uid,
                     email: currentUser.email,
                   })
                 });
@@ -87,7 +87,7 @@ const url=useParams();
   }
   
 
-  return <AddUser redirect="/home"/>;
+  return <AddUser firstName={currentUser.displayName}redirect="/home"/>;
 }
 
 export default CheckUser;

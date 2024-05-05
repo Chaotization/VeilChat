@@ -280,7 +280,7 @@ const handleSignUp=async(e)=>
           });
     }
     
-    let dob=document.getElementById("dob");
+    let dob=document.getElementById("dob").value;
     dob = new Date(dob)
 
     let yearOfBirth=parseInt(dob.getFullYear());
@@ -523,6 +523,7 @@ return
           </label>
           <input
               type="date"
+              id="dob"
               name="dob"
               value={formData.dob}
               onChange={e => setFormData({ ...formData, dob: e.target.value })}
