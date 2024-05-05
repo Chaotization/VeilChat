@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './FriendList.css';
+// import './FriendList.css';
 import { useUserStore } from '../../../context/userStore'; // Adjust the path as necessary
 import { doc, getDoc, query, collection, where, setDoc, getDocs, updateDoc, arrayUnion, arrayRemove, deleteDoc} from "firebase/firestore";
 import { db } from '../../../firebase/FirebaseFunctions';
@@ -147,11 +147,7 @@ const FriendList = ({triggerChatUpdate}) => {
 
   return (
     <div className="friendList">
-      <div className='search'>
-        <div className="searchbar">
-          <input type="text" placeholder='Search Friend' />
-        </div>
-      </div>
+      
       {friends.map(friend => (
         <div key={friend.id} className="item" onClick={() => handleSelectFriend(friend.id)}>
           <img src={friend.profilePictureLocation || './public/imgs/default_avatar.png'} alt={friend.firstName} />

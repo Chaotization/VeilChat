@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import './ChatRoom.css'
+// import './ChatRoom.css'
 import { arrayUnion, doc, getDoc, onSnapshot, updateDoc} from "firebase/firestore";
 import { db } from '../../../firebase/FirebaseFunctions';
 import {useChatStore} from '../../../context/chatStore';
@@ -13,6 +13,10 @@ const ChatRoom = () =>{
   const { chatId, user } = useChatStore();
   const {currentUser} = useUserStore();
   const [text, setText] = useState("");
+  const fileInputRef = useRef(null);
+  const handleIconClick = () => {
+    fileInputRef.current.click();
+  };
   const [img, setImg] = useState({
     file: null,
     url: "",
@@ -32,6 +36,17 @@ const ChatRoom = () =>{
       unSub();
     }
   }, [chatId])
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setImg({
+        file,
+        url,
+      });
+    }
+  };
   
   const handleImg = (e) => {
     if (e.target.files[0]) {
@@ -142,8 +157,20 @@ const ChatRoom = () =>{
           <div ref={endRef}></div>
         </div>
         <div className="bottom">
-          <div className="icons"></div>
+          
           <input type = 'text' placeholder='Type a message...' value={text} onChange={(e) => setText(e.target.value)}/>
+          <div className="icons">
+          <label htmlFor="file">
+          <img src="/imgs/plus.png" alt="" />
+          </label>
+          <input
+          type="file"
+          id="file"
+          style={{ display: "none" }}
+          onChange={handleFileUpload}
+          accept="image/*,video/*,audio/*,application/zip"
+          />
+          </div>
           <button className='sendButton' onClick={handleSend}>Send</button>
         </div>
       </div>

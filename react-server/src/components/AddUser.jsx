@@ -4,7 +4,7 @@ import Resizer from 'react-image-file-resizer';
 import { useUserStore } from '../context/userStore';
 import { useNavigate, Link, Navigate } from "react-router-dom";
 import { db } from '../firebase/FirebaseFunctions';
-import { setDoc, doc } from 'firebase/firestore';
+import { setDoc, doc, updateDoc, getDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import upload from "../context/upload.js";
 
@@ -14,7 +14,7 @@ function AddUser(props)
     const auth =getAuth();
     const navigate=useNavigate();
     const loggedUser=auth.currentUser;
-//const { currentUser, isLoading } = useUserStore();
+  const { currentUser} = useUserStore();
   const [languages, setLanguages]=useState("");
   const [uploadError, setUploadError] = useState(null);
   const [imageFile, setImageFile] = useState(null); 
@@ -148,7 +148,6 @@ function AddUser(props)
     if(!errors.length>0){
 
       try{
-    //I AM NOT FAMILIAR WITH THIS, THIS IS THROWING ERROR(MAYBE BCOZ OF PIC FILE), SO I COMMENTED IT, PLEASE REMOVE THIS WHEN YOU FIGURE IT OUT, THANK YOU-BNKVARMA
           let profilePictureUrl = ""
           if (imageFile) {
             profilePictureUrl = await upload(imageFile);
@@ -156,22 +155,21 @@ function AddUser(props)
 
           //save to firebase db
           const userDocRef = doc(db, "users", loggedUser.uid);
-          await setDoc(userDocRef, {
-              id: loggedUser.uid,
+          await updateDoc(userDocRef, {
               firstName: formData.first_name.trim(),
               lastName: formData.last_name.trim(),
-              email: loggedUser.email,
               dob: `${month}/${day}/${year}`,
               gender: formData.gender,
               phoneNumber: "+1"+phone,
               languages: languages,
-              friends: [],
               profilePictureLocation: profilePictureUrl || ""
           });
 
-          await setDoc(doc(db, "userchats", loggedUser.uid), {
-            chats: [],
-          });
+          const userChatsRef = doc(db, "userchats", loggedUser.uid);
+          const userChatsSnap = await getDoc(userChatsRef);
+          if (!userChatsSnap.exists()) {
+              await setDoc(userChatsRef, { chats: [] });
+          }
 
       let response = await fetch("http://localhost:4000/user/updateuser", {
                 method: "POST",
