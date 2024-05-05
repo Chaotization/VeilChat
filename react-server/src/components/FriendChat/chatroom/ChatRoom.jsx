@@ -4,9 +4,12 @@ import { db } from '../../../firebase/FirebaseFunctions';
 import {useChatStore} from '../../../context/chatStore';
 import { useUserStore } from '../../../context/userStore';
 import upload from '../../../context/upload';
+import moment from 'moment';
 
 const ChatRoom = () =>{
-
+  const timeAgo = (createdAt) => {
+    return moment(createdAt).fromNow();
+  }
   const [chat, setChat] = useState();
   const endRef = useRef(null)
   const { chatId, user } = useChatStore();
@@ -142,6 +145,7 @@ const ChatRoom = () =>{
             <div className="texts">
               {message.img && <img src={message.img} alt="" className="w-full mb-2 rounded-lg" />}
               <p>{message.text}</p>
+              <span>{timeAgo(message.createdAt)}</span>
             </div>
           </div>
         ))}
