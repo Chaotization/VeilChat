@@ -135,7 +135,7 @@ useEffect(() => {
         let dob=document.getElementById("dob").value;
         let phoneNumber=document.getElementById('phoneNumber').value;
         let gender=document.getElementById('gender').value;
-        let updatedUser={_id:data.userId}
+        let updatedUser={uId:data.userId}
         updatedUser['email']=data.email;
     if(fname.trim())
     {
