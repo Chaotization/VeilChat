@@ -240,6 +240,8 @@ useEffect(() => {
 
   if(data && data.firstName){
     console.log(data)
+    let dob=new Date(data.dob);
+     let dateOfBirth=String(dob.getMonth() + 1).padStart(2, '0').toString()+"-"+String(dob.getDate()).padStart(2, '0').toString()+"-"+parseInt(dob.getFullYear().toString());
     const rootElement = document.getElementById('root');
     return(
         <div className="container">
@@ -258,7 +260,7 @@ useEffect(() => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
           <p className="text-sm text-gray-600">Mobile: {data.phoneNumber}</p>
           <p className="text-sm text-gray-600">Email: {data.email}</p>
-          <p className="text-sm text-gray-600">Born on: {data.dob}</p>
+          <p className="text-sm text-gray-600">Born on: {dateOfBirth}</p>
         </div>
         <p className="text-sm text-gray-600 mt-4">
           Languages you know:
