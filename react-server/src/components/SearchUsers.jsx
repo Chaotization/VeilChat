@@ -80,6 +80,7 @@ const UserFilter = () => {
         setMessages([]);
         const db = getDatabase();
         const participantsRef = ref(db, `chats/${newChatId}/participants`);
+        push(participantsRef, { userId: currentUser.uid, joined: true });
         push(participantsRef, { userId: uid, joined: false });
     
         navigate(`/chat/${newChatId}`)

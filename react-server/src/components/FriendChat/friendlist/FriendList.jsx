@@ -145,27 +145,33 @@ const FriendList = ({triggerChatUpdate}) => {
   };
 
   return (
-    <div className="friendList">
-      
+    <div className="friendList bg-white shadow-md rounded-lg p-4">
+      <div className="search mb-4">
+        <div className="searchbar">
+          <input type="text" placeholder="Search Friend" className="input input-bordered w-full" />
+        </div>
+      </div>
       {friends.map(friend => (
-        <div key={friend.id} className="item" onClick={() => handleSelectFriend(friend.id)}>
-          <img src={friend.profilePictureLocation || './public/imgs/default_avatar.png'} alt={friend.firstName} />
-          <div className='texts'>
-            <img src="./imgs/option.png" alt="Options" onClick={() => {
-              setShowConfirm(true);
-              setSelectedFriend(friend);
-            }}
-            />
+        <div key={friend.id} className="item flex items-center mb-2 cursor-pointer" onClick={() => handleSelectFriend(friend.id)}>
+          <img src={friend.profilePictureLocation || './public/imgs/default_avatar.png'} alt={friend.firstName} className="w-10 h-10 rounded-full mr-4" />
+          <div className="texts flex-grow">
+            <span className="font-bold">{friend.firstName} {friend.lastName}</span>
           </div>
+          <img src="./imgs/option.png" alt="Options" className="w-6 h-6 cursor-pointer" onClick={() => {
+            setShowConfirm(true);
+            setSelectedFriend(friend);
+          }} />
         </div>
       ))}
       {showConfirm && (
-          <div className="confirmDialog">
-            <p>Are you sure you want to delete {selectedFriend.firstName} {selectedFriend.lastName}?</p>
-            <img src={selectedFriend.profilePictureLocation || './public/imgs/default_avatar.png'} alt={selectedFriend.firstName} />
-            <button onClick={handleDeleteFriend}>Delete</button>
-            <button onClick={() => setShowConfirm(false)}>Cancel</button>
-    </div>
+        <div className="confirmDialog bg-white shadow-md rounded-lg p-4 fixed inset-0 flex flex-col justify-center items-center">
+          <p className="mb-4">Are you sure you want to delete {selectedFriend.firstName} {selectedFriend.lastName}?</p>
+          <img src={selectedFriend.profilePictureLocation || './public/imgs/default_avatar.png'} alt={selectedFriend.firstName} className="w-20 h-20 rounded-full mb-4" />
+          <div className="flex justify-center">
+            <button className="btn btn-error mr-2" onClick={handleDeleteFriend}>Delete</button>
+            <button className="btn btn-secondary" onClick={() => setShowConfirm(false)}>Cancel</button>
+          </div>
+        </div>
       )}
     </div>
   );
