@@ -155,15 +155,15 @@ const uploadToS3 = async () => {
   }
   if (currentUser) {
     return <Navigate to='/home' />;
-}
-let userCreated=null;
+  }
+  let userCreated=null;
 
   const handleSubmit = async(e) => {
 
     e.preventDefault();
     setLoading(true);
-
     setErrors([]);
+
     if (password !== repeat_password) {
       setErrors((prevState) => {
         return [...prevState, "Passwords don't match"];
@@ -172,17 +172,35 @@ let userCreated=null;
     }
 
   if(!errors.length){
-    
+
      try {
        await doCreateUserWithEmailAndPassword(
         formData.email,
         password           
-    );
-    userCreated= auth.currentUser;
+      );
+      userCreated= auth.currentUser;
 
       if(userCreated){
         setLoading(true)
-        let response = await fetch("http://localhost:4000/user/createuserwithemail", {
+        const userDocRef = doc(db, "users", userCreated.uid);
+            await setDoc(userDocRef, {
+                id: userCreated.uid,
+                firstName: "",
+                lastName: "",
+                email: formData.email.trim(),
+                dob: "",
+                gender: "",
+                phoneNumber: "",
+                languages: [],
+                friends: [],
+                profilePictureLocation: ""
+            });
+
+            await setDoc(doc(db, "userchats", userCreated.uid), {
+              chats: [],
+          });
+
+          let response = await fetch("http://localhost:4000/user/createuserwithemail", {
           method: "POST",
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -190,9 +208,8 @@ let userCreated=null;
               email: formData.email.trim(),
               password:password,
           })
-        });
-  
-        let data=await response.json()
+          });
+          let data = await response.json();
         if (!response.ok) {
           if (data && data.message) {
               setErrors((prevState) => {
@@ -263,7 +280,8 @@ const handleSignUp=async(e)=>
           });
     }
     
-    let dob=document.getElementById("dob").value;
+    let dob=document.getElementById("dob");
+  
    
     let yearOfBirth=parseInt(dob.getFullYear());
     const day = String(dob.getDate()).padStart(2, '0');
@@ -289,7 +307,7 @@ const handleSignUp=async(e)=>
 
 
 
-    if(!errors.length>0){
+    if(errors.length === 0){
 
       try{
         const currentUser = auth.currentUser
