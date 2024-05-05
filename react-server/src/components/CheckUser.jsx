@@ -4,9 +4,6 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import AddUser from './AddUser';
 import Home from './ProtectedHome';
 import { useParams } from 'react-router-dom';
-import { db } from '../firebase/FirebaseFunctions';
-import { setDoc, doc, updateDoc, getDoc } from 'firebase/firestore';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 function CheckUser() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -46,29 +43,6 @@ const url=useParams();
                 if (createResponse.ok) {
                   const createdData = await createResponse.json();
                   setData(createdData);
-                  try{
-                    const userDocRef = doc(db, "users", currentUser.uid);
-                    await setDoc(userDocRef, {
-                     id: currentUser.uid,
-                      firstName: "",
-                      lastName: "",
-                      email: currentUser.email,
-                      dob: "",
-                      gender: "",
-                      phoneNumber: "",
-                      languages: [],
-                      friends: [],
-                      profilePictureLocation: ""
-                  });
-                  await setDoc(doc(db, "userchats", userCreated.uid), {
-                    chats: [],
-                });
-
-                  }
-                  catch(e)
-                  {
-                    setError(e+ "Error with firestore")
-                  }
                 } else {
                   setError('Failed to create user'); 
                 }
