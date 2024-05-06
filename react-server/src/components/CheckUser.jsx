@@ -114,7 +114,7 @@ const url=useParams();
   }
   
 
-  return <AddUser firstName={currentUser.displayName}redirect="/home"/>;
+  return <AddUser firstName={currentUser && currentUser.displayName ||"User"} redirect="/home"/>;
 }
 
 export default CheckUser;
