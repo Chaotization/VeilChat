@@ -7,10 +7,20 @@ import { getAuth } from 'firebase/auth';
 import React, { useState } from 'react'  // Corrected import order for React and useState
 import { useUserStore } from '../../context/userStore.jsx';
 import { useChatStore } from '../../context/chatStore.jsx';
-
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 export default function FriendChat() {
   const [updateTrigger, setUpdateTrigger] = useState(0);
-
+  let auth=getAuth();
+  let currentUser=auth.currentUser;
+  const navigate = useNavigate();
+  useEffect(()=>{
+    if(!currentUser)
+    {
+      navigate('/signin')
+      return
+    }
+  },[])
   const triggerChatUpdate = () => {
     setUpdateTrigger(current => current + 1); // Increment to force update
   };

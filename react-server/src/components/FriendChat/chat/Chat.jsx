@@ -5,7 +5,8 @@ import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore"
 import { db } from '../../../firebase/FirebaseFunctions';
 import AddFriend from '../../addFriend/AddFriend';
 import {useChatStore} from '../../../context/chatStore';
-
+import { useNavigate } from 'react-router-dom';
+import { getAuth } from 'firebase/auth';
 const Chat = ({updateTrigger}) =>{
     const { currentUser, isLoading } = useUserStore();
     const { chatId, changeChat } = useChatStore();
@@ -13,7 +14,14 @@ const Chat = ({updateTrigger}) =>{
     const [searchInput, setsearchInput] = useState("");
     const [addMode, setAddMode] = useState(false);
 
-
+    let {cUser}=getAuth();
+    useEffect(()=>{
+      if(!cUser)
+      {
+        navigate('/signin')
+        return
+      }
+    },[])
     useEffect(() => {
         const unSub = onSnapshot(
           doc(db, "userchats", currentUser.id),
@@ -51,7 +59,8 @@ const Chat = ({updateTrigger}) =>{
     if (isLoading || !currentUser) {
         return <div>Loading...</div>; 
     }
-    
+    const navigate = useNavigate();
+ 
     const handleSelectChat = async (chat) => {
       const userChats = chats.map((item) => {
         const { user, ...rest } = item;

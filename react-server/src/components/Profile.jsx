@@ -71,10 +71,13 @@ useEffect(() => {
     };
   
     if(currentUser)
-    {fetchData();}else {
+    {fetchData();}
+    else {
         navigate('/signin');
+        return
       }
   },[]); 
+
   console.log(currentUser)
   if(loading)
   {
@@ -452,7 +455,7 @@ useEffect(() => {
 else
 {
   return(<div>
-    <AddUser  firstName={currentUser.displayName}redirect="/profile"/>
+   {currentUser && <AddUser  firstName={currentUser.displayName}redirect="/profile"/>}
     </div>)
 }
 }
