@@ -65,29 +65,28 @@ function AddUser(props)
   };
 
    
+  
   const handleImageChange = (e) => {
-      const file = e.target.files[0];
+    const file = e.target.files[0];
 
-      Resizer.imageFileResizer(
-          file,
-          720,
-          560,
-          'JPEG',
-          100,
-          0,
-          (resizedImage) => {
-              if (resizedImage.size / 1024 / 1024 > 5) {
-                  alert('Image size should be less than 5MB.');
-                  return;
-              }
+    Resizer.imageFileResizer(
+        file,
+        720,
+        560,
+        'JPEG',
+        100,
+        0,
+        (resizedImage) => {
+            if (resizedImage.size / 1024 / 1024 > 5) {
+                alert('Image size should be less than 5MB.');
+                return;
+            }
 
-
-              //     setImageFile(resizedImage);
-              //   },
-              setImageFile(file);
-          })
-  }
-
+            setImageFile(resizedImage);
+        },
+        'blob'
+    );
+}
 
     const uploadToS3 = async () => {
         try {
@@ -191,8 +190,8 @@ function AddUser(props)
         try {
             let profilePictureUrl = ""
             if (imageFile) {
-                profilePictureUrl = await upload(imageFile);
-            }
+              profilePictureUrl = await uploadToS3();
+          }
           //save to firebase db
           const userDocRef = doc(db, "users", loggedUser.uid);
           await updateDoc(userDocRef, {
@@ -211,7 +210,7 @@ function AddUser(props)
               await setDoc(userChatsRef, { chats: [] });
           }
 
-
+          
       let response = await fetch("http://localhost:4000/user/updateuser", {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
