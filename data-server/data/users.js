@@ -197,7 +197,7 @@ export const loginUser = async (email, password) => {
     if (!checkPassword) {
         throw "Error: Either the email address or password is invalid"
     } else {
-        const userId = user._id.toString();
+        const userId = user.uId.toString();
         const onlineUsersKey = 'onlineUsers';
 
         let exist = await client.exists(onlineUsersKey);
@@ -232,7 +232,7 @@ export const logoutUser = async (userId) => {
     userId = validation.checkId(userId);
     const userCollection = await users();
     const user = await userCollection.findOne({
-        _id: new ObjectId(userId)
+        uId: userId
     });
     if (!user) {
         throw "Error: Either the email address or password is invalid";
@@ -259,12 +259,12 @@ export const updateUserFirstName = async (
     firstName = validation.validateName(firstName, "firstName");
     userId = validation.checkId(userId, "userId");
     const userCollection = await users();
-    const user = await userCollection.findOne({_id: new ObjectId(userId.trim())});
+    const user = await userCollection.findOne({uId: userId});
     if (!user) {
         throw `Error: User with ID ${userId} not found`;
     }
     const updateUser = await userCollection.updateOne(
-        {_id: new ObjectId(userId)},
+        {uId: userId},
         {$set: {firstName}}
     );
     if (updateUser.modifiedCount === 0) {
@@ -277,12 +277,12 @@ export const updateUserLastName = async (userId, lastName) => {
     lastName = validation.validateName(lastName, "lastName");
     userId = validation.checkId(userId, "userId");
     const userCollection = await users();
-    const user = await userCollection.findOne({_id: new ObjectId(userId)});
+    const user = await userCollection.findOne({uId: userId});
     if (!user) {
         throw `Error: User with ID ${userId} not found`;
     }
     const updateUser = await userCollection.updateOne(
-        {_id: new ObjectId(userId.trim())},
+        {uId: userId},
         {$set: {lastName}}
     );
     if (updateUser.modifiedCount === 0) {
@@ -297,7 +297,7 @@ export const updateUserPassword = async (userId, oldPassword, newPassword) => {
     newPassword = validation.validatePassword(newPassword, "newPassword");
 
     const userCollection = await users();
-    const user = await userCollection.findOne({_id: new ObjectId(userId)});
+    const user = await userCollection.findOne({uId: userId});
 
     if (!user) {
         throw `Error: User with ID ${userId} not found`;
@@ -315,7 +315,7 @@ export const updateUserPassword = async (userId, oldPassword, newPassword) => {
     const hashedNewPassword = await bcrypt.hash(newPassword, 15);
 
     const updateUser = await userCollection.updateOne(
-        {_id: new ObjectId(userId)},
+        {uId: userId},
         {$set: {password: hashedNewPassword}}
     );
 
@@ -329,12 +329,12 @@ export const updateUserLanguages = async (userId, languages) => {
     languages = validation.validateLanguages(languages);
     userId = validation.checkId(userId, "userId");
     const userCollection = await users();
-    const user = await userCollection.findOne({_id: new ObjectId(userId)});
+    const user = await userCollection.findOne({uId: userId});
     if (!user) {
         throw `Error: User with ID ${userId} not found`;
     }
     const updateUser = await userCollection.updateOne(
-        {_id: new ObjectId(userId.trim())},
+        {uId: userId},
         {$set: {languages}}
     );
     if (updateUser.modifiedCount === 0) {
@@ -347,12 +347,12 @@ export const updateUserPhoneNumber = async (userId, phoneNumber) => {
     phoneNumber = validation.validatePhoneNumber(phoneNumber);
     userId = validation.checkId(userId, "userId");
     const userCollection = await users();
-    const user = await userCollection.findOne({_id: new ObjectId(userId)});
+    const user = await userCollection.findOne({uId: userId});
     if (!user) {
         throw `Error: User with ID ${userId} not found`;
     }
     const updateUser = await userCollection.updateOne(
-        {_id: new ObjectId(userId)},
+        {uId: userId},
         {$set: {phoneNumber}}
     );
     if (updateUser.modifiedCount === 0) {
@@ -368,7 +368,7 @@ export const updateUserProfilePictureLocation = async (
 ) => {
     userId = validation.checkId(userId, "userId");
     const userCollection = await users();
-    const user = await userCollection.findOne({_id: new ObjectId(userId)});
+    const user = await userCollection.findOne({uId: userId});
     if (!user) {
         throw `Error: User with ID ${userId} not found`;
     }
@@ -382,7 +382,7 @@ export const updateUserProfilePictureLocation = async (
     }
 
     const updateUser = await userCollection.updateOne(
-        {_id: user._id},
+        {uId: user.uId},
         {$set: {profilePictureLocation}}
     );
     if (updateUser.modifiedCount === 0) {
@@ -499,7 +499,7 @@ export const updateFriendStatus = async (userId, friendId, newStatus) => {
 export const getUserInfoByUserId = async (userId) => {
     userId = validation.checkId(userId, "userId");
     const userCollection = await users();
-    const user = await userCollection.findOne({_id: new ObjectId(userId)});
+    const user = await userCollection.findOne({uId: userId});
 
     if (!user) {
         throw `Error: User with ID ${userId} not found`;
@@ -543,13 +543,13 @@ export const getUserIdByEmail = async (email) => {
     if (!user) {
         throw `Error: User with email ${email} not found`;
     }
-    return user._id.toString();
+    return user.uId.toString();
 };
 
 export const getUserPasswordById = async (userId) => {
     userId = validation.checkId(userId, "userId");
     const userCollection = await users();
-    const user = await userCollection.findOne({_id: new ObjectId(userId)});
+    const user = await userCollection.findOne({uId: userId});
 
     if (!user) {
         throw `Error: User with _id ${userId} not found`;

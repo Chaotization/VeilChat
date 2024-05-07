@@ -192,14 +192,13 @@ let exportedMethods = {
                     if(!filteredUsers || filteredUsers.length === 0) return [];
                     const nearbyUsers = await findNearByUsers(filteredUsers, lat, lng, criteria.distance);
                     const nearbyUserIds = nearbyUsers.map(user => user.uId);
-                    const userQueries = nearbyUserIds.map(id => ({ uId: new ObjectId(id) }));
+                    const userQueries = nearbyUserIds.map(id => ({ uId: id }));
                     query.$or = userQueries;
                 }
 
             }
             const allUsers = await userCollection.find(query).toArray();
-            const filteredUsers = allUsers.filter(user => !currentUser.friends.hasOwnProperty(user._id.toString())
-            );
+            const filteredUsers = allUsers.filter(user => currentUser.friends[user.uId] !== user.uId);
             if (filteredUsers.length === 0) {
                 return [];
             }

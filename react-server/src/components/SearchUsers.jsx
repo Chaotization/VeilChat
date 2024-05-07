@@ -50,8 +50,8 @@ const UserFilter = () => {
                });
 
             setFilteredUser(response.data);
-            console.log(filteredUser);
-            createNewChat(filteredUser.uId)
+            console.log(filteredUser.uId);
+           createNewChat(filteredUser.uId)
         } catch (error) {
             console.error('Error filtering users:', error.message);
         }finally{
