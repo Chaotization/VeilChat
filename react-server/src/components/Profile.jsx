@@ -7,6 +7,7 @@ import AddUser from "./AddUser";
 import upload from "../context/upload.js";
 import { setDoc, doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase/FirebaseFunctions';
+
 function Profile(){
 const auth =getAuth();
 const currentUser=auth.currentUser;

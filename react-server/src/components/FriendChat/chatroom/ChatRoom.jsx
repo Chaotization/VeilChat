@@ -69,7 +69,7 @@ const ChatRoom = () =>{
       const messageData = {
         senderId: currentUser.id,
         text,
-        createdAt: Date.now(),  // Consider using Firestore serverTimestamp here
+        createdAt: Date.now(),  
         ...(fileUrl && { file: fileUrl }),
       };
   
@@ -141,17 +141,22 @@ const ChatRoom = () =>{
             </div>
           </div>
         ))}
-        {img.url && (
+        {file.url && (
           <div className="message own bg-primary text-white rounded-lg p-2 mb-2">
             <div className="texts">
-              <img src={img.url} alt="" className="w-full mb-2 rounded-lg" />
+              <img src={file.url} alt="" className="w-full mb-2 rounded-lg" />
             </div>
           </div>
         )}
         <div ref={endRef}></div>
       </div>
       <div className="bottom flex items-center mt-4">
-        <div className="icons"></div>
+        <div className="">
+          <label htmlFor="file">
+          <img src="imgs/file.png" alt="" />
+            </label>
+            <input type="file" id="file" style={{display: "none"}} onChange={handleFileUpload} />
+        </div>
         <input type="text" placeholder="Type a message..." value={text} onChange={(e) => setText(e.target.value)} className="input input-bordered flex-grow mr-2" />
         <button className="sendButton btn btn-primary" onClick={handleSend}>Send</button>
       </div>
