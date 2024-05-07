@@ -22,6 +22,7 @@ const Chat = ({updateTrigger}) =>{
     //     return
     //   }
     // },[])
+
     useEffect(() => {
         const unSub = onSnapshot(
           doc(db, "userchats", currentUser.id),
