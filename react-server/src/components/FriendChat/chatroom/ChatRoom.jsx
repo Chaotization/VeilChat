@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { arrayUnion, doc, getDoc, onSnapshot, updateDoc} from "firebase/firestore";
-import { db } from '../../../firebase/FirebaseFunctions';
+import React, {useEffect, useRef, useState} from 'react'
+import {arrayUnion, doc, getDoc, onSnapshot, updateDoc} from "firebase/firestore";
+import {db} from '../../../firebase/FirebaseFunctions';
 import {useChatStore} from '../../../context/chatStore';
-import { useUserStore } from '../../../context/userStore';
+import {useUserStore} from '../../../context/userStore';
 import upload from '../../../context/upload';
 import moment from 'moment';
+import axios from "axios";
 
 const ChatRoom = () =>{
   const timeAgo = (createdAt) => {
@@ -19,7 +20,7 @@ const ChatRoom = () =>{
   const handleIconClick = () => {
     fileInputRef.current.click();
   };
-  const [img, setImg] = useState({
+  const [file, setfile] = useState({
     file: null,
     url: "",
   });
@@ -43,21 +44,40 @@ const ChatRoom = () =>{
     const file = e.target.files[0];
     if (file) {
       const url = URL.createObjectURL(file);
-      setImg({
+      setfile({
         file,
         url,
       });
     }
   };
   
-  const handleImg = (e) => {
-    if (e.target.files[0]) {
-      setImg({
-        file: e.target.files[0],
-        url: URL.createObjectURL(e.target.files[0]),
-      });
+
+  const getReceiverId = async (chatId) => {
+    try {
+      const chatRef = doc(db, "chats", chatId);
+
+      const chatDoc = await getDoc(chatRef);
+
+      if (chatDoc.exists()) {
+        const chatData = chatDoc.data();
+        const receiverId = chatData.members.find(memberId => memberId !== currentUser.uid);
+        return receiverId;
+      } else {
+        console.log("Chat document does not exist.");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching chat document:", error);
+      return null;
     }
   };
+
+  // const checkUserStatus = async () => {
+  //   let receiverId = getReceiverId(chatId)
+  //   const response = await axios.post('http://localhost:4000/user/checkstatus')
+  //   if(response)
+  //
+  // }
 
   const handleSend = async () => {
   
@@ -66,19 +86,20 @@ const ChatRoom = () =>{
       return;
     }
   
-    let imgUrl = null;
+    let fileUrl = null;
     try {
-      if (img.file) {
-        console.log("Uploading image...");
-        imgUrl = await upload(img.file);
-        console.log("Image uploaded:", imgUrl);
+      if (file.file) {
+        console.log("Uploading file...");
+        imgUrl = await upload(file.file);
+        console.log("Image uploaded:", fileUrl);
       }
   
       const messageData = {
         senderId: currentUser.id,
         text,
-        createdAt: Date.now(),  // Consider using Firestore serverTimestamp here
+        createdAt: Date.now(),
         ...(imgUrl && { img: imgUrl }),
+
       };
   
       
@@ -110,7 +131,7 @@ const ChatRoom = () =>{
     } catch (error) {
       console.error("Error sending message:", error);
     } finally {
-      setImg({ file: null, url: "" });
+      setfile({ file: null, url: "" });
       setText("");
     }
   };
@@ -149,17 +170,22 @@ const ChatRoom = () =>{
             </div>
           </div>
         ))}
-        {img.url && (
+        {file.url && (
           <div className="message own bg-primary text-white rounded-lg p-2 mb-2">
             <div className="texts">
-              <img src={img.url} alt="" className="w-full mb-2 rounded-lg" />
+              <img src={file.url} alt="" className="w-full mb-2 rounded-lg" />
             </div>
           </div>
         )}
         <div ref={endRef}></div>
       </div>
       <div className="bottom flex items-center mt-4">
-        <div className="icons"></div>
+        <div className="">
+          <label htmlFor="file">
+          <img src="imgs/file.png" alt="" />
+            </label>
+            <input type="file" id="file" style={{display: "none"}} onChange={handleFileUpload} />
+        </div>
         <input type="text" placeholder="Type a message..." value={text} onChange={(e) => setText(e.target.value)} className="input input-bordered flex-grow mr-2" />
         <button className="sendButton btn btn-primary" onClick={handleSend}>Send</button>
       </div>

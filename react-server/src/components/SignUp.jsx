@@ -102,8 +102,8 @@ function SignUp() {
         console.log(file);
         Resizer.imageFileResizer(
             file,
-            300,
-            300,
+            720,
+            560,
             'JPEG',
             90,
             0,
@@ -304,7 +304,6 @@ function SignUp() {
 
             try {
                 const currentUser = auth.currentUser
-
                 let profilePictureUrl = "https://veilchat-s3.s3.amazonaws.com/usersProfileFolder/defaultUserProfilePicture.jpg"
                 if (imageFile) {
                     profilePictureUrl = await uploadToS3();

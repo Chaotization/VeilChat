@@ -1,12 +1,21 @@
-import { useState, useEffect, useRef, useContext } from "react"
-import { getAuth } from 'firebase/auth';
+import {useState} from "react"
+import {getAuth} from 'firebase/auth';
 import Resizer from 'react-image-file-resizer';
-import { useUserStore } from '../context/userStore';
-import { useNavigate, Link, Navigate } from "react-router-dom";
-import { db } from '../firebase/FirebaseFunctions';
-import { setDoc, doc, updateDoc, getDoc } from 'firebase/firestore';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import {useUserStore} from '../context/userStore';
+import {useNavigate} from "react-router-dom";
+import {db} from '../firebase/FirebaseFunctions';
+import {doc, getDoc, setDoc, updateDoc} from 'firebase/firestore';
 import upload from "../context/upload.js";
+
+import {PutObjectCommand, S3Client} from '@aws-sdk/client-s3';
+
+const s3Client = new S3Client({
+    region: 'us-east-1',
+    credentials: {
+        accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
+        secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_ID,
+    },
+});
 
 function AddUser(props)
 {
@@ -56,26 +65,57 @@ function AddUser(props)
   };
 
    
+  
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+
     Resizer.imageFileResizer(
-      file,
-      150,
-      150,
-      'JPEG',
-      100, 
-      0,
-      (resizedImage) => {
-        if (resizedImage.size / 1024 / 1024 > 5) {
-          alert('Image size should be less than 5MB.');
-          return;
-        }
-        
-        setImageFile(resizedImage);
-      },
-      'blob'
+        file,
+        720,
+        560,
+        'JPEG',
+        100,
+        0,
+        (resizedImage) => {
+            if (resizedImage.size / 1024 / 1024 > 5) {
+                alert('Image size should be less than 5MB.');
+                return;
+            }
+
+            setImageFile(resizedImage);
+        },
+        'blob'
     );
+}
+
+    const uploadToS3 = async () => {
+        try {
+            const randomString =
+                Math.random().toString(36).substring(2, 15) +
+                Math.random().toString(36).substring(2, 15);
+            const currentFileName = `usersProfileFolder/${randomString}.jpeg`;
+
+            const params = {
+                Bucket: "veilchat-s3",
+                Key: currentFileName,
+                Body: imageFile,
+                ContentType: 'image/jpeg',
+                ACL: "public-read",
+            };
+
+            console.log("Uploading with parameters:", params);
+
+            const command = new PutObjectCommand(params);
+            await s3Client.send(command);
+
+            const fileUrl = `https://${params.Bucket}.s3.amazonaws.com/${params.Key}`;
+            console.log("Image uploaded successfully:", fileUrl);
+
+            return fileUrl;
+        } catch (error) {
+            console.error("S3 Upload Error:", error);
     }
+    };
   const handleLanguages=(e)=>
   {
    
@@ -147,12 +187,11 @@ function AddUser(props)
 
     if(!errors.length>0){
 
-      try{
-          let profilePictureUrl = ""
-          if (imageFile) {
-            profilePictureUrl = await upload(imageFile);
+        try {
+            let profilePictureUrl = ""
+            if (imageFile) {
+              profilePictureUrl = await uploadToS3();
           }
-
           //save to firebase db
           const userDocRef = doc(db, "users", loggedUser.uid);
           await updateDoc(userDocRef, {
@@ -171,6 +210,7 @@ function AddUser(props)
               await setDoc(userChatsRef, { chats: [] });
           }
 
+          
       let response = await fetch("http://localhost:4000/user/updateuser", {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
@@ -183,7 +223,7 @@ function AddUser(props)
                     gender: formData.gender,
                     dob: `${month}/${day}/${year}`, 
                     phoneNumber: "+1"+phone,
-                   profilePictureLocation: imageFile || ""
+                    profilePictureLocation: profilePictureUrl || ""
                 })
       });
 

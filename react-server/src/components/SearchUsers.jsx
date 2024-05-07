@@ -57,11 +57,28 @@ const UserFilter = (props) => {
                 userLocation,
                });
 
-            setFilteredUser(response.data);
-            console.log(filteredUser.uId);
-           createNewChat(filteredUser.uId)
+            if (response.data.success) {
+                setFilteredUser(response.data.filteredUserId);
+                console.log('Filtered User ID:', response.data.filteredUserId);
+                createNewChat(response.data.filteredUserId);
+            } else {
+                setFilteredUser(null);
+                console.log('No filtered user found.');
+            }
         } catch (error) {
-            console.error('Error filtering users:', error.message);
+            if (error.response) {
+                if (error.response.status === 404) {
+                    setFilteredUser(null);
+                    console.log('No filtered user found.');
+                } else if (error.response.status === 500) {
+                    console.error('Internal server error occurred.');
+                }
+            } else if (error.request) {
+                console.log(error.request);
+                console.error('No response received from the server.');
+            } else {
+                console.log('Error', error.message);
+            }
         }finally{
             setLoading(false)
         }

@@ -17,7 +17,7 @@ const upload = async (file) => {
         console.log("Upload is " + progress + "% done");
       },
       (error) => {
-        reject("Can Not Upload Profile Image" + error.code);
+        reject("Can Not Upload File" + error.code);
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {

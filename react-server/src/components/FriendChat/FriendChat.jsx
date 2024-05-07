@@ -13,14 +13,6 @@ export default function FriendChat() {
   const [updateTrigger, setUpdateTrigger] = useState(0);
   let auth=getAuth();
   let currentUser=auth.currentUser;
-  const navigate = useNavigate();
-  useEffect(()=>{
-    if(!currentUser)
-    {
-      navigate('/signin')
-      return
-    }
-  },[])
   const triggerChatUpdate = () => {
     setUpdateTrigger(current => current + 1); // Increment to force update
   };
