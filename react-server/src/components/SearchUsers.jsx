@@ -116,10 +116,6 @@ const UserFilter = (props) => {
       }
     };
     
-    const handleChatRedirect = () => {
-        console.log("inside chat redirect")
-        createNewChat()
-    }
     
     if(props && props.tested)
     {
@@ -190,15 +186,12 @@ const UserFilter = (props) => {
         </div>
           <div className="flex justify-between">
               {loading ? (
-                  <button className="btn btn-primary loading">Finding a match...</button>
+                  <button className="btn outline loading">Finding a match...</button>
               ) : (
-                  <button className="btn btn-primary" onClick={handleFilter}>
+                  <button className="btn btn-outline" onClick={handleFilter}>
                       Apply Filters
                   </button>
               )}
-              <button className="btn btn-outline" onClick={handleChatRedirect}>
-                  Find a match
-              </button>
           </div>
       </div>
     );}
