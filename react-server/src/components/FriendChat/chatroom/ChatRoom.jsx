@@ -7,10 +7,16 @@ import upload from '../../../context/upload';
 import moment from 'moment';
 import axios from "axios";
 
+
 const ChatRoom = () =>{
   const timeAgo = (createdAt) => {
     return moment(createdAt).fromNow();
   }
+  const timeFormat = (createdAt) => {
+    return new Date(createdAt.seconds * 1000);
+  }
+  const [notification, setNotification] = useState({ visible: false, message: '' });
+
   const [chat, setChat] = useState();
   const endRef = useRef(null)
   const { chatId, user } = useChatStore();
@@ -52,34 +58,56 @@ const ChatRoom = () =>{
       });
     }
   };
-  
 
-  const getReceiverId = async (chatId) => {
+
+  const checkUserStatus = async () => {
+    if (!chatId) return;
     try {
       const chatRef = doc(db, "chats", chatId);
-
       const chatDoc = await getDoc(chatRef);
 
-      if (chatDoc.exists()) {
-        const chatData = chatDoc.data();
-        const receiverId = chatData.members.find(memberId => memberId !== currentUser.uid);
-        return receiverId;
-      } else {
+      if (!chatDoc.exists()) {
         console.log("Chat document does not exist.");
-        return null;
+        return;
       }
+      const chatData = chatDoc.data();
+      const receiverId = chatData.members.find(memberId => memberId !== currentUser.id);
+      const lastCreatedAt = timeFormat(chatData.createdAt);
+
+      const userChatRef = doc(db, 'userchats', receiverId);
+      const userChatDoc = await getDoc(userChatRef);
+      const useChatData = userChatDoc.data();
+      const isSeen = useChatData.chats[0]?.isSeen
+      if (userChatDoc.exists() && !isSeen) {
+        const response = await axios.post("http://localhost:4000/user/checkstatus", {
+          receiverId: receiverId,
+          lastMessageTime: lastCreatedAt
+        });
+
+        if(!response.data.isOnline){
+          const sendNotification = await axios.post("http://localhost:4000/sendNotification/newMessage", {
+            userName: currentUser.firstName,
+            friendId: receiverId
+          })
+          if(sendNotification.sendStatus){
+            setNotification({
+              visible: true,
+              message: 'Notification sent successfully!'
+            });
+            setTimeout(() => {
+              setNotification({ visible: false, message: '' });
+            }, 3000);
+          }
+        }
+        }
+
+
+      console.log(response.data);
     } catch (error) {
-      console.error("Error fetching chat document:", error);
-      return null;
+      console.error("Error fetching chat document or checking status:", error);
     }
   };
 
-  const checkUserStatus = async () => {
-    let receiverId = getReceiverId(chatId)
-    // const response = await axios.post('http://localhost:4000/user/checkstatus')
-    // if(response)
-
-  }
 
   const handleSend = async () => {
   
@@ -133,6 +161,7 @@ const ChatRoom = () =>{
           }
         }
       }
+      await checkUserStatus()
     } catch (error) {
       console.error("Error sending message:", error);
     } finally {
@@ -184,6 +213,11 @@ const ChatRoom = () =>{
 
   return (
     <div className="chat bg-white shadow-md rounded-lg p-4">
+      {notification.visible && (
+          <div className="notification-popup fixed top-20 right-20 bg-blue-500 text-white p-3 rounded-lg shadow-lg">
+            {notification.message}
+          </div>
+      )}
       <div className="top flex items-center mb-4">
         <div className="user flex items-center">
           <img src={user?.profilePictureLocation || "/imgs/avatar.png"} alt="" className="w-12 h-12 rounded-full mr-4" />

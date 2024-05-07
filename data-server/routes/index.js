@@ -5,7 +5,7 @@ import signupRoute from "./signup.js";
 import searchRoute from "./search.js"
 import conversationRoute from './conversations.js'
 import friendRequestRoute from './friendRequests.js'
-// import sendRouter from "./sendNotification.js"
+import sendRouter from "./notification.js"
 const constructorMethod = (app) => {
   app.use("/user", userRoutes);
   app.use("/login", loginRoute);
@@ -14,7 +14,7 @@ const constructorMethod = (app) => {
   app.use("/search", searchRoute)
   app.use("/conversation", conversationRoute);
   app.use("/friendRequests", friendRequestRoute);
-  // app.use("/send", sendRouter);
+  app.use("/sendNotification", sendRouter);
 
   app.use("*", (req, res) => {
     res.status(404).json({ error: "Route Not found" });

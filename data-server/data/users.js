@@ -678,7 +678,6 @@ export const createAccountWithEmailAndPassword=async(user)=>
 
 export const checkStatus = async (receiverId, lastMessageTime) => {
     receiverId = validation.checkId(receiverId);
-    lastMessageTime = validation.validateDateTime()
     const exist = await client.exists('onlineUsers');
 
     if (exist) {

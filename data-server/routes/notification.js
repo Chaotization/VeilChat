@@ -5,27 +5,19 @@ import twilio from 'twilio';
 import validation from "../validation.js";
 import xss from "xss";
 
-const accountSid = process.env.accountSid;
-const authToken = process.env.authToken;
+const accountSid = process.env.ACCOUNT_SID;
+const authToken = process.env.AUTH_TOKEN;
 
 const client = twilio(accountSid, authToken);
 
-router.route("/notification").post(async (req, res) => {
+router.route("/newMessage").post(async (req, res) => {
 
-    let numOfMessages = req.body.numOfMessages;
-    let user =null;
-
-    if (!req.isAuthenticated()){
-        return res.status(401).render("error", {
-            errorMsg: "Please Login to send a message",
-            title: "Error"
-        });
-    }
-
+    let userName = req.body.userName
+    let friend
     try {
 
-        let userId = validation.checkId(req.body.id);
-        user = await usersData.getUserInfoByUserId(userId);
+        let userId = validation.checkId(req.body.friendId);
+        friend = await usersData.getUserInfoByUserId(userId);
     } catch (error) {
         return res.status(400).render('error', {
             title: "Inputs Error",
@@ -35,15 +27,15 @@ router.route("/notification").post(async (req, res) => {
 
     try {
         await client.messages.create({
-            body: `You have ${numOfMsgs} from ${user.firstName} haven't read`,
+            body: `You have new message from ${userName} haven't read`,
             from: '+18334580397',
-            to: user.phoneNumber
+            to: friend.phoneNumber
         });
 
 
-        return res.status(200).send({ sendStatus: true });
+        return res.status(200).json({ sendStatus: true });
     } catch (error) {
-        return res.status(500).send({ sendStatus: false });
+        return res.status(500).json({ sendStatus: false });
     }
 });
 

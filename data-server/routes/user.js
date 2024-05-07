@@ -19,21 +19,7 @@ router.route("/signup").post(async (req, res) => {
     }
 });
 
-router.route("/signin").post(async (req, res) => {
-    try {
-        const userData = req.session.user;
-        if (userData) {
-            return res
-                .status(403)
-                .json({
-                    message: `Forbidden, You are already signed in as ${req.session.user.username}`,
-                });
-        }
-    } catch (e) {
-    }
-});
 router.route("/logout").get(async (req, res) => {
-    //code here for GET
     try {
         const userData = req.session.user;
         if (!userData) {
@@ -187,7 +173,6 @@ router.route("/checkstatus").post(async (req, res) =>{
         }
 
         const result = await usersData.checkStatus(receiverId, lastMessageTime);
-
         return res.status(200).json({
             success: true,
             isOnline: result.isOnline

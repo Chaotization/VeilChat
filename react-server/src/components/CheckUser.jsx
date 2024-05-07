@@ -7,7 +7,6 @@ import UserFilter from './SearchUsers';
 import { useParams } from 'react-router-dom';
 import {db} from '../firebase/FirebaseFunctions';
 import {setDoc, doc} from 'firebase/firestore';
-import {getStorage, ref, uploadBytesResumable, getDownloadURL} from "firebase/storage";
 function CheckUser(props) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
