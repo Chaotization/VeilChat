@@ -13,7 +13,7 @@ const Chat = ({updateTrigger}) =>{
     const [chats, setChats] = useState([]);
     const [searchInput, setsearchInput] = useState("");
     const [addMode, setAddMode] = useState(false);
-
+    const [message, setMessage] = useState("");
     // let {cUser}=getAuth();
     // useEffect(()=>{
     //   if(!cUser)
@@ -24,6 +24,10 @@ const Chat = ({updateTrigger}) =>{
     // },[])
 
     useEffect(() => {
+      if (!currentUser || !currentUser.id) {
+        setMessage("Please refresh your page to enter friendchat.");
+        return;
+    }
         const unSub = onSnapshot(
           doc(db, "userchats", currentUser.id),
           async (res) => {
@@ -58,8 +62,11 @@ const Chat = ({updateTrigger}) =>{
       }, [currentUser.id, updateTrigger]);
 
     if (isLoading || !currentUser) {
-        return <div>Loading...</div>; 
+        return <div>Loading...Please Refresh your page</div>; 
     }
+    if (message) {
+      return <div>{message}</div>;  // Display the message if there is one
+  }
     const navigate = useNavigate();
  
     const handleSelectChat = async (chat) => {
