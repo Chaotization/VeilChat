@@ -72,12 +72,12 @@ const ChatRoom = () =>{
     }
   };
 
-  // const checkUserStatus = async () => {
-  //   let receiverId = getReceiverId(chatId)
-  //   const response = await axios.post('http://localhost:4000/user/checkstatus')
-  //   if(response)
-  //
-  // }
+  const checkUserStatus = async () => {
+    let receiverId = getReceiverId(chatId)
+    // const response = await axios.post('http://localhost:4000/user/checkstatus')
+    // if(response)
+
+  }
 
   const handleSend = async () => {
   
