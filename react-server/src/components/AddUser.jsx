@@ -8,6 +8,7 @@ import { setDoc, doc, updateDoc, getDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import upload from "../context/upload.js";
 
+
 function AddUser(props)
 {
 
@@ -58,23 +59,23 @@ function AddUser(props)
    
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    Resizer.imageFileResizer(
-      file,
-      150,
-      150,
-      'JPEG',
-      100, 
-      0,
-      (resizedImage) => {
-        if (resizedImage.size / 1024 / 1024 > 5) {
-          alert('Image size should be less than 5MB.');
-          return;
-        }
+    // Resizer.imageFileResizer(
+    //   file,
+    //   150,
+    //   150,
+    //   'JPEG',
+    //   100, 
+    //   0,
+    //   (resizedImage) => {
+    //     if (resizedImage.size / 1024 / 1024 > 5) {
+    //       alert('Image size should be less than 5MB.');
+    //       return;
+    //     }
         
-        setImageFile(resizedImage);
-      },
-      'blob'
-    );
+    //     setImageFile(resizedImage);
+    //   },
+      setImageFile(file);
+   
     }
   const handleLanguages=(e)=>
   {
@@ -151,6 +152,7 @@ function AddUser(props)
           let profilePictureUrl = ""
           if (imageFile) {
             profilePictureUrl = await upload(imageFile);
+            console.log(profilePictureUrl);
           }
 
           //save to firebase db

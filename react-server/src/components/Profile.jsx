@@ -4,6 +4,9 @@ import ReactModal from "react-modal";
 import Resizer from 'react-image-file-resizer';
 import { useNavigate } from "react-router-dom";
 import AddUser from "./AddUser";
+import upload from "../context/upload.js";
+import { setDoc, doc, updateDoc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase/FirebaseFunctions';
 function Profile(){
 const auth =getAuth();
 const currentUser=auth.currentUser;
@@ -12,7 +15,7 @@ const [openModal,setOpenModal]=useState(false);
 const [loading, setLoading]=useState(false);
 const[error, setError]=useState(null);
  const navigate=useNavigate();
-
+ const loggedUser=auth.currentUser;
   const [languages, setLanguages]=useState("");
   const [uploadError, setUploadError] = useState(null);
   const [imageFile, setImageFile] = useState(null); 
@@ -78,32 +81,37 @@ useEffect(() => {
       }
   },[]); 
 
-  console.log(currentUser)
+  
   if(loading)
   {
     return <div> Fetching the data from server</div>
   }
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    console.log(file)
-    Resizer.imageFileResizer(
-      file,
-      150,
-      150,
-      'JPEG',
-      100, 
-      0,
-      (resizedImage) => {
-        if (resizedImage.size / 1024 / 1024 > 5) {
-          alert('Image size should be less than 5MB.');
-          return;
-        }
+    
+    // Resizer.imageFileResizer(
+    //   file,
+    //   150,
+    //   150,
+    //   'JPEG',
+    //   100, 
+    //   0,
+    //   (resizedImage) => {
+    //     if (resizedImage.size / 1024 / 1024 > 5) {
+    //       alert('Image size should be less than 5MB.');
+    //       return;
+    //     }
         
-        setImageFile(resizedImage);
-      },
+    //     setImageFile(resizedImage);
+    //   },
+  
+
+      setImageFile(file)
       'blob'
-    );
+    ;
     }
+
+    
   const handleLanguages=(e)=>
   {
    
@@ -197,9 +205,32 @@ useEffect(() => {
     }
     if(!errors || errors.length===0)
     {
-        try
-    
-        {
+        try{
+
+          let profilePictureUrl = ""
+          
+          if (imageFile) {
+            profilePictureUrl = await upload(imageFile);
+            console.log(profilePictureUrl);
+          }
+
+          //save to firebase db
+          const userDocRef = doc(db, "users", loggedUser.uid);
+          await updateDoc(userDocRef, {
+              firstName: fname.trim(),
+              lastName: lname.trim(),
+              dob: dob,
+              gender: gender,
+              phoneNumber: phoneNumber,
+              languages: languages,
+              profilePictureLocation: profilePictureUrl || ""
+          });
+
+          const userChatsRef = doc(db, "userchats", loggedUser.uid);
+          const userChatsSnap = await getDoc(userChatsRef);
+          if (!userChatsSnap.exists()) {
+              await setDoc(userChatsRef, { chats: [] });
+          }
             
       let response=await fetch("http://localhost:4000/user/updateuser",{
           method:"POST",
@@ -209,7 +240,7 @@ useEffect(() => {
      
       let data=await response.json()
 
-      console.log("data:",data)
+      
       if (!response.ok) {
           if (data && data.message) {
               setErrors((prevState) => {
@@ -225,7 +256,8 @@ useEffect(() => {
           }
         else{
           setErrors([]);
-          console.log("success",data);
+          
+  
           setData(data);
           alert("Sucessfully updated your profile");
         setOpenModal(false);}
@@ -242,7 +274,8 @@ useEffect(() => {
   }
 
   if(data && data.firstName){
-    console.log(data)
+    
+
     let dob=new Date(data.dob);
      let dateOfBirth=String(dob.getMonth() + 1).padStart(2, '0').toString()+"-"+String(dob.getDate()).padStart(2, '0').toString()+"-"+parseInt(dob.getFullYear().toString());
     const rootElement = document.getElementById('root');

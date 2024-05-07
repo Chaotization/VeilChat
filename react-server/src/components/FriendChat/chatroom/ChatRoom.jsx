@@ -19,7 +19,7 @@ const ChatRoom = () =>{
   const handleIconClick = () => {
     fileInputRef.current.click();
   };
-  const [img, setImg] = useState({
+  const [file, setfile] = useState({
     file: null,
     url: "",
   });
@@ -43,21 +43,13 @@ const ChatRoom = () =>{
     const file = e.target.files[0];
     if (file) {
       const url = URL.createObjectURL(file);
-      setImg({
+      setfile({
         file,
         url,
       });
     }
   };
   
-  const handleImg = (e) => {
-    if (e.target.files[0]) {
-      setImg({
-        file: e.target.files[0],
-        url: URL.createObjectURL(e.target.files[0]),
-      });
-    }
-  };
 
   const handleSend = async () => {
   
@@ -66,19 +58,19 @@ const ChatRoom = () =>{
       return;
     }
   
-    let imgUrl = null;
+    let fileUrl = null;
     try {
-      if (img.file) {
-        console.log("Uploading image...");
-        imgUrl = await upload(img.file);
-        console.log("Image uploaded:", imgUrl);
+      if (file.file) {
+        console.log("Uploading file...");
+        imgUrl = await upload(file.file);
+        console.log("Image uploaded:", fileUrl);
       }
   
       const messageData = {
         senderId: currentUser.id,
         text,
         createdAt: Date.now(),  // Consider using Firestore serverTimestamp here
-        ...(imgUrl && { img: imgUrl }),
+        ...(fileUrl && { file: fileUrl }),
       };
   
       
@@ -110,7 +102,7 @@ const ChatRoom = () =>{
     } catch (error) {
       console.error("Error sending message:", error);
     } finally {
-      setImg({ file: null, url: "" });
+      setfile({ file: null, url: "" });
       setText("");
     }
   };
