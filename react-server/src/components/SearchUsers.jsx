@@ -1,9 +1,10 @@
-import  { useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getDatabase, ref, push } from 'firebase/database';
 import { getAuth } from 'firebase/auth';
 import axios from 'axios';
-const UserFilter = () => {
+import CheckUser from './CheckUser';
+const UserFilter = (props) => {
     const [gender, setGender] = useState('');
     const [age, setAge] = useState('');
     const [language, setLanguage] = useState('');
@@ -16,10 +17,17 @@ const UserFilter = () => {
     //firebase
     const [messages,setMessages] = useState([])
     const [chatId, setChatId] = useState('')
-    const navigate = useNavigate();
+
     const auth = getAuth();
     const currentUser = auth.currentUser;
-
+    const navigate = useNavigate();
+  useEffect(()=>{
+    if(!currentUser)
+    {
+      navigate('/signin')
+      return
+    }
+  },[])
     const handleLocationAccess = () => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -90,9 +98,9 @@ const UserFilter = () => {
         console.log("inside chat redirect")
         createNewChat()
     }
-
     
-
+    if(props && props.tested)
+    {
     return (
       <div className="bg-base-200 p-6 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-4">User Filter</h2>
@@ -171,7 +179,8 @@ const UserFilter = () => {
               </button>
           </div>
       </div>
-    );
+    );}
+    return <CheckUser search={true}/>
 };
 
 export default UserFilter;

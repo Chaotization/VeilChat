@@ -18,7 +18,7 @@ function Home(props) {
   );}
   else
   { 
-   return <div><CheckUser/></div>
+   return <div><CheckUser home={true}/></div>
   }
 }
 

@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import AddUser from './AddUser';
 import Home from './ProtectedHome';
+import UserFilter from './SearchUsers';
 import { useParams } from 'react-router-dom';
-function CheckUser() {
+function CheckUser(props) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -57,7 +58,7 @@ const url=useParams();
                       friends: [],
                       profilePictureLocation: ""
                   });
-                  await setDoc(doc(db, "userchats", userCreated.uid), {
+                  await setDoc(doc(db, "userchats", currentUser.uid), {
                     chats: [],
                 });
 
@@ -106,11 +107,14 @@ const url=useParams();
   }
 
   if (filteredData) {
+    if(props.home)
     return <Home tested={true} firstName={filteredData.firstName} />;
+      return <UserFilter tested={true}/>
+    
   }
   
 
-  return <AddUser firstName={currentUser.displayName}redirect="/home"/>;
+  return <AddUser firstName={currentUser && currentUser.displayName ||"User"} redirect="/home"/>;
 }
 
 export default CheckUser;
