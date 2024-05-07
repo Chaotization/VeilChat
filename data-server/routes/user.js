@@ -188,9 +188,9 @@ router.route("/checkstatus").post(async (req, res) =>{
 
         const result = await usersData.checkStatus(receiverId, lastMessageTime);
 
-        res.json({
+        return res.status(200).json({
             success: true,
-            data: result
+            isOnline: result.isOnline
         });
     } catch (error) {
         console.error("Error checking status:", error);

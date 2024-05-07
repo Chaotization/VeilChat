@@ -4,7 +4,7 @@ import Resizer from 'react-image-file-resizer';
 import {useUserStore} from '../context/userStore';
 import {useNavigate} from "react-router-dom";
 import {db} from '../firebase/FirebaseFunctions';
-import {doc, getDoc, setDoc, updateDoc} from 'firebase/firestore';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import upload from "../context/upload.js";
 
 import {PutObjectCommand, S3Client} from '@aws-sdk/client-s3';
@@ -192,6 +192,7 @@ function AddUser(props)
             let profilePictureUrl = ""
             if (imageFile) {
                 profilePictureUrl = await upload(imageFile);
+                console.log(profilePictureUrl);
             }
           //save to firebase db
           const userDocRef = doc(db, "users", loggedUser.uid);
