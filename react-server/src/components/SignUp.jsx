@@ -98,25 +98,8 @@ function SignUp() {
     }
 
     const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        console.log(file);
-        Resizer.imageFileResizer(
-            file,
-            720,
-            560,
-            'JPEG',
-            90,
-            0,
-            (resizedImage) => {
-                if (resizedImage.size / 1024 / 1024 > 5) {
-                    alert('Image size should be less than 5MB.');
-                    return;
-                }
-
-                setImageFile(resizedImage);
-            },
-            'blob'
-        );
+        const file = e.target.files(0);
+        setImageFile(file);
     };
 
 
