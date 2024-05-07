@@ -4,10 +4,9 @@ import Resizer from 'react-image-file-resizer';
 import {useUserStore} from '../context/userStore';
 import {useNavigate} from "react-router-dom";
 import {db} from '../firebase/FirebaseFunctions';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import upload from "../context/upload.js";
 
 import {PutObjectCommand, S3Client} from '@aws-sdk/client-s3';
+import {doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
 
 const s3Client = new S3Client({
     region: 'us-east-1',
@@ -23,50 +22,50 @@ function AddUser(props)
     const auth =getAuth();
     const navigate=useNavigate();
     const loggedUser=auth.currentUser;
-  const { currentUser} = useUserStore();
-  const [languages, setLanguages]=useState("");
-  const [uploadError, setUploadError] = useState(null);
-  const [imageFile, setImageFile] = useState(null); 
-  const langs= [
-    "English",
-    "Arabic",
-    "Bengali",
-    "Chinese",
-    "French",
-    "German",
-    "Hindi",
-    "Indonesian",
-    "Japanese",
-    "Marathi",
-    "Nigerian Pidgin",
-    "Portuguese",
-    "Russian",
-    "Spanish",
-    "Tamil",
-    "Telugu",
-    "Turkish",
-    "Urdu",
-    "Vietnamese"
-  ];
-  const [availableLanguages, setAvailableLanguages]=useState(langs)
-  const [errors, setErrors] = useState([]);
-  const[profilePictureLocation, setProfilePictureLocation]=useState(null);
-  const [formData, setFormData] = useState({
-    uId: "",
-    first_name: "",
-    last_name: "",
-    dob: "",
-    email: "",
-    gender:"",
-    languages:""
-  });
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+    const { currentUser} = useUserStore();
+    const [languages, setLanguages]=useState("");
+    const [uploadError, setUploadError] = useState(null);
+    const [imageFile, setImageFile] = useState(null);
+    const langs= [
+        "English",
+        "Arabic",
+        "Bengali",
+        "Chinese",
+        "French",
+        "German",
+        "Hindi",
+        "Indonesian",
+        "Japanese",
+        "Marathi",
+        "Nigerian Pidgin",
+        "Portuguese",
+        "Russian",
+        "Spanish",
+        "Tamil",
+        "Telugu",
+        "Turkish",
+        "Urdu",
+        "Vietnamese"
+    ];
+    const [availableLanguages, setAvailableLanguages]=useState(langs)
+    const [errors, setErrors] = useState([]);
+    const[profilePictureLocation, setProfilePictureLocation]=useState(null);
+    const [formData, setFormData] = useState({
+          uId: "",
+          first_name: "",
+          last_name: "",
+          dob: "",
+          email: "",
+          gender:"",
+          languages:""
+    });
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
    
   
-  const handleImageChange = (e) => {
+    const handleImageChange = (e) => {
     const file = e.target.files[0];
 
     Resizer.imageFileResizer(
@@ -229,36 +228,34 @@ function AddUser(props)
 
       let data=await response.json()
       if (!response.ok) {
-        if (data && data.message) {
-            setErrors((prevState) => {
-                return [...prevState, "Trouble with the server"];
+          if (data && data.message) {
+              setErrors((prevState) => {
+                  return [...prevState, "Trouble with the server"];
               });
             return
           } else {
-            setErrors((prevState) => {
+              setErrors((prevState) => {
                 return [...prevState, "An error occurred while signing up"];
               });
             return
           }
-        }
-        else{
-          setErrors([]);
-          let redr=props.redirect;
-          navigate('/checker')
+        } else{
+            setErrors([]);
+            let redr=props.redirect;
+            navigate('/checker')
            return
-        }
-      } catch(e){
-        setErrors((prevState) => {
-          return [...prevState, e.message];
+        }} catch(e){
+            setErrors((prevState) => {
+                return [...prevState, e.message];
         });
         return
-      }
+        }
     }
     return
   }
 return(
     <div>
-      <h4 style={{background:"white",color:"purple"}}className="text-center text-2xl font-medium mb-4"> Dear {props.firstName || "user"}, fill this form to continue</h4>
+      <h4 style={{background:"white",color:"purple"}} className="text-center text-2xl font-medium mb-4"> Dear {props.firstName || "user"}, fill this form to continue</h4>
     <form
           onSubmit={handleSignUp}
           className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
