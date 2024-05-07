@@ -254,23 +254,21 @@ useEffect(() => {
     if(!errors || errors.length===0)
     {
         try{
-
-          let profilePictureUrl = ""
-          
-          if (imageFile) {
-            profilePictureUrl = await upload(imageFile);
-            console.log(profilePictureUrl);
-          }
+          // let profilePictureUrl1=""
+          // // if (imageFile) {
+          // //   profilePictureUrl1 = await upload(imageFile);
+          // //   console.log(profilePictureUrl1);
+          // // }
 
           //save to firebase db
           const userDocRef = doc(db, "users", loggedUser.uid);
           await updateDoc(userDocRef, {
-              firstName: fname.trim(),
-              lastName: lname.trim(),
-              dob: dob,
-              gender: gender,
-              phoneNumber: phoneNumber,
-              languages: languages,
+              firstName: fname?.trim()||"",
+              lastName: lname?.trim()||"",
+              dob: dob||"",
+              gender: gender||"",
+              phoneNumber: phoneNumber||"",
+              languages: languages||[],
               profilePictureLocation: profilePictureUrl || ""
           });
 
