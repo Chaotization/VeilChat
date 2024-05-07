@@ -43,6 +43,29 @@ const url=useParams();
                 if (createResponse.ok) {
                   const createdData = await createResponse.json();
                   setData(createdData);
+                  try{
+                    const userDocRef = doc(db, "users", currentUser.uid);
+                    await setDoc(userDocRef, {
+                     id: currentUser.uid,
+                      firstName: "",
+                      lastName: "",
+                      email: currentUser.email,
+                      dob: "",
+                      gender: "",
+                      phoneNumber: "",
+                      languages: [],
+                      friends: [],
+                      profilePictureLocation: ""
+                  });
+                  await setDoc(doc(db, "userchats", userCreated.uid), {
+                    chats: [],
+                });
+
+                  }
+                  catch(e)
+                  {
+                    setError("Error with firestore")
+                  }
                 } else {
                   setError('Failed to create user'); 
                 }
