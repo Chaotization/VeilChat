@@ -8,6 +8,7 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/
 import upload from "../context/upload.js";
 
 import {PutObjectCommand, S3Client} from '@aws-sdk/client-s3';
+import {doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
 
 const s3Client = new S3Client({
     region: 'us-east-1',
