@@ -14,14 +14,6 @@ const Chat = ({updateTrigger}) =>{
     const [searchInput, setsearchInput] = useState("");
     const [addMode, setAddMode] = useState(false);
 
-    let {cUser}=getAuth();
-    useEffect(()=>{
-      if(!cUser)
-      {
-        navigate('/signin')
-        return
-      }
-    },[])
     useEffect(() => {
         const unSub = onSnapshot(
           doc(db, "userchats", currentUser.id),
