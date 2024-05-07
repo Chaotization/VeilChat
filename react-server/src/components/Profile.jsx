@@ -5,8 +5,9 @@ import {S3Client, PutObjectCommand} from '@aws-sdk/client-s3';
 import Resizer from 'react-image-file-resizer';
 import { useNavigate } from "react-router-dom";
 import AddUser from "./AddUser";
-
-
+import upload from "../context/upload.js";
+import { setDoc, doc, updateDoc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase/FirebaseFunctions';
 
 
 const s3Client = new S3Client({
@@ -25,7 +26,7 @@ const [loading, setLoading]=useState(false);
 const [uploaded, setUploaded]=useState(false);
 const[error, setError]=useState(null);
  const navigate=useNavigate();
-
+ const loggedUser=auth.currentUser;
   const [languages, setLanguages]=useState("");
   const [uploadError, setUploadError] = useState(null);
   const [imageFile, setImageFile] = useState(null); 
@@ -91,12 +92,12 @@ useEffect(() => {
       }
   },[]); 
 
-  console.log(currentUser)
+  
   if(loading)
   {
     return <div> Fetching the data from server</div>
   }
-  
+
     const handleImageChange = (e) => {
       e.preventDefault()
       const file = e.target.files[0];
@@ -151,7 +152,6 @@ useEffect(() => {
           console.error("S3 Upload Error:", error);
       }
   };
-
 
   const handleLanguages=(e)=>
   {
@@ -253,9 +253,32 @@ useEffect(() => {
     console.log(profilePictureUrl)
     if(!errors || errors.length===0)
     {
-        try
-    
-        {
+        try{
+
+          let profilePictureUrl = ""
+          
+          if (imageFile) {
+            profilePictureUrl = await upload(imageFile);
+            console.log(profilePictureUrl);
+          }
+
+          //save to firebase db
+          const userDocRef = doc(db, "users", loggedUser.uid);
+          await updateDoc(userDocRef, {
+              firstName: fname.trim(),
+              lastName: lname.trim(),
+              dob: dob,
+              gender: gender,
+              phoneNumber: phoneNumber,
+              languages: languages,
+              profilePictureLocation: profilePictureUrl || ""
+          });
+
+          const userChatsRef = doc(db, "userchats", loggedUser.uid);
+          const userChatsSnap = await getDoc(userChatsRef);
+          if (!userChatsSnap.exists()) {
+              await setDoc(userChatsRef, { chats: [] });
+          }
             
       let response=await fetch("http://localhost:4000/user/updateuser",{
           method:"POST",
@@ -265,7 +288,7 @@ useEffect(() => {
      
       let data=await response.json()
 
-      console.log("data:",data)
+      
       if (!response.ok) {
           if (data && data.message) {
               setErrors((prevState) => {
@@ -281,7 +304,8 @@ useEffect(() => {
           }
         else{
           setErrors([]);
-          console.log("success",data);
+          
+  
           setData(data);
           setUploaded(false);
           //alert("Sucessfully updated your profile");
@@ -299,7 +323,8 @@ useEffect(() => {
   }
 
   if(data && data.firstName){
-    console.log(data)
+    
+
     let dob=new Date(data.dob);
      let dateOfBirth=String(dob.getMonth() + 1).padStart(2, '0').toString()+"-"+String(dob.getDate()).padStart(2, '0').toString()+"-"+parseInt(dob.getFullYear().toString());
     const rootElement = document.getElementById('root');

@@ -7,6 +7,7 @@ import { db } from '../firebase/FirebaseFunctions';
 import { setDoc, doc, updateDoc, getDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import upload from "../context/upload.js";
+
 import {S3Client, PutObjectCommand} from '@aws-sdk/client-s3';
 const s3Client = new S3Client({
   region: 'us-east-1',
@@ -15,6 +16,7 @@ const s3Client = new S3Client({
       secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_ID,
   },
 });
+
 function AddUser(props)
 {
 
@@ -65,6 +67,7 @@ function AddUser(props)
    
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+
     Resizer.imageFileResizer(
       file,
       720,
@@ -77,11 +80,12 @@ function AddUser(props)
           alert('Image size should be less than 5MB.');
           return;
         }
+
         
-        setImageFile(resizedImage);
-      },
-      'blob'
-    );
+    //     setImageFile(resizedImage);
+    //   },
+      setImageFile(file);
+   
     }
 
   const uploadToS3 = async () => {
@@ -186,7 +190,9 @@ function AddUser(props)
       try{
           let profilePictureUrl = ""
           if (imageFile) {
-            profilePictureUrl = await uploadToS3();
+            profilePictureUrl = await upload(imageFile);
+            console.log(profilePictureUrl);
+          }
         }
 
           //save to firebase db
