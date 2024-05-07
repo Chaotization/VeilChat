@@ -90,7 +90,7 @@ const ChatRoom = () =>{
     try {
       if (file.file) {
         console.log("Uploading file...");
-        imgUrl = await upload(file.file);
+        fileUrl = await upload(file.file);
         console.log("Image uploaded:", fileUrl);
       }
   
@@ -98,7 +98,7 @@ const ChatRoom = () =>{
         senderId: currentUser.id,
         text,
         createdAt: Date.now(),
-        ...(imgUrl && { img: imgUrl }),
+        ...(fileUrl && { img: fileUrl }),
 
       };
   
