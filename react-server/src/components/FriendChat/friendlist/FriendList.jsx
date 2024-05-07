@@ -147,7 +147,7 @@ const FriendList = ({triggerChatUpdate}) => {
   };
 
   return (
-    <div className="friendList bg-white shadow-md rounded-lg p-4">
+    <div className="friendList bg-white shadow-md rounded-lg p-4 h-screen max-h-screen">
       <div className="search mb-4">
         <div className="searchbar">
           <input type="text" placeholder="Search Friend" className="input input-bordered w-full" />
