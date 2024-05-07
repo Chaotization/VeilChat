@@ -15,7 +15,6 @@ import {
 import { useUserStore } from "../../context/userStore";
 
 
-
 const AddFriend = () => {
   const [friend, setFriend] = useState(null);
   const { currentUser } = useUserStore();

@@ -100,23 +100,24 @@ function SignUp() {
     const handleImageChange = (e) => {
         const file = e.target.files[0];
 
-        Resizer.imageFileResizer(
-            file,
-            150,
-            150,
-            'JPEG',
-            100,
-            0,
-            (resizedImage) => {
-                if (resizedImage.size / 1024 / 1024 > 5) {
-                    alert('Image size should be less than 5MB.');
-                    return;
-                }
+        // Resizer.imageFileResizer(
+        //     file,
+        //     150,
+        //     150,
+        //     'JPEG',
+        //     100,
+        //     0,
+        //     (resizedImage) => {
+        //         if (resizedImage.size / 1024 / 1024 > 5) {
+        //             alert('Image size should be less than 5MB.');
+        //             return;
+        //         }
 
-                setImageFile(resizedImage);
-            },
-            'blob'
-        );
+        //         setImageFile(resizedImage);
+        //     },
+        //     'blob'
+        // );
+        setImageFile(file)
     }
 
 
@@ -304,10 +305,10 @@ function SignUp() {
 
             try {
                 const currentUser = auth.currentUser
-
+                
                 let profilePictureUrl = ""
                 if (imageFile) {
-                    profilePictureUrl = await uploadToS3();
+                    profilePictureUrl = await upload(imageFile);
 
                 }
 

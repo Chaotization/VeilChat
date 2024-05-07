@@ -23,19 +23,22 @@ router.route("/").post(async (req, res) => {
         let {userFound, selectedUser} = await searchData.filtering(uId,  {gender, language, age , distance, position});
         //return the matched user's id, gender, language, age, distance, position
         if(userFound){
-            return {
+            return res.status(200).json({
                 success: true,
-                filteredUser:selectedUser
-            }
+                filteredUserId:selectedUser.uId
+            })
         }else{
-            return {
+            return res.status(404).json( {
                 success: false,
-                filteredUser: null
-            }
+                filteredUserId: null
+            })
         }
     } catch (error) {
         console.error("Error:", error.message);
-        return res.status(500).send("Internal Server Error");
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error while filtering users'
+        });
     }
 });
 

@@ -24,6 +24,7 @@ const NavigationAuth = () => {
           <ul tabIndex={0} className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
             <li><NavLink to='/'>Landing</NavLink></li>
             <li><NavLink to='/home'>Home</NavLink></li>
+            <li><NavLink to='/friendchat'>Friend Chat</NavLink></li>
             <li><NavLink to='/account'>Account</NavLink></li>
             <li><NavLink to="/profile">Profile</NavLink></li>
           </ul>
@@ -35,6 +36,7 @@ const NavigationAuth = () => {
           <li className='btn'><NavLink to='/'>Landing</NavLink></li>
           <li className='btn'><NavLink to='/home'>Home</NavLink></li>
           <li className='btn'><NavLink to='/account'>Account</NavLink></li>
+          <li className='btn'><NavLink to='/friendchat'>Friend Chat</NavLink></li>
           <li className='btn'><NavLink to='/profile'>Profile</NavLink></li>
         </ul>
       </div>
