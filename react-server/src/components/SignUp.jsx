@@ -99,13 +99,13 @@ function SignUp() {
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
-
+        console.log(file);
         Resizer.imageFileResizer(
             file,
-            150,
-            150,
+            300,
+            300,
             'JPEG',
-            100,
+            90,
             0,
             (resizedImage) => {
                 if (resizedImage.size / 1024 / 1024 > 5) {
@@ -117,7 +117,7 @@ function SignUp() {
             },
             'blob'
         );
-    }
+    };
 
 
     const uploadToS3 = async () => {
@@ -305,11 +305,12 @@ function SignUp() {
             try {
                 const currentUser = auth.currentUser
 
-                let profilePictureUrl = ""
+                let profilePictureUrl = "https://veilchat-s3.s3.amazonaws.com/usersProfileFolder/defaultUserProfilePicture.jpg"
                 if (imageFile) {
                     profilePictureUrl = await uploadToS3();
 
                 }
+                console.log(profilePictureUrl)
 
                 const userDocRef = doc(db, "users", currentUser.uid);
                 await setDoc(userDocRef, {

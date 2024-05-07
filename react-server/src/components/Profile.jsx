@@ -4,6 +4,7 @@ import ReactModal from "react-modal";
 import Resizer from 'react-image-file-resizer';
 import { useNavigate } from "react-router-dom";
 import AddUser from "./AddUser";
+import {PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
 function Profile(){
 const auth =getAuth();
 const currentUser=auth.currentUser;
@@ -15,7 +16,7 @@ const[error, setError]=useState(null);
 
   const [languages, setLanguages]=useState("");
   const [uploadError, setUploadError] = useState(null);
-  const [imageFile, setImageFile] = useState(null); 
+  const [imageFile, setImageFile] = useState(null);
   const langs= [
     "English",
     "Arabic",
@@ -40,6 +41,13 @@ const[error, setError]=useState(null);
   const [availableLanguages, setAvailableLanguages]=useState(langs)
   const [errors, setErrors] = useState([]);
   const[profilePictureLocation, setProfilePictureLocation]=useState(null);
+    const s3Client = new S3Client({
+        region: 'us-east-1',
+        credentials: {
+            accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
+            secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_ID,
+        },
+    });
 
 useEffect(() => {
     const fetchData = async () => {
@@ -50,17 +58,17 @@ useEffect(() => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: currentUser.email }),
         });
-  
+
         if (!response.ok) {
-         
+
           throw new Error(`Request failed`);
-         
+
         }
         const jsonData = await response.json();
         setData(jsonData);
         setLanguages(jsonData.languages)
       } catch (error) {
-        
+
        setError(error);
        setLoading('false')
        alert('There was some problem processing your data')
@@ -69,44 +77,44 @@ useEffect(() => {
       }
       setLoading(false);
     };
-  
+
     if(currentUser)
     {fetchData();}
     else {
         navigate('/signin');
         return
       }
-  },[]); 
+  },[]);
 
   console.log(currentUser)
   if(loading)
   {
     return <div> Fetching the data from server</div>
   }
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    console.log(file)
-    Resizer.imageFileResizer(
-      file,
-      150,
-      150,
-      'JPEG',
-      100, 
-      0,
-      (resizedImage) => {
-        if (resizedImage.size / 1024 / 1024 > 5) {
-          alert('Image size should be less than 5MB.');
-          return;
-        }
-        
-        setImageFile(resizedImage);
-      },
-      'blob'
-    );
-    }
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        console.log(file);
+        Resizer.imageFileResizer(
+            file,
+            300,
+            300,
+            'JPEG',
+            90,
+            0,
+            (resizedImage) => {
+                if (resizedImage.size / 1024 / 1024 > 5) {
+                    alert('Image size should be less than 5MB.');
+                    return;
+                }
+
+                setImageFile(resizedImage);
+            },
+            'blob'
+        );
+    };
   const handleLanguages=(e)=>
   {
-   
+
     if(!languages.includes(e.target.value))
     {
       if(languages.length>2)
@@ -127,11 +135,40 @@ useEffect(() => {
     else{
     setLanguages(languages.filter((lang) => lang !== languageToRemove));}
   };
-    
-  async function handleEditForm(e){
+    const uploadToS3 = async () => {
+        try {
+            const randomString =
+                Math.random().toString(36).substring(2, 15) +
+                Math.random().toString(36).substring(2, 15);
+            const currentFileName = `usersProfileFolder/${randomString}.jpeg`;
+
+            const params = {
+                Bucket: "veilchat-s3",
+                Key: currentFileName,
+                Body: imageFile,
+                ContentType: 'image/jpeg',
+                ACL: "public-read",
+            };
+
+            console.log("Uploading with parameters:", params);
+
+            const command = new PutObjectCommand(params);
+            await s3Client.send(command);
+
+            const fileUrl = `https://${params.Bucket}.s3.amazonaws.com/${params.Key}`;
+            console.log("Image uploaded successfully:", fileUrl);
+
+            return fileUrl;
+        } catch (error) {
+            console.error("S3 Upload Error:", error);
+        }
+    };
+
+
+    async function handleEditForm(e){
         e.preventDefault();
         setErrors([]);
-        
+
         const regex = /^[A-Za-zÀ-ÿ ]+$/;
         let fname=document.getElementById('first_name').value;
         let lname=document.getElementById('last_name').value;
@@ -164,7 +201,7 @@ useEffect(() => {
     if(dob)
     {
         dob=new Date(dob);
-   
+
     let yearOfBirth=parseInt(dob.getFullYear());
     const day = String(dob.getDate()).padStart(2, '0');
     const year=yearOfBirth.toString();
@@ -172,7 +209,7 @@ useEffect(() => {
     let today=new Date();
     let age=parseInt(today.getFullYear())-yearOfBirth;
     if(age<18){
-      
+
       setErrors((prevState) => {
         return [...prevState, "You must be 18 years old to continue..."]
       });
@@ -198,15 +235,24 @@ useEffect(() => {
     if(!errors || errors.length===0)
     {
         try
-    
+
         {
-            
-      let response=await fetch("http://localhost:4000/user/updateuser",{
+            let profilePictureUrl = ""
+            if (imageFile) {
+                profilePictureUrl = await uploadToS3();
+
+            }
+            if(profilePictureUrl){
+                updatedUser['profilePictureLocation']=profilePictureUrl;
+            }
+
+
+            let response=await fetch("http://localhost:4000/user/updateuser",{
           method:"POST",
           headers: { 'Content-Type': 'application/json' },
           body:JSON.stringify(updatedUser)
       });
-     
+
       let data=await response.json()
 
       console.log("data:",data)
@@ -314,7 +360,7 @@ useEffect(() => {
               type="text"
               name="first_name"
               id="first_name"
-              defaultValue={data.firstName}    
+              defaultValue={data.firstName}
               //onChange={handleChange}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 leading-tight focus:outline-none focus:shadow-outline"/>
           </div>
@@ -391,13 +437,13 @@ useEffect(() => {
               Languages you know:(choose maximum 3)
             </label>
             <select
-              name="languages[]" 
+              name="languages[]"
               id="languages"
               className="border rounded py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              value={languages}  
+              value={languages}
               onChange={handleLanguages}
               multiple
-              max={3} 
+              max={3}
               style={{ height: '250px' }}
             >
   {availableLanguages.map((lang)=>(
@@ -407,10 +453,10 @@ useEffect(() => {
           </div>
           <div className="container">
   {languages && languages.length > 0 && (
-    <div className="mb-3"> 
+    <div className="mb-3">
 
         {languages.map((language) => (
-          <span key={language} className="me-2 mb-2 inline-flex">          
+          <span key={language} className="me-2 mb-2 inline-flex">
             <button type="button" className="bg-blue-300 hover:bg-red-300 text-black  py-1 px-1 rounded focus:outline-none focus:shadow-outline" onClick={() => handleLanguageRemove(language)}>
             {language}
             </button>
@@ -448,7 +494,7 @@ useEffect(() => {
               className="bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline">
               Make Changes
             </button>
-          
+
                 </div></div></form></ReactModal></div>
     )
 }
