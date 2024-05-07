@@ -5,9 +5,11 @@ import Resizer from 'react-image-file-resizer';
 import { useNavigate } from "react-router-dom";
 import AddUser from "./AddUser";
 import {PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
+import { useUserStore } from "../context/userStore";
 function Profile(){
     const auth =getAuth();
     const currentUser=auth.currentUser;
+    const userInFireStore=useUserStore();
     const [data, setData] = useState("");
     const [openModal,setOpenModal]=useState(false);
     const [loading, setLoading]=useState(false);
@@ -163,7 +165,7 @@ function Profile(){
             console.error("S3 Upload Error:", error);
         }
     };
-
+    console.log(userInFireStore)
 
     async function handleEditForm(e){
         e.preventDefault();

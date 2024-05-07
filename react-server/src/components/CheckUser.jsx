@@ -7,6 +7,7 @@ import UserFilter from './SearchUsers';
 import { useParams } from 'react-router-dom';
 import {db} from '../firebase/FirebaseFunctions';
 import {setDoc, doc} from 'firebase/firestore';
+import FriendChat from './FriendChat/FriendChat';
 function CheckUser(props) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -111,12 +112,16 @@ const url=useParams();
   if (filteredData) {
     if(props.home)
     return <Home tested={true} firstName={filteredData.firstName} />;
+    else if(props.search)
       return <UserFilter tested={true}/>
-    
+    else if(props.friendchat)
+    return <FriendChat tested={true}/>
+
   }
+  else{
   
 
-  return <AddUser firstName={currentUser && currentUser.displayName ||"User"} redirect="/home"/>;
+  return <AddUser firstName={currentUser && currentUser.displayName ||"User"} redirect="/home"/>;}
 }
 
 export default CheckUser;

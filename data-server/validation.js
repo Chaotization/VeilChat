@@ -102,7 +102,7 @@ const exportedMethods = {
     if (!nameRegex.test(name)) {
       throw `Error: ${valName} must only contain character a-z and should not contain numbers`;
     }
-    if (name.length < 2 || name.length > 25) {
+    if (name.length < 1 || name.length > 25) {
       throw `Error: ${valName} length must be at least 2 characters long with a max of 25 characters`;
     }
     return name;

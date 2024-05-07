@@ -1,4 +1,4 @@
-import React,{useState,useContext} from "react";
+import React,{useState,useContext, useEffect} from "react";
 import {useNavigate, Link,Navigate} from "react-router-dom";
 import AuthContext from './AuthContext.jsx';
 import SocialSignIn from './SocialSignIn.jsx';
@@ -6,15 +6,23 @@ import {
   doSignInWithEmailAndPassword,
   doPasswordReset,
 } from '../firebase/FirebaseFunctions.js';
+import { getAuth } from "firebase/auth";
 
 const SignIn=()=>
 {
     const navigate=useNavigate();
     const [error, setError]=useState(null);
-    const {currentUser} = useContext(AuthContext);
+    const {currentUser} = getAuth()
+
+    useEffect(()=>
+  {
     if (currentUser) {
-      return <Navigate to='/' />;
+      navigate('/')
+      return
   }
+
+  },[])
+  
 
   const passwordReset = (event) => {
     event.preventDefault();
