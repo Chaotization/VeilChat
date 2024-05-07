@@ -23,6 +23,7 @@ const ChatRoom = () =>{
   const [file, setfile] = useState({
     file: null,
     url: "",
+    name: null
   });
 
   useEffect(()=>{
@@ -47,6 +48,7 @@ const ChatRoom = () =>{
       setfile({
         file,
         url,
+        name: file.name
       });
     }
   };
@@ -81,24 +83,27 @@ const ChatRoom = () =>{
 
   const handleSend = async () => {
   
-    if (!text.trim() && !img.file) {
+    if (!text.trim() && !file.file) {
       console.log("No content to send.");
       return;
     }
-  
+    let fileName = null;
     let fileUrl = null;
+    let fileType = null;
     try {
       if (file.file) {
         console.log("Uploading file...");
         fileUrl = await upload(file.file);
-        console.log("Image uploaded:", fileUrl);
+        fileType = file.file.type;
+        fileName = file.name,
+        console.log("File uploaded:", fileUrl);
       }
   
       const messageData = {
         senderId: currentUser.id,
-        text,
+        text:text.trim(),
         createdAt: Date.now(),
-        ...(fileUrl && { img: fileUrl }),
+        ...(fileUrl && { fileUrl, fileType, fileName }),
 
       };
   
@@ -131,8 +136,38 @@ const ChatRoom = () =>{
     } catch (error) {
       console.error("Error sending message:", error);
     } finally {
-      setfile({ file: null, url: "" });
+      setfile({ file: null, url: "", name: null });
       setText("");
+    }
+  };
+
+  const FileMessage = ({ message }) => {
+    const { fileType, fileUrl, fileName } = message;
+  
+    const fileExtension = fileType?.split('/').pop();
+  
+    const handleClick = () => {
+      
+      const link = document.createElement('a');
+      link.href = fileUrl;
+      link.download = fileUrl.split('/').pop(); 
+      link.click();
+    };
+  
+    if (fileType?.startsWith('image')) {
+      return <img src={fileUrl} alt="Sent Image" className="w-full mb-2 rounded-lg" />;
+    } else if (fileType?.startsWith('video')) {
+      return <video src={fileUrl} controls className="w-full mb-2 rounded-lg"></video>;
+    } else if (fileType?.startsWith('audio')) {
+      return <audio controls src={fileUrl} className="w-full mb-2"></audio>;
+    } else {
+      // Display a generic file icon for other file types
+      return (
+        <div onClick={handleClick} className="cursor-pointer flex items-center space-x-2">
+          <img src="/imgs/file.png" alt="File" className="w-6 h-6" />
+          <span>Download: {fileName|| 'Unknown File'}</span>
+        </div>
+      );
     }
   };
   
@@ -164,8 +199,8 @@ const ChatRoom = () =>{
             key={message?.creatAt}
           >
             <div className="texts">
-              {message.img && <img src={message.img} alt="" className="w-full mb-2 rounded-lg" />}
-              <p>{message.text}</p>
+              {message.fileUrl && <FileMessage message={message} />}
+              {message.text && <p>{message.text}</p>}
               <span>{timeAgo(message.createdAt)}</span>
             </div>
           </div>
@@ -179,16 +214,22 @@ const ChatRoom = () =>{
         )}
         <div ref={endRef}></div>
       </div>
-      <div className="bottom flex items-center mt-4">
-        <div className="">
-          <label htmlFor="file">
-          <img src="imgs/file.png" alt="" />
-            </label>
-            <input type="file" id="file" style={{display: "none"}} onChange={handleFileUpload} />
+      <div className="bottom flex items-center mt-4 space-x-2">
+    <input type="text" placeholder="Type a message..." value={text} onChange={(e) => setText(e.target.value)} className="input input-bordered flex-grow mr-2" />
+    <label htmlFor="file" className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <img src="imgs/file.png" alt="Upload" className="h-5 w-5" />  
+    </label>
+    <input type="file" id="file" className="hidden" onChange={handleFileUpload} />
+    <button className="btn btn-primary" onClick={handleSend}>Send</button>
+    {file.url && (
+        <div className="preview bg-green-200 p-2 rounded flex items-center">
+            <p className="mr-2">{file.name}</p> {/* Display the name of the file here */}
+            <button onClick={() => setfile({ file: null, url: "", name: "" })} className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">
+                Remove
+            </button>
         </div>
-        <input type="text" placeholder="Type a message..." value={text} onChange={(e) => setText(e.target.value)} className="input input-bordered flex-grow mr-2" />
-        <button className="sendButton btn btn-primary" onClick={handleSend}>Send</button>
-      </div>
+    )}
+</div>
     </div>
   )
 }
