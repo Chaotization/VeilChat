@@ -56,7 +56,7 @@ const UserFilter = (props) => {
                 distance,
                 userLocation,
                });
-
+            print(response)
             setFilteredUser(response.data);
             console.log(filteredUser.uId);
            createNewChat(filteredUser.uId)

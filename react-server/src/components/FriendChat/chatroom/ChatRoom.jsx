@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { arrayUnion, doc, getDoc, onSnapshot, updateDoc} from "firebase/firestore";
-import { db } from '../../../firebase/FirebaseFunctions';
+import React, {useEffect, useRef, useState} from 'react'
+import {arrayUnion, doc, getDoc, onSnapshot, updateDoc} from "firebase/firestore";
+import {db} from '../../../firebase/FirebaseFunctions';
 import {useChatStore} from '../../../context/chatStore';
-import { useUserStore } from '../../../context/userStore';
+import {useUserStore} from '../../../context/userStore';
 import upload from '../../../context/upload';
 import moment from 'moment';
+import axios from "axios";
 
 const ChatRoom = () =>{
   const timeAgo = (createdAt) => {
@@ -59,6 +60,33 @@ const ChatRoom = () =>{
     }
   };
 
+  const getReceiverId = async (chatId) => {
+    try {
+      const chatRef = doc(db, "chats", chatId);
+
+      const chatDoc = await getDoc(chatRef);
+
+      if (chatDoc.exists()) {
+        const chatData = chatDoc.data();
+        const receiverId = chatData.members.find(memberId => memberId !== currentUser.uid);
+        return receiverId;
+      } else {
+        console.log("Chat document does not exist.");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching chat document:", error);
+      return null;
+    }
+  };
+
+  // const checkUserStatus = async () => {
+  //   let receiverId = getReceiverId(chatId)
+  //   const response = await axios.post('http://localhost:4000/user/checkstatus')
+  //   if(response)
+  //
+  // }
+
   const handleSend = async () => {
   
     if (!text.trim() && !img.file) {
@@ -77,7 +105,7 @@ const ChatRoom = () =>{
       const messageData = {
         senderId: currentUser.id,
         text,
-        createdAt: Date.now(),  // Consider using Firestore serverTimestamp here
+        createdAt: Date.now(),
         ...(imgUrl && { img: imgUrl }),
       };
   

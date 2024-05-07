@@ -175,6 +175,33 @@ router.route("/createuserwithemail").post(async(req,res)=>
     }
 
 })
+
+router.route("/checkstatus").post(async (req, res) =>{
+    try{
+        const { receiverId, lastMessageTime } = req.body;
+        if (!receiverId || !lastMessageTime) {
+            return res.status(400).json({
+                success: false,
+                message: "Missing required parameters: receiverId or lastMessageTime"
+            });
+        }
+
+        const result = await usersData.checkStatus(receiverId, lastMessageTime);
+
+        res.json({
+            success: true,
+            data: result
+        });
+    } catch (error) {
+        console.error("Error checking status:", error);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error while checking status"
+        });
+    }
+})
+
+
 export default router;
 
 

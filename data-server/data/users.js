@@ -148,8 +148,9 @@ export const createUser = async (
         phoneNumber,
         password: await bcrypt.hash(password, 15),
         userSince: validation.generateCurrentDate(),
+        lastOnlineAt: validation.generateCurrentDate(),
         profilePictureLocation,
-        friends: [], status: 'inactive'
+        friends: []
     };
 
     const insertUser = await userCollection.insertOne(user);
@@ -199,6 +200,13 @@ export const loginUser = async (email, password) => {
     } else {
         const userId = user.uId.toString();
         const onlineUsersKey = 'onlineUsers';
+        const updateUser = await userCollection.updateOne(
+            {uId: userId},
+            { $set: { lastOnlineAt: validation.generateCurrentDate() } }
+        )
+        if (updateUser.modifiedCount === 0) {
+            throw `Error: Failed to update last online at for user with ID ${userId}`;
+        }
 
         let exist = await client.exists(onlineUsersKey);
         if (!exist) {
@@ -222,8 +230,9 @@ export const loginUser = async (email, password) => {
             phoneNumber: user.phoneNumber,
             languages: user.languages,
             userSince: user.userSince,
+            lastOnlineAt: user.lastOnlineAt,
             profilePictureLocation: user.profilePictureLocation,
-            friends: user.friends, status: user.status
+            friends: user.friends
         };
     }
 };
@@ -236,6 +245,13 @@ export const logoutUser = async (userId) => {
     });
     if (!user) {
         throw "Error: Either the email address or password is invalid";
+    }
+    const updateUser = await userCollection.updateOne(
+        {uId: userId},
+        { $set: { lastOnlineAt: validation.generateCurrentDate() } }
+    )
+    if (updateUser.modifiedCount === 0) {
+        throw `Error: Failed to update last online at for user with ID ${userId}`;
     }
 
     const onlineUsersKey = 'onlineUsers';
@@ -529,9 +545,9 @@ export const getUserInfoByEmail = async (email) => {
         dob:user.dob,
         languages: user.languages,
         userSince: user.userSince,
+        lastOnlineAt: user.lastOnlineAt,
         profilePictureLocation: user.profilePictureLocation,
         friends: user.friends,
-        status:user.status
     };
 }
 
@@ -564,20 +580,6 @@ export const getAllUsers = async () => {
     const user = await userCollection.find({}).toArray();
     return user;
 };
-
-export const setStatus = async (email, status) => {
-    try {
-        let user = await getUserInfoByEmail(email);
-        const userCollection = await users();
-        const userUpdated = await userCollection.updateOne({email}, {$set: {status: status}});
-        if (!userUpdated.acknowledged) {
-            throw "Can't update status"
-        }
-        return {...user, status};
-    } catch (e) {
-        throw e;
-    }
-}
 
 
 export const updateUser = async (user) =>
@@ -659,9 +661,9 @@ export const createAccountWithEmailAndPassword=async(user)=>
         phoneNumber:"",
         password:password ,
         userSince: validation.generateCurrentDate(),
+        lastOnlineAt: validation.generateCurrentDate(),
         profilePictureLocation:"",
-        friends: [],
-        status:'inactive'
+        friends: []
     };
 
 	const insertUser = await userCollection.insertOne(new_user);
@@ -669,8 +671,62 @@ export const createAccountWithEmailAndPassword=async(user)=>
 		throw `Error: couldn't register the account: ${email}`;
 
 	}
-	const insertedUser=await getUserInfoByEmail(email);
+	const insertedUser= await getUserInfoByEmail(email);
 	return insertedUser ;
 
 }
 
+export const checkStatus = async (receiverId, lastMessageTime) => {
+    receiverId = validation.checkId(receiverId);
+    lastMessageTime = validation.validateDateTime()
+    const exist = await client.exists('onlineUsers');
+
+    if (exist) {
+        const allOnlineUsers = await client.json.get('onlineUsers');
+
+
+        const isOnline = allOnlineUsers.includes(receiverId);
+
+        const userCollection = await users();
+        const user = await userCollection.findOne({uId: receiverId});
+        if (!user) {
+            throw `No user with ID ${receiverId}`;
+        }
+
+        const lastOnlineDate = new Date(user.lastOnlineAt);
+        const lastMessageDate = new Date(lastMessageTime);
+
+        if (isOnline || lastOnlineDate > lastMessageDate) {
+            return {
+                isOnline: true,
+                message: "User is online or was last online after the last message."
+            };
+        } else {
+            return {
+                isOnline: false,
+                message: "User is offline and was last online before the last message."
+            };
+        }
+    } else {
+        const userCollection = await users();
+        const user = await userCollection.findOne({uId: receiverId});
+
+        if (!user) {
+            throw `No user with ID ${receiverId}`;
+        }
+        const lastOnlineDate = new Date(user.lastOnlineAt);
+        const lastMessageDate = new Date(lastMessageTime);
+
+        if (lastOnlineDate > lastMessageDate) {
+            return {
+                isOnline: false,
+                message: "User was last online after the last message."
+            };
+        } else {
+            return {
+                isOnline: false,
+                message: "User is offline and was last online before the last message."
+            };
+        }
+    }
+};
