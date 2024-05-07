@@ -1,6 +1,6 @@
 import  { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getDatabase, ref, push } from 'firebase/database';
+import { getDatabase, ref, push, get } from 'firebase/database';
 import { getAuth } from 'firebase/auth';
 import axios from 'axios';
 import CheckUser from './CheckUser';
@@ -47,25 +47,27 @@ const UserFilter = (props) => {
     };
 
     const handleFilter = async () => {
-        try {
-            const response = await axios.post('http://localhost:4000/search', {
-                uId: currentUser.uid,
-                gender,
-                age,
-                language,
-                distance,
-                userLocation,
-               });
-
-            if (response.data.success) {
-                setFilteredUser(response.data.filteredUserId);
-                console.log('Filtered User ID:', response.data.filteredUserId);
-                createNewChat(response.data.filteredUserId);
-            } else {
-                setFilteredUser(null);
-                console.log('No filtered user found.');
-            }
-        } catch (error) {
+      try {
+        const response = await axios.post('http://localhost:4000/search', {
+          uId: currentUser.uid,
+          gender,
+          age,
+          language,
+          distance,
+          userLocation,
+        });
+    
+        if (response.data.success) {
+          setFilteredUser(response.data.filteredUserId);
+          console.log('Filtered User ID:', response.data.filteredUserId);
+          const chatId = response.data.chatId;
+          await createNewChat(response.data.filteredUserId, chatId);
+          navigate(`/chat/${chatId}`);
+        } else {
+          setFilteredUser(null);
+          console.log('No filtered user found.');
+        }
+      } catch (error) {
             if (error.response) {
                 if (error.response.status === 404) {
                     setFilteredUser(null);
@@ -99,22 +101,21 @@ const UserFilter = (props) => {
         return 'chatId_' + Date.now() + Math.round(Math.random(0,10)*10)
     };
 
-    const createNewChat = (uid) => {
-        const newChatId = generateChatId();
-        setChatId(newChatId);
-        setMessages([]);
-        const db = getDatabase();
-        const participantsRef = ref(db, `chats/${newChatId}/participants`);
-        push(participantsRef, { userId: currentUser.uid, joined: true });
-        push(participantsRef, { userId: uid, joined: false });
+    const createNewChat = async (uid, chatId) => {
+      const db = getDatabase();
+      const chatRef = ref(db, `chats/${chatId}`);
+      const snapshot = await get(chatRef);
     
-        navigate(`/chat/${newChatId}`)
+      if (!snapshot.exists()) {
+        setChatId(chatId);
+        setMessages([]);
+        console.log(chatId);
+        const participantsRef = ref(db, `chats/${chatId}/participants`);
+        await push(participantsRef, { userId: currentUser.uid, joined: true });
+        await push(participantsRef, { userId: uid, joined: true });
+      }
     };
     
-    const handleChatRedirect = () => {
-        console.log("inside chat redirect")
-        createNewChat()
-    }
     
     if(props && props.tested)
     {
@@ -185,15 +186,12 @@ const UserFilter = (props) => {
         </div>
           <div className="flex justify-between">
               {loading ? (
-                  <button className="btn btn-primary loading">Finding a match...</button>
+                  <button className="btn outline loading">Finding a match...</button>
               ) : (
-                  <button className="btn btn-primary" onClick={handleFilter}>
+                  <button className="btn btn-outline" onClick={handleFilter}>
                       Apply Filters
                   </button>
               )}
-              <button className="btn btn-outline" onClick={handleChatRedirect}>
-                  Find a match
-              </button>
           </div>
       </div>
     );}

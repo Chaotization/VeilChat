@@ -36,12 +36,12 @@ const NavigationAuth = () => {
           <li className='btn'><NavLink to='/'>Landing</NavLink></li>
           <li className='btn'><NavLink to='/home'>Home</NavLink></li>
           <li className='btn'><NavLink to='/account'>Account</NavLink></li>
-          <li className='btn'><NavLink to='/friendchat'>Friend Chat</NavLink></li>
+          <li className='btn'><NavLink to='/searchuser'>Random Chat</NavLink></li>
           <li className='btn'><NavLink to='/profile'>Profile</NavLink></li>
         </ul>
       </div>
       <div className="navbar-end">
-        {/* <SignOutButton /> */}
+      <NavLink to="/friendchat"><span className="material-symbols-outlined hover:text-secondary">chat</span></NavLink>
       </div>
     </div>
   );

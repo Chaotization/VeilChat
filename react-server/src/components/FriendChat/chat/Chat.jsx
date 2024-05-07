@@ -94,7 +94,7 @@ const Chat = ({updateTrigger}) =>{
     };
 
     return (
-      <div className="list bg-base-100 shadow-md rounded-lg p-4">
+      <div className="list bg-base-100 shadow-md rounded-lg p-4 h-screen max-h-screen">
         <div className="chatList">
           <div className="userInfo flex items-center mb-4">
             <img src={currentUser.profilePictureLocation || './public/imgs/avatar.png'} alt="User Avatar" className="userAvatar w-12 h-12 rounded-full mr-4" />
