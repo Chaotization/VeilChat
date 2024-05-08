@@ -44,20 +44,22 @@ function Landing() {
         <div>
           <h1 className="text-5xl font-bold">Welcome to </h1>
           {/* AI generated svg */}
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100">
-            <defs>
-              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#FF4136" />
-                <stop offset="100%" stop-color="#0074D9" />
-              </linearGradient>
-            </defs>
-            <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-size="80" font-weight="bold" fill="url(#gradient)">
-              <tspan>V</tspan>
-              <tspan fill="base">eil</tspan>
-              <tspan>C</tspan>
-              <tspan fill="base">hat</tspan>
-            </text>
-          </svg>
+          <div className="block">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100">
+              <defs>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#FF4136" />
+                  <stop offset="100%" stopColor="#0074D9" />
+                </linearGradient>
+              </defs>
+              <text x="50%" y="50%" textAnchor="middle" dominantBaseline="middle" fontSize="80" fontWeight="bold" fill="url(#gradient)">
+                <tspan>V</tspan>
+                <tspan>eil</tspan>
+                <tspan>C</tspan>
+                <tspan>hat</tspan>
+              </text>
+            </svg>
+          </div>
           <p className="py-6">
             Connect with interesting strangers based on your preferences and engage in meaningful conversations.
           </p>
