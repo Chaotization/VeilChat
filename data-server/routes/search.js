@@ -61,4 +61,21 @@ router.route("/").post(async (req, res) => {
 	}
 });
 
+router.route("/exist").post(async (req, res) => {
+	let userId = req.body.userId;
+	try {
+		const response = await searchData.existSearch(userId);
+
+		if (response.deleted) {
+			return res.json(200).json({deleted: true});
+		} else {
+			return res.status(404).json({ deleted: false, message: "Unable to delete user" });
+		}
+	}catch (error){
+		console.log(error);
+	}
+
+});
+
+
 export default router;

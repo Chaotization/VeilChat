@@ -268,6 +268,7 @@ function Chatroom(props) {
 
   const handleExitChat = () => {
     setShowExitOptions(true);
+
   };
 
   const handleGoToHome = () => {
