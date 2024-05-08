@@ -271,8 +271,16 @@ function Chatroom(props) {
 
   };
 
-  const handleGoToHome = () => {
-    navigate('/home');
+  const handleGoToHome = async () => {
+    const response = await axios.post("http://localhost:4000/search/exit", {
+      userId: currentUser.uid
+    })
+    if(response.data.deleted){
+      navigate('/home');
+    }else{
+      console.log(response.data.message)
+    }
+
   };
 
   const handleFindNewMatch = () => {
