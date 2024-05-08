@@ -1,48 +1,61 @@
-import React,{useContext} from 'react';
+import React from 'react';
+import { NavLink } from 'react-router-dom';
 import '../App.css';
-import { useNavigate } from 'react-router-dom';
+import { getAuth } from 'firebase/auth';
 
-function Landing() {   
+function Landing() {
   return (
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content flex-col lg:flex-row-reverse">
-        <img
-          src="/imgs/hero.webp"
-          className="max-w-sm rounded-lg shadow-2xl"
-          alt="Landing"
-        />
+        <div className="relative">
+          <img
+            src="/imgs/5233.jpg"
+            className="max-w-xl rounded-lg shadow-2xl"
+            alt="Landing"
+          />
+          <svg
+            className="absolute -top-10 -left-10 w-20 h-20 text-primary"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"
+            />
+          </svg>
+          <svg
+            className="absolute bottom-0 right-0 w-20 h-20 text-secondary"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+            />
+          </svg>
+        </div>
         <div>
           <h1 className="text-5xl font-bold">Welcome to VeilChat!</h1>
           <p className="py-6">
-            VeilChat is a unique blind dating platform that connects you with interesting strangers based on your preferences. Our platform aims to create meaningful conversations and potentially lasting connections.
+            Connect with interesting strangers based on your preferences and engage in meaningful conversations.
           </p>
-          <h2 className="text-3xl font-bold mb-4">How it works:</h2>
-          <ol className="list-decimal list-inside mb-6">
-            <li>Sign up and set your preferences</li>
-            <li>Get matched with a stranger who shares similar interests</li>
-            <li>Start a conversation and get to know each other</li>
-            <li>If you enjoy the conversation, you can choose to follow each other</li>
-            <li>Continue building your connection and see where it leads!</li>
-          </ol>
-          <p className="mb-6">
-            With VeilChat, you have the opportunity to expand your social circle, engage in exciting conversations, and potentially find your perfect match.
-          </p>
-          <h2 className="text-3xl font-bold mb-4">Why choose VeilChat?</h2>
           <ul className="list-disc list-inside mb-6">
-            <li>Connect with individuals who share your interests</li>
-            <li>Engage in meaningful conversations</li>
+            <li>Personalized matches</li>
+            <li>Engaging conversations</li>
             <li>Expand your social network</li>
-            <li>Potentially find your perfect match</li>
             <li>Privacy and safety assured</li>
           </ul>
-          <div className="flex justify-center">
-            <button className="btn btn-primary mr-4">Sign Up</button>
-            <button className="btn btn-secondary">Learn More</button>
-          </div>
+          <NavLink to="/searchuser"><button className="btn btn-primary">Get Started</button></NavLink>
         </div>
       </div>
     </div>
-  );}
-
+  );
+}
 
 export default Landing;

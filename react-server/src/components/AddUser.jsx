@@ -4,9 +4,9 @@ import Resizer from 'react-image-file-resizer';
 import {useUserStore} from '../context/userStore';
 import {useNavigate} from "react-router-dom";
 import {db} from '../firebase/FirebaseFunctions';
-
 import {PutObjectCommand, S3Client} from '@aws-sdk/client-s3';
 import {doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
+import PhoneVerificationModal from "./PhoneVerification.jsx";
 
 const s3Client = new S3Client({
     region: 'us-east-1',
@@ -26,6 +26,8 @@ function AddUser(props)
     const [languages, setLanguages]=useState("");
     const [uploadError, setUploadError] = useState(null);
     const [imageFile, setImageFile] = useState(null);
+    const [phoneNumberVerified, setPhoneNumberVerified] = useState(false);
+    const [phoneNumber, setPhoneNumber] = useState('');
     const langs= [
         "English",
         "Arabic",
@@ -115,48 +117,46 @@ function AddUser(props)
             console.error("S3 Upload Error:", error);
     }
     };
-  const handleLanguages=(e)=>
-  {
-   
-    if(!languages.includes(e.target.value))
-    {
-      if(languages.length>2)
-      {
-        alert("You already selected 3 languages...")
-      }
-      else
-      {
-    setLanguages([...languages,e.target.value])
-      }
+    const handleLanguages=(e)=> {
+
+        if(!languages.includes(e.target.value)) {
+            if(languages.length>2) {
+                alert("You already selected 3 languages...")
+            } else {
+                setLanguages([...languages,e.target.value])
+            }
+        }
     }
-  }
   //console.log(loggedUser, currentUser)
-  const handleLanguageRemove = (languageToRemove) => {
-    if(languages.length<2)
-    {
+    const handleLanguageRemove = (languageToRemove) => {
+        if(languages.length<2) {
         alert("You need to choose atleast one language");
-    }
-    else{
+    } else{
     setLanguages(languages.filter((lang) => lang !== languageToRemove));}
-  };
-    
-  const handleSignUp=async(e)=>
-  {
-    e.preventDefault();
+    };
+
+    const onVerificationSuccess = () => {
+        setPhoneNumberVerified(true);
+        setErrors(errors.filter(e => e !== "Please verify your phone number."));
+    };
+    const handleSignUp=async(e)=> {
+      e.preventDefault();
       setErrors([]);
       const regex = /^[A-Za-zÀ-ÿ ]+$/;
-    if(!regex.test(formData.first_name.trim()))
-    {
-        setErrors((prevState) => {
+      if(!regex.test(formData.first_name.trim())) {
+          setErrors((prevState) => {
             return [...prevState, "Invalid First name"]
           });
-    }
-    if(!regex.test(formData.last_name.trim()))
-    {
-        setErrors((prevState) => {
-            return [...prevState, "Invalid Last name"]
+      }
+      if(!regex.test(formData.last_name.trim())) {
+          setErrors((prevState) => {
+              return [...prevState, "Invalid Last name"]
           });
-    }
+      }
+      if (!phoneNumberVerified) {
+          setErrors(prevState => [...prevState, "Please verify your phone number."]);
+          return;
+      }
     
     let dob=document.getElementById("dob").value;
     dob = new Date(dob)
@@ -241,8 +241,8 @@ function AddUser(props)
           }
         } else{
             setErrors([]);
-            let redr=props.redirect;
-            navigate('/checker')
+            alert("Info added, you can access other pages now")
+            navigate('/')
            return
         }} catch(e){
             setErrors((prevState) => {
@@ -305,23 +305,7 @@ return(
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
         </div>
-        <div className="mb-4">
-          <label htmlFor="phoneNumber"
-          className="block text-gray-700 text-sm font-bold mb-2">
-            Mobile Number:
-          </label>
-          <input
-              type="tel"
-              name="phoneNumber"
-              id="phoneNumber"
-              placeholder="1234567890" pattern="[0-9]{10}"
-              required
-              value={formData.phoneNumber}
-              onChange={e => setFormData({ ...formData, phoneNumber: e.target.value })}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
-        </div>
-
+        <PhoneVerificationModal initialPhoneNumber={phoneNumber} onVerificationSuccess={onVerificationSuccess} />
 
         <div className="mb-4">
             <label

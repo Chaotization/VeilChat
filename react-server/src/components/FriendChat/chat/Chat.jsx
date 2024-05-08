@@ -59,7 +59,7 @@ const Chat = ({updateTrigger}) =>{
         return () => {
           unSub();
         };
-      }, [currentUser.id, updateTrigger]);
+      }, [currentUser?.id, updateTrigger]);
 
     if (isLoading || !currentUser) {
         return <div>Loading...Please Refresh your page</div>; 

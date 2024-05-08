@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext.jsx';
 import SignOutButton from './SignOut.jsx';
+import ThemeToggle from './ThemeToggle.jsx';
 import '../App.css';
 
 const Navigation = () => {
@@ -35,13 +36,14 @@ const NavigationAuth = () => {
         <ul className="menu menu-horizontal space-x-1">
           <li className='btn'><NavLink to='/'>Landing</NavLink></li>
           <li className='btn'><NavLink to='/home'>Home</NavLink></li>
-          <li className='btn'><NavLink to='/account'>Account</NavLink></li>
           <li className='btn'><NavLink to='/searchuser'>Random Chat</NavLink></li>
           <li className='btn'><NavLink to='/profile'>Profile</NavLink></li>
+          <li className='btn'><NavLink to='/account'>Account</NavLink></li>
         </ul>
       </div>
-      <div className="navbar-end">
-      <NavLink to="/friendchat"><span className="material-symbols-outlined hover:text-secondary">chat</span></NavLink>
+      <div className="navbar-end space-x-8 px-2">
+      <NavLink to="/friendchat"><span className="material-symbols-outlined hover:text-secondary mt-1 text-3xl">chat</span></NavLink>
+      <ThemeToggle/>
       </div>
     </div>
   );
@@ -66,6 +68,9 @@ const NavigationNonAuth = () => {
           <li><NavLink to='/signup'>Sign-up</NavLink></li>
           <li><NavLink to='/signin'>Sign-In</NavLink></li>
         </ul>
+      </div>
+      <div className="navbar-end">
+        <ThemeToggle />
       </div>
     </div>
   );

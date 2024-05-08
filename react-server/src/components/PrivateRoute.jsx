@@ -2,9 +2,10 @@ import {Navigate, Outlet} from 'react-router-dom';
 import React, {useContext} from 'react';
 import {AuthContext} from '../context/AuthContext.jsx';
 import '../App.css';
+import { getAuth } from 'firebase/auth';
 
 const PrivateRoute = () => {
-    const {currentUser} = useContext(AuthContext);
+    const {currentUser} =getAuth();
     
     //console.log('Private Route Comp current user', currentUser);
     // If authorized, return an outlet that will render child elements
