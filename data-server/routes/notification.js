@@ -45,8 +45,8 @@ router.route("/verification").post(async (req, res) => {
     const verificationCode = Math.floor(100000 + Math.random() * 900000);
     try {
         await client.messages.create({
-            body: `You verification code: ${verificationCode}`,
-            from: '+18334580397',
+            body: `You VeilChat verification code: ${verificationCode} is, the code expired in 60 seconds.`,
+            from: '+18666664001',
             to: phoneNumber
         });
 

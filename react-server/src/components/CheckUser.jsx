@@ -5,23 +5,27 @@ import AddUser from './AddUser';
 import Home from './ProtectedHome';
 import UserFilter from './SearchUsers';
 import { useParams } from 'react-router-dom';
-import {db} from '../firebase/FirebaseFunctions';
-import {setDoc, doc} from 'firebase/firestore';
+import { db } from '../firebase/FirebaseFunctions';
+import { setDoc, doc } from 'firebase/firestore';
 import FriendChat from './FriendChat/FriendChat';
+import Loader from './Loader';
+
 function CheckUser(props) {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const auth = getAuth();
   const currentUser = auth.currentUser;
   const navigate = useNavigate();
-const url=useParams();
+  const url = useParams();
+
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
       try {
         // Check for existing user data if currentUser exists
         if (currentUser) {
+          console.log("test")
+          console.log(currentUser)
           const response = await fetch("http://localhost:4000/user/userinfo", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -32,8 +36,7 @@ const url=useParams();
             const jsonData = await response.json();
             setData(jsonData);
           } else if (response.status === 404) {
-            // Handle non-existent user (potentially Google sign-in)
-            if (currentUser?.providerData[0]?.providerId === 'google.com' ||currentUser?.providerData[0]?.providerId==="password") {
+            if (currentUser?.providerData[0]?.providerId === 'google.com' || currentUser?.providerData[0]?.providerId === 'password') {
               try {
                 const createResponse = await fetch("http://localhost:4000/user/createuserwithemail", {
                   method: "POST",
@@ -41,16 +44,17 @@ const url=useParams();
                   body: JSON.stringify({
                     uId: currentUser.uid,
                     email: currentUser.email,
+                    autoLogin: true
                   })
                 });
 
                 if (createResponse.ok) {
                   const createdData = await createResponse.json();
                   setData(createdData);
-                  try{
+                  try {
                     const userDocRef = doc(db, "users", currentUser.uid);
                     await setDoc(userDocRef, {
-                     id: currentUser.uid,
+                      id: currentUser.uid,
                       firstName: "",
                       lastName: "",
                       email: currentUser.email,
@@ -60,38 +64,44 @@ const url=useParams();
                       languages: [],
                       friends: [],
                       profilePictureLocation: ""
-                  });
-                  await setDoc(doc(db, "userchats", currentUser.uid), {
-                    chats: [],
-                });
+                    });
+                    await setDoc(doc(db, "userchats", currentUser.uid), {
+                      chats: [],
+                    });
 
                   }
-                  catch(e)
-                  {
+                  catch (e) {
                     setError("Error with firestore")
+                    return
                   }
                 } else {
-                  setError('Failed to create user'); 
+                  setError('Failed to create user');
+                  return
                 }
               } catch (error) {
-                setError(error.message); 
+                setError(error.message);
+                return
               }
-            } 
+            }
           } else {
             setError(`Request failed`);
+            return
           }
         } else {
           navigate('/signin');
+          return
         }
       } catch (error) {
         setError(error.message);
+        return
       } finally {
         setLoading(false);
+        return
       }
     };
 
     fetchData();
-  }, [currentUser]);
+  }, [currentUser, navigate]);
 
   const isDataComplete = useCallback(() => {
     return data && (data.firstName || data.lastName);
@@ -102,7 +112,7 @@ const url=useParams();
   }, [data, isDataComplete]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loader />
   }
 
   if (error) {
@@ -110,18 +120,17 @@ const url=useParams();
   }
 
   if (filteredData) {
-    if(props.home)
-    return <Home tested={true} firstName={filteredData.firstName} />;
-    else if(props.search)
-      return <UserFilter tested={true}/>
-    else if(props.friendchat)
-    return <FriendChat tested={true}/>
+    if (props.home)
+      return <Home tested={true} firstName={filteredData.firstName} />;
+    else if (props.search)
+      return <UserFilter tested={true} />
+    else if (props.friendchat)
+      return <FriendChat tested={true} />
 
+  } else {
+    setTimeout(()=>{<Loader/>},1800)
+    return <AddUser firstName={currentUser && currentUser.displayName || "User"} redirect="/home" />;
   }
-  else{
-  
-
-  return <AddUser firstName={currentUser && currentUser.displayName ||"User"} redirect="/home"/>;}
 }
 
 export default CheckUser;

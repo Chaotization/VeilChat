@@ -3,6 +3,9 @@ import { getDatabase, ref , push , onChildAdded , onValue } from 'firebase/datab
 import { useNavigate, useParams } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 import axios from 'axios';
+import FriendRequestListener from "./FriendRequestListener.jsx";
+import {arrayRemove, arrayUnion, doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
+import {db} from "../firebase/FirebaseFunctions.js";
 
 function Chatroom(props) {
   const [messages,setMessages] = useState([])
@@ -12,6 +15,11 @@ function Chatroom(props) {
   const [showFriendRequestModal, setShowFriendRequestModal] = useState(false)
   const [joinChatId, setJoinChatId] = useState('')
   const [otherUserId, setOtherUserId] = useState('');
+  const [friendRequestSent, setFriendRequestSent] = useState(false);
+  const [friendRequestReceived, setFriendRequestReceived] = useState(null);
+  const [isListening, setIsListening] = useState(true);
+  const [promoteToFriend, setPromoteToFriend] = useState(false);
+
 
   const navigate = useNavigate()
   const auth = getAuth()
@@ -33,6 +41,7 @@ function Chatroom(props) {
     const db = getDatabase();
 
     if (providedChatId) {
+      console.log("this chatId: ",providedChatId)
       setChatId(providedChatId);
       joinChat(providedChatId);
 
@@ -40,7 +49,7 @@ function Chatroom(props) {
       onValue(participantsRef, (snapshot) => {
         const participants = snapshot.val();
         if (participants) {
-          const participantIds = Object.keys(participants);
+          const participantIds = [...new Set(Object.values(participants).map((participant) => participant.userId))];
           const otherParticipantId = participantIds.find((id) => id !== currentUser.uid);
           setOtherUserId(otherParticipantId);
           console.log("current user id",currentUser.uid)
@@ -140,26 +149,126 @@ function Chatroom(props) {
   };
 
   const handleSendFriendRequest = async () => {
-    try {
-      const response = await axios.put('http://localhost:4000/friendRequest', {
-        senderId: currentUser.uid,
-        receiverId: otherUserId,
+
+
+    try{
+    const userDocRef = doc(db, "users", otherUserId);
+    const userDocSnapshot = await getDoc(userDocRef);
+
+    if (userDocSnapshot.exists()) {
+
+      await updateDoc(userDocRef, {
+        friends: arrayUnion({
+          friendId: currentUser.uid,
+          status: 'pending',
+        }),
       });
-  
-      if (response.status === 200) {
-        console.log('Friend request sent successfully');
-      } else {
-        console.error('Failed to send friend request');
-      }
-    } catch (error) {
-      console.error('Error sending friend request:', error);
+    } else {
+      await setDoc(userDocRef, {
+        friends: [{
+          friendId: currentUser.uid,
+          status: 'pending',
+        }],
+      });
     }
-  
+      setFriendRequestSent(true);
+    console.log(`Friend request sent to ${otherUserId}`);
+  } catch (error) {
+    console.error('Error sending friend request:', error);
+  }
+
     toggleFriendRequestModal();
   };
 
+  const onRequestReceived = ({ requesterId }) => {
+    setFriendRequestReceived(requesterId);
+    console.log('A new friend request has been received.');
+  };
+
+  const onRequestAccepted = ({ requesterId }) => {
+    setFriendRequestSent(false);
+    setFriendRequestReceived(false);
+    setPromoteToFriend(true);
+    console.log(`your friend Request to ${requesterId} was accepted!`);
+  };
+
+
+
+
+  const handleAcceptFriendRequest = async (requesterId) => {
+    try {
+      // Get the document references for the current user and the requester
+      const currentUserDocRef = doc(db, 'users', currentUser.uid);
+      const requesterDocRef = doc(db, 'users', requesterId);
+
+      // Read the current data for the users
+      const currentUserDocSnap = await getDoc(currentUserDocRef);
+      const requesterDocSnap = await getDoc(requesterDocRef);
+
+      if (currentUserDocSnap.exists() && requesterDocSnap.exists()) {
+        const currentUserData = currentUserDocSnap.data();
+        const requesterData = requesterDocSnap.data();
+
+        const updatedCurrentUserFriends = (currentUserData.friends || []).filter(
+            (friend) => !(friend.friendId === requesterId && friend.status === 'pending')
+        );
+
+        updatedCurrentUserFriends.push({ friendId: requesterId, status: 'accepted' });
+
+        await updateDoc(currentUserDocRef, {
+          friends: updatedCurrentUserFriends,
+        });
+
+        const updatedRequesterFriends = (requesterData.friends || []).filter(
+            (friend) => !(friend.friendId === currentUser.uid && friend.status === 'pending')
+        );
+
+        updatedRequesterFriends.push({ friendId: currentUser.uid, status: 'accepted' });
+
+        await updateDoc(requesterDocRef, {
+          friends: updatedRequesterFriends,
+        });
+
+        setFriendRequestReceived(null);
+        console.log(`Friend request accepted from ${requesterId}`);
+        setPromoteToFriend(true);
+      } else {
+        console.error('User data not found');
+      }
+    } catch (error) {
+      console.error('Error accepting friend request:', error);
+    }
+  };
+
+
+  const handleRejectFriendRequest = async (requesterId) => {
+    try {
+      // Remove requester from current user's friends list
+      const currentUserDocRef = doc(db, 'users', currentUser.uid);
+      await updateDoc(currentUserDocRef, {
+        friends: arrayRemove({ friendId: requesterId, status: 'pending' }),
+      });
+
+      // Remove current user from requester's friends list
+      const requesterDocRef = doc(db, 'users', requesterId);
+      await updateDoc(requesterDocRef, {
+        friends: arrayRemove({ friendId: currentUser.uid, status: 'pending' }),
+      });
+
+      // Remove the pending request locally
+      setFriendRequestReceived(null);
+      console.log(`Friend request rejected from ${requesterId}`);
+    } catch (error) {
+      console.error('Error rejecting friend request:', error);
+    }
+  };
+
+
+
+
   const handleExitChat = () => {
     setShowExitOptions(true);
+
   };
 
   const handleGoToHome = () => {
@@ -197,12 +306,24 @@ function Chatroom(props) {
               <h2 className="text-xl font-bold text-white">Anonymous User</h2>
             </div>
             <div>
-              <button className="text-white" onClick={handleSendFriendRequest}>
-                <span className="material-symbols-outlined btn btn-ghost">person_add</span>
-              </button>
-              <button className="btn btn-ghost text-white" onClick={handleExitChat}>
-                Exit
-              </button>
+
+              {promoteToFriend?
+                  <p className="btn btn-primary">Friendship Established</p>
+                  :friendRequestReceived ? (
+                  <>
+                    <button className="btn btn-primary" onClick={() => handleAcceptFriendRequest(friendRequestReceived)}>Accept</button>
+                    <button className="btn btn-secondary" onClick={() => handleRejectFriendRequest(friendRequestReceived)}>Reject</button>
+                  </>
+              ) : (
+                  friendRequestSent === false ? (
+                      <button className="text-white" onClick={handleSendFriendRequest}>
+                        <span className="material-symbols-outlined btn btn-ghost">Add Friend</span>
+                      </button>
+                  ) : (
+                      <button className="btn btn-ghost text-white">Pending</button>
+                  )
+              )}
+              <button className="btn btn-ghost text-white" onClick={() => setShowExitOptions(true)}>Exit</button>
             </div>
           </div>
           <div className="p-6 flex-grow h-96 overflow-y-auto">
@@ -283,6 +404,12 @@ function Chatroom(props) {
               </div>
             </div>
         )}
+        <FriendRequestListener
+            isListening={isListening}
+            otherUserId={otherUserId}
+            onRequestReceived={onRequestReceived}
+            onRequestAccepted={onRequestAccepted}
+        />
 
       </div>
   );

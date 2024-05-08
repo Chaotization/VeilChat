@@ -1,10 +1,11 @@
 import React, { useState,  useEffect} from "react";
 import {useNavigate, Link, Navigate} from "react-router-dom";
-import {doCreateUserWithEmailAndPassword} from '../firebase/FirebaseFunctions.js';
+import {doCreateUserWithEmailAndPassword, doSignOut} from '../firebase/FirebaseFunctions.js';
 import SocialSignIn from './SocialSignIn.jsx';
 import {db} from '../firebase/FirebaseFunctions';
 import {setDoc, doc} from 'firebase/firestore';
 import {getAuth} from 'firebase/auth';
+import Loader from "./Loader.jsx";
 
 
 function SignUp() {
@@ -44,7 +45,7 @@ function SignUp() {
         const hasLowerCase = /[a-z]/g.test(password);
         const hasNumber = /[0-9]/g.test(password);
         const hasSpecialChar = /[!@#$%^&*()]/g.test(password);
-
+        setErrors([])
         if (password.length < 8) {
             setStrength("weak");
         } else if (hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar) {
@@ -52,6 +53,8 @@ function SignUp() {
         } else {
             setStrength("medium");
         }
+        password===repeat_password?setMatch(true):setMatch(false)
+
         return;
     }
 
@@ -68,18 +71,22 @@ function SignUp() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
+        
         setErrors([]);
 
         if (password !== repeat_password) {
             setErrors((prevState) => {
                 return [...prevState, "Passwords don't match"];
             });
-
         }
-
+        if(strength==="weak")
+        {
+          setErrors((prevState) => {
+            return [...prevState, "Choose a strong password"];
+        });
+        return
+        }
         if (!errors.length) {
-
             try {
                 await doCreateUserWithEmailAndPassword(
                     email,
@@ -89,29 +96,13 @@ function SignUp() {
 
                 if (userCreated) {
                     setLoading(true)
-                    const userDocRef = doc(db, "users", userCreated.uid);
-                    await setDoc(userDocRef, {
-                        id: userCreated.uid,
-                        firstName: "",
-                        lastName: "",
-                        email: email.trim(),
-                        dob: "",
-                        gender: "",
-                        phoneNumber: "",
-                        languages: [],
-                        friends: [],
-                        profilePictureLocation: ""
-                    });
-
-                    await setDoc(doc(db, "userchats", userCreated.uid), {
-                        chats: [],
-                    });
-
+                    let uid=userCreated.uid;
+                   
                     let response = await fetch("http://localhost:4000/user/createuserwithemail", {
                         method: "POST",
                         headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({
-                            uId: userCreated.uid,
+                            uId: uid,
                             email: email.trim(),
                             password: password,
                         })
@@ -128,12 +119,31 @@ function SignUp() {
                             });
                         }
                     } else {
+                      
                         setErrors([])
-                        setLoading(false);
-                        //setContinuePage(true);
-                        navigate('/home');
-                        return
                     }
+
+                    const userDocRef = doc(db, "users",uid);
+                    await setDoc(userDocRef, {
+                     id: uid,
+                      firstName: "",
+                      lastName: "",
+                      email:email,
+                      dob: "",
+                      gender: "",
+                      phoneNumber: "",
+                      languages: [],
+                      friends: [],
+                      profilePictureLocation: ""
+                  });
+                  await setDoc(doc(db, "userchats", uid), {
+                    chats: [],
+                });
+                await doSignOut();
+                    
+                    setLoading(false);
+                    navigate('/signin')
+                    return
                 } else {
                     navigate('/home');
                 }
@@ -141,8 +151,8 @@ function SignUp() {
                 setErrors((prevState) => {
                     return [...prevState, e.message];
                 });
-                alert("You can finish the application on home page... Have fun!!!")
-                navigate('/home');
+                alert(e);
+                //navigate('/home');
             }
             setLoading(false)
             return;
@@ -150,7 +160,7 @@ function SignUp() {
         return
     }
         if (loading) {
-            return <div>loading..</div>
+            return <Loader/>
         }
 
     return (

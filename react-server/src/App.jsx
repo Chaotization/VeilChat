@@ -18,6 +18,7 @@ import CheckUser from './components/CheckUser.jsx';
 import Error from './components/Error.jsx';
 import 'tailwindcss/tailwind.css';
 import './output.css';
+import Loader from './components/Loader.jsx';
 
 
 
@@ -39,8 +40,9 @@ function App() {
 
     
     if (isLoading) {
-        return <div>Loading...</div>;
-    }
+        return <Loader/>
+      }
+    
 
     return (
         
