@@ -228,11 +228,11 @@ function Chatroom(props) {
             ))}
             <div ref={messagesEndRef}></div>
           </div>
-          <div className="py-4 px-6 bg-gray-100 flex items-center mt-auto">
+          <div className="py-4 px-6 bg-base-100 shadow-md flex items-center mt-auto">
             <input
                 type="text"
                 placeholder="Type a message"
-                className="input input-bordered bg-gray-50 text-black w-full mr-4"
+                className="input input-bordered w-full mr-4"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyDown={handleEnter}
@@ -244,10 +244,10 @@ function Chatroom(props) {
                 className="hidden"
                 id="imageUpload"
             />
-            <label htmlFor="imageUpload" className="btn btn-primary btn-outline mr-2 bg-gray-50">
+            <label htmlFor="imageUpload" className="btn btn-primary btn-outline mr-2">
               <span className="material-symbols-outlined">image</span>
             </label>
-            <button className="btn btn-primary btn-outline bg-gray-50" onClick={handleSendMessage}>
+            <button className="btn btn-primary btn-outline" onClick={handleSendMessage}>
               <span className="material-symbols-outlined">send</span>
             </button>
           </div>
