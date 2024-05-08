@@ -15,7 +15,7 @@ router.route("/").post(async (req, res) => {
 		const user = await loginUser(email, password);
 
 		if (user) {
-			const userId = user.userId;
+			const userId = user.uId;
 			const accessToken = jwt.sign(
 				{ userId },
 				(process.env.JWT_SECRET = "someSecret"),
@@ -35,16 +35,6 @@ router.route("/").post(async (req, res) => {
 	}
 });
 
-router.route("/:uid").post(async (req, res) => {
-  try {
-    const email = req.body.email;
-    const uid = req.params.uid;
-    const result = await usersData.addUid(uid, email);
 
-    return res.json(result);
-  } catch (e) {
-    return res.json(e);
-  }
-});
 
 export default router;

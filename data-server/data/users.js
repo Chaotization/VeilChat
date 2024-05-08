@@ -33,7 +33,7 @@ client.connect().then(() => {
 const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
 const AWS_SECRET_ACCESS_ID = process.env.AWS_SECRET_ACCESS_ID;
 const bucketName = process.env.bucketName;
-const social_password=process.env.social_signin_password
+const social_password=process.env.SOCIAL_SIGNIN_PASSWORD
 
 AWS.config.update({
     region: "us-east-1",
@@ -206,7 +206,7 @@ export const loginUser = async (email, password) => {
             {uId: userId},
             { $set: { lastOnlineAt: validation.generateCurrentDate() } }
         )
-        if (updateUser.modifiedCount === 0) {
+        if (updateUser.modifiedCount === 0 || !updateUser.acknowledged) {
             throw `Error: Failed to update last online at for user with ID ${userId}`;
         }
 
@@ -239,6 +239,8 @@ export const loginUser = async (email, password) => {
     }
 };
 
+
+
 export const logoutUser = async (userId) => {
     userId = validation.checkId(userId);
     const userCollection = await users();
@@ -252,7 +254,7 @@ export const logoutUser = async (userId) => {
         {uId: userId},
         { $set: { lastOnlineAt: validation.generateCurrentDate() } }
     )
-    if (updateUser.modifiedCount === 0) {
+    if (updateUser.modifiedCount === 0 || !updateUser.acknowledged) {
         throw `Error: Failed to update last online at for user with ID ${userId}`;
     }
 
@@ -666,9 +668,6 @@ else
 		throw `Error: couldn't register the account: ${email}`;
 
 	}
-    const insertedUser= await getUserInfoByEmail(email);
-	return insertedUser ;
-
 }
 
 export const checkStatus = async (receiverId, lastMessageTime) => {

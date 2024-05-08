@@ -1,6 +1,7 @@
 import Router from "express";
 
 import usersData from '../data/index.js';
+import {logoutUser} from "../data/users.js";
 
 const router = Router();
 
@@ -19,20 +20,6 @@ router.route("/signup").post(async (req, res) => {
     }
 });
 
-router.route("/logout").get(async (req, res) => {
-    try {
-        const userData = req.session.user;
-        if (!userData) {
-            return res
-                .status(401)
-                .json({message: "Unauthorized access, Sign in first."});
-        }
-        req.session.destroy();
-        return res.status(200).json({message: "Logged out successfully.."});
-    } catch (e) {
-        res.status(400).json({message: "User can't be loggedout, sign in first.."});
-    }
-});
 
 router.route("/").put(async (req, res) => {
     try {

@@ -49,7 +49,6 @@ let exportedMethods = {
             userId = validation.checkId(userId);
             gender = validation.checkGender(gender);
             const userCollection = await users();
-            const currentUser = await userCollection.findOne({uId: userId});
             let allUsers = [];
             if (gender === 'others') {
                 allUsers = await userCollection.find({}).toArray();
@@ -65,7 +64,6 @@ let exportedMethods = {
 
             const filteredUsers = allUsers.filter(user =>
                 activeUsers.some(activeUser => activeUser.uId === user.uId)
-                && !currentUser.friends[user.uId]
                 && user.uId.toString() !== userId
             );
 
@@ -85,7 +83,6 @@ let exportedMethods = {
             userId = validation.checkId(userId);
             language = validation.checkLanguage(language);
             const userCollection = await users();
-            const currentUser = await userCollection.findOne({uId: userId});
             const allUsers = await userCollection.find({ languages: { $in: [language.toLowerCase()] } }).toArray();
 
             const exists = await client.exists('activeUsers');
@@ -97,7 +94,6 @@ let exportedMethods = {
             const filteredUsers = allUsers.filter(user =>
                 activeUsers.some(activeUser => activeUser.uId === user.uId)
                 && user.uId.toString() !== userId
-                && !currentUser.friends.hasOwnProperty(userId)
             );
 
             if (filteredUsers.length === 0) {
@@ -117,7 +113,6 @@ let exportedMethods = {
             let { min, max } = validation.checkAgeRange(age);
 
             const userCollection = await users();
-            const currentUser = await userCollection.findOne({uId: userId});
             const allUsers = await userCollection.find({
                 dob: {
                     $gte: min,
@@ -134,7 +129,6 @@ let exportedMethods = {
             const filteredUsers = allUsers.filter(user =>
                 activeUsers.some(activeUser => activeUser.uId === user.uId)
                 && user.uId.toString() !== userId
-                && !currentUser.friends.hasOwnProperty(userId)
             );
 
 
@@ -171,6 +165,7 @@ let exportedMethods = {
                 query.languages = { $in: [language] };
             }
 
+            let nearbyUserIds;
             if (criteria.distance && criteria.position.lat && criteria.position.lng) {
                 const { lat, lng } = criteria.position;
                 const { data: { results } } = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
@@ -186,19 +181,20 @@ let exportedMethods = {
 
                 const userAddress = results[0].formatted_address;
                 const exists = await client.exists('activeUsers');
+
                 if(exists){
                     const activeUsers = await client.json.get('activeUsers');
                     const filteredUsers = activeUsers.filter((user) => user.uId !== userId && user.position);
                     if(!filteredUsers || filteredUsers.length === 0) return [];
                     const nearbyUsers = await findNearByUsers(filteredUsers, lat, lng, criteria.distance);
-                    const nearbyUserIds = nearbyUsers.map(user => user.uId);
+                    nearbyUserIds = nearbyUsers.map(user => user.uId);
                     const userQueries = nearbyUserIds.map(id => ({ uId: id }));
                     query.$or = userQueries;
                 }
 
             }
             const allUsers = await userCollection.find(query).toArray();
-            const filteredUsers = allUsers.filter(user => currentUser.friends[user.uId] !== user.uId);
+            const filteredUsers = allUsers.filter(user => nearbyUserIds.some(id => id === user.uId));
             if (filteredUsers.length === 0) {
                 return [];
             }
