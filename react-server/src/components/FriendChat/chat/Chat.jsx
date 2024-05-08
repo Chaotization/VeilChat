@@ -6,6 +6,7 @@ import { db } from '../../../firebase/FirebaseFunctions';
 import {useChatStore} from '../../../context/chatStore';
 import { useNavigate } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
+
 const Chat = ({updateTrigger}) =>{
     const { currentUser, isLoading } = useUserStore();
     const [allChats, setAllChats] = useState([]);
@@ -14,7 +15,8 @@ const Chat = ({updateTrigger}) =>{
     const [searchInput, setsearchInput] = useState("");
     const [message, setMessage] = useState("");
     
-
+    
+    
     useEffect(() => {
       if (!currentUser || !currentUser.id) {
         setMessage("Please refresh your page to enter friendchat.");

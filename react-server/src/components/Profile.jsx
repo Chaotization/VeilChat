@@ -281,7 +281,7 @@ function Profile(){
                     languages: languages||[],
                     profilePictureLocation: profilePictureUrl || ""
                 });
-
+                useUserStore.getState().fetchUserInfo(currentUser.uid);
                 let response=await fetch("http://localhost:4000/user/updateuser",{
                     method:"POST",
                     headers: { 'Content-Type': 'application/json' },
