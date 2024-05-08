@@ -6,9 +6,11 @@ import { useNavigate } from "react-router-dom";
 import AddUser from "./AddUser";
 import {PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
 import PhoneVerificationModal from './PhoneVerification.jsx';
+import { useUserStore } from "../context/userStore";
 function Profile(){
     const auth =getAuth();
     const currentUser=auth.currentUser;
+    const userInFireStore=useUserStore();
     const [data, setData] = useState("");
     const [openModal,setOpenModal]=useState(false);
     const [loading, setLoading]=useState(false);
@@ -166,7 +168,7 @@ function Profile(){
             console.error("S3 Upload Error:", error);
         }
     };
-
+    console.log(userInFireStore)
 
 
     async function handleEditForm(e){
@@ -297,30 +299,30 @@ function Profile(){
         let dateOfBirth=String(dob.getMonth() + 1).padStart(2, '0').toString()+"-"+String(dob.getDate()).padStart(2, '0').toString()+"-"+parseInt(dob.getFullYear().toString());
         const rootElement = document.getElementById('root');
         return(
-            <div className="container">
-                <div className="profile-container mx-auto max-w-sm rounded-lg shadow-md bg-white overflow-hidden">
+            <div className="container my-6 mx-auto">
+                <div className="profile-container mx-auto max-w-sm rounded-lg shadow-2xl shadow-base-900 bg-base-100 overflow-hidden">
                     <img
                         src={data.profilePictureLocation || '/imgs/profile.jpeg'}
                         alt={`${data.firstName} ${data.lastName}'s profile picture`}
-                        className="w-full h-64 object-cover rounded-t-lg"
+                        className="w-64 h-64 rounded-full mx-auto"
                     />
 
                     <div className="px-6 py-4">
-                        <h2 className="text-xl font-bold text-gray-800">
+                        <h2 className="text-xl font-bold">
                             {data.firstName} {data.lastName}
                         </h2>
-                        <p className="text-sm text-gray-600">Joined on: {data.userSince.split(' ')[0]}</p>
+                        <p className="text-sm">Joined on: {data.userSince.split(' ')[0]}</p>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                            <p className="text-sm text-gray-600">Mobile: {data.phoneNumber}</p>
-                            <p className="text-sm text-gray-600">Email: {data.email}</p>
-                            <p className="text-sm text-gray-600">Born on: {dateOfBirth}</p>
+                            <p className="text-sm">Mobile: {data.phoneNumber}</p>
+                            <p className="text-sm">Email: {data.email}</p>
+                            <p className="text-sm">Born on: {dateOfBirth}</p>
                         </div>
-                        <p className="text-sm text-gray-600 mt-4">
+                        <p className="text-sm mt-4">
                             Languages you know:
                             {data.languages && data.languages.length > 0 && (
                                 <>
                                     {data.languages.map((lang, index) => (
-                                        <span key={lang} className="inline-block px-3 mr-1 text-sm text-gray-700 bg-gray-200 rounded-full">
+                                        <span key={lang} className="inline-block px-3 mr-1 text-sm bg-base-200 rounded-full">
                   {lang}
                 </span>
                                     ))}
@@ -332,7 +334,7 @@ function Profile(){
                                 <h3 className="text-lg font-medium mt-6 text-gray-800">Friends</h3>
                                 <ol className="list-none space-y-2 pl-4">
                                     {data.friends.map((friend) => (
-                                        <li key={friend.userId} className="text-base text-gray-600">
+                                        <li key={friend.userId} className="text-base">
                                             {friend.firstName}
                                         </li>
                                     ))}

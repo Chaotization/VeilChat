@@ -241,8 +241,8 @@ function AddUser(props)
           }
         } else{
             setErrors([]);
-            let redr=props.redirect;
-            navigate('/checker')
+            alert("Info added, you can access other pages now")
+            navigate('/')
            return
         }} catch(e){
             setErrors((prevState) => {

@@ -3,8 +3,8 @@ module.exports = {
 	content: ["./src/**/*.{js,jsx,html,css}"],
 	theme: {
 		themes: {
-			forest: {},
-			emerald: {},
+			dracula: {},
+			nord: {},
 		},
 		extend: {
 			backgroundImage: {
@@ -16,6 +16,6 @@ module.exports = {
 	},
 	plugins: [require("daisyui")],
 	daisyui: {
-		themes: ["emerald"],
+		themes: ["nord", "dracula"],
 	},
 };
