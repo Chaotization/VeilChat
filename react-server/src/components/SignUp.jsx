@@ -122,7 +122,7 @@ function SignUp() {
                       
                         setErrors([])
                     }
-
+                      
                     const userDocRef = doc(db, "users",uid);
                     await setDoc(userDocRef, {
                      id: uid,

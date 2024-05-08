@@ -4,10 +4,25 @@ import ReactModal from "react-modal";
 import Resizer from 'react-image-file-resizer';
 import { useNavigate } from "react-router-dom";
 import AddUser from "./AddUser";
+<<<<<<< HEAD
+import PhoneVerificationModal from './PhoneVerification.jsx';
+import { useUserStore } from "../context/userStore";
+import Loader from "./Loader.jsx";
+
+const s3Client = new S3Client({
+  region: 'us-east-1',
+  credentials: {
+      accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID,
+      secretAccessKey: import.meta.env.VITE_AWS_SECRET_ACCESS_ID,
+  },
+});
+
+=======
 import {PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
 import PhoneVerificationModal from './PhoneVerification.jsx';
 import { useUserStore } from "../context/userStore";
 import Loader from "./Loader.jsx";
+>>>>>>> parent of 0a71671 (updated Profile)
 function Profile(){
     const auth =getAuth();
     const currentUser=auth.currentUser;
@@ -92,6 +107,14 @@ function Profile(){
         }
     },[]);
 
+<<<<<<< HEAD
+  console.log(currentUser)
+  if(loading)
+  {
+    return <div><Loader/></div>
+  }
+  
+=======
     console.log(currentUser)
     if(loading)
     {
@@ -101,6 +124,7 @@ function Profile(){
 
 
     }
+>>>>>>> parent of 0a71671 (updated Profile)
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         console.log(file);

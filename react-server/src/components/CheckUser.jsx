@@ -75,8 +75,7 @@ function CheckUser(props) {
                     return
                   }
                 } else {
-                  setError('Failed to create user');
-                  return
+                 setError('Failed to create user')
                 }
               } catch (error) {
                 setError(error.message);
@@ -128,8 +127,11 @@ function CheckUser(props) {
       return <FriendChat tested={true} />
 
   } else {
-    setTimeout(()=>{<Loader/>},1800)
-    return <AddUser firstName={currentUser && currentUser.displayName || "User"} redirect="/home" />;
+    
+     return <AddUser firstName={currentUser && currentUser.displayName || "User"} redirect="/home" />;
+    //return <Loader/>
+    
+   
   }
 }
 
