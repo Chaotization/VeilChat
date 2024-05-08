@@ -651,7 +651,7 @@ export const createAccountWithEmailAndPassword=async(user)=>
 	}
 	const new_user = {
         _id: new ObjectId(), 
-        uId: uId,
+        uId,
         firstName:"",
         lastName:"",
         email,

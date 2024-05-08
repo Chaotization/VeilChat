@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes,useNavigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { useUserStore } from './context/userStore.jsx';
 import Navigation from './components/Navigation.jsx';
@@ -23,7 +23,7 @@ import './output.css';
 
 function App() {
     const { fetchUserInfo, currentUser, isLoading } = useUserStore();
-
+    const navigate=useNavigate();
     useEffect(() => {
         const auth = getAuth();
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -37,6 +37,7 @@ function App() {
         return () => unsubscribe();
     }, [fetchUserInfo]);
 
+    
     if (isLoading) {
         return <div>Loading...</div>;
     }
@@ -50,7 +51,6 @@ function App() {
                 </header>
                 <Routes>
                     <Route path='/' element={<Landing />} />
-                    <Route path='/friendchat' element={<FriendChat />} />
                     <Route path='/home' element={<PrivateRoute />}>
                         <Route path='/home' element={<Home />} />
                     </Route>
@@ -59,11 +59,22 @@ function App() {
                     </Route>
                     <Route path='/signin' element={<SignIn />} />
                     <Route path='/signup' element={<SignUp />} />
-                    <Route path='/searchuser' element={<UserFilter/>} />
-                    <Route path='/chat/:providedChatId' element={<Chatroom/>}/>
-                    <Route path='/profile' element={<Profile/>}/>
-                    <Route path='/friendchat' element={<FriendChat/>} />
+                    <Route path='/searchuser' element={<PrivateRoute/>} >
+                        <Route path='/searchuser' element={<UserFilter/>} />
+                        </Route>
+                    <Route path='/chat/:providedChatId' element={<PrivateRoute/>}>
+                        <Route path='/chat/:providedChatId' element={<Chatroom/>}/>
+                        </Route>
+                        <Route path='/profile' element={<PrivateRoute/>}>
+                        <Route path='/profile' element={<Profile/>}/>
+                        </Route>
+                    <Route path='/friendchat' element={<PrivateRoute/>}>
+                        <Route path='/friendchat' element={<FriendChat/>} />
+                        </Route>
+                 <Route path='/checker' element={<PrivateRoute/>}>
                     <Route path='/checker' element={<CheckUser/>}/>
+                    </Route>
+
                     <Route path='*' element={<Error/>}/>
                 </Routes>
             </div>

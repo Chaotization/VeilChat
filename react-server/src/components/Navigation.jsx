@@ -36,9 +36,9 @@ const NavigationAuth = () => {
         <ul className="menu menu-horizontal space-x-1">
           <li className='btn'><NavLink to='/'>Landing</NavLink></li>
           <li className='btn'><NavLink to='/home'>Home</NavLink></li>
-          <li className='btn'><NavLink to='/account'>Account</NavLink></li>
           <li className='btn'><NavLink to='/searchuser'>Random Chat</NavLink></li>
           <li className='btn'><NavLink to='/profile'>Profile</NavLink></li>
+          <li className='btn'><NavLink to='/account'>Account</NavLink></li>
         </ul>
       </div>
       <div className="navbar-end space-x-8 px-2">
