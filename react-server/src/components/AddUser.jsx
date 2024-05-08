@@ -258,7 +258,7 @@ return(
       <h4 style={{background:"white",color:"purple"}} className="text-center text-2xl font-medium mb-4"> Dear {props.firstName || "user"}, fill this form to continue</h4>
     <form
           onSubmit={handleSignUp}
-          className="bg-base-100 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+          className=" shadow-md rounded px-8 pt-6 pb-8 mb-4">
           <div className="mb-4">
             <label
               htmlFor="first_name"
@@ -356,7 +356,7 @@ return(
 
         {languages.map((language) => (
           <span key={language} className="me-2 mb-2 inline-flex">          
-            <button type="button" className="bg-blue-300 hover:bg-red-300 text-black  py-1 px-1 rounded focus:outline-none focus:shadow-outline" onClick={() => handleLanguageRemove(language)}>
+            <button type="button" className="btn btn-primary" onClick={() => handleLanguageRemove(language)}>
             {language}
             </button>
           </span>
@@ -371,7 +371,7 @@ return(
         {imageFile && (
         <div>
           <img src={URL.createObjectURL(imageFile)} alt="Resized" />
-          {/* <button type="button" className="bg-green-500 hover:bg-green-700 text-black font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline"onClick={uploadToS3}>Upload</button> */}
+          {/* <button type="button" className="bg-green-500 hover:bg-green-700 font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline"onClick={uploadToS3}>Upload</button> */}
         </div>
       )}
 
@@ -389,7 +389,7 @@ return(
             <div className="flex space-x-10">
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline">
+              className="btn btn-primary">
               Begin
             </button>
           
