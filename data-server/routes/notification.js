@@ -40,42 +40,23 @@ router.route("/newMessage").post(async (req, res) => {
 });
 
 
-router.route("/invitation").post(async (req, res) => {
-
-    if (!req.isAuthenticated()){
-        return res.status(401).render("error", {
-            errorMsg: "Please Login to send a message",
-            title: "Error"
-        });
-    }
-
-    let user;
-    let firstName = req.body.firstName;
-    try {
-
-        let userId = validation.checkId(req.body.id);
-        firstName = validation.validateName(firstName, 'First Name')
-        user = await usersData.getUserInfoByUserId(userId);
-    } catch (error) {
-        return res.status(400).render('error', {
-            title: "Inputs Error",
-            errorMsg: error
-        });
-    }
-
+router.route("/verification").post(async (req, res) => {
+    const phoneNumber = req.body.phoneNumber
+    const verificationCode = Math.floor(100000 + Math.random() * 900000);
     try {
         await client.messages.create({
-            body: `You have friend invitation from ${firstName} haven't read`,
+            body: `You verification code: ${verificationCode}`,
             from: '+18334580397',
-            to: user.phoneNumber
+            to: phoneNumber
         });
 
 
-        return res.status(200).send({ sendStatus: true });
+        return res.status(200).send({ sendStatus: true, verificationCode: verificationCode });
     } catch (error) {
-        return res.status(500).send({ sendStatus: false });
+        return res.status(500).send({ sendStatus: false, error: 'Failed to send verification code' });
     }
 });
+
 
 
 

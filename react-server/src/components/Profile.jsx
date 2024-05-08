@@ -5,6 +5,7 @@ import Resizer from 'react-image-file-resizer';
 import { useNavigate } from "react-router-dom";
 import AddUser from "./AddUser";
 import {PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
+import PhoneVerificationModal from './PhoneVerification.jsx';
 function Profile(){
     const auth =getAuth();
     const currentUser=auth.currentUser;
@@ -17,6 +18,8 @@ function Profile(){
     const [languages, setLanguages]=useState("");
     const [uploadError, setUploadError] = useState(null);
     const [imageFile, setImageFile] = useState(null);
+    const [formSubmitted, setFormSubmitted] = useState(false);
+    const [phoneVerified, setPhoneVerified] = useState(false);
     const langs= [
         "English",
         "Arabic",
@@ -163,6 +166,7 @@ function Profile(){
             console.error("S3 Upload Error:", error);
         }
     };
+
 
 
     async function handleEditForm(e){
@@ -348,7 +352,10 @@ function Profile(){
                 <ReactModal isOpen={openModal} contentLabel="editProfile" appElement={rootElement}>
                     <h2 className="text-center text-2xl font-medium mb-4">Editing profile Information</h2>
                     <form
-                        onSubmit={handleEditForm}
+                        onSubmit={(e) => {
+                            handleEditForm(e);
+                            setFormSubmitted(true);
+                    }}
                         className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                         <div className="mb-4">
                             <label
@@ -393,21 +400,11 @@ function Profile(){
                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             />
                         </div>
-                        <div className="mb-4">
-                            <label htmlFor="phoneNumber"
-                                   className="block text-gray-700 text-sm font-bold mb-2">
-                                Mobile Number:
-                            </label>
-                            <input
-                                type="tel"
-                                name="phoneNumber"
-                                id="phoneNumber"
-                                placeholder="1234567890" pattern="[0-9]{10}"
-                                //defaultValue={data.phoneNumber}
-                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            />
-                        </div>
-
+                        <PhoneVerificationModal
+                            phoneNumber={data.phoneNumber}
+                            onVerificationSuccess={() => setPhoneVerified(true)}
+                            formSubmitted={formSubmitted}
+                        />
 
                         <div className="mb-4">
                             <label
