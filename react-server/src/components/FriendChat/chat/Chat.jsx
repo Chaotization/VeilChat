@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 const Chat = ({updateTrigger}) =>{
     const { currentUser, isLoading } = useUserStore();
-    const { chatId, changeChat } = useChatStore();
+    const [allChats, setAllChats] = useState([]);
     const [chats, setChats] = useState([]);
     const [searchInput, setsearchInput] = useState("");
     const [addMode, setAddMode] = useState(false);
@@ -27,39 +27,31 @@ const Chat = ({updateTrigger}) =>{
       if (!currentUser || !currentUser.id) {
         setMessage("Please refresh your page to enter friendchat.");
         return;
-    }
-        const unSub = onSnapshot(
-          doc(db, "userchats", currentUser.id),
-          async (res) => {
-           
-            const items = res.data().chats;
-    
-            const promises = items.map(async (item) => {
-              if (!item.receiverId) {
-                console.error("Missing receiver ID for item:", item);
-                return null;  // Continue to the next item if this one is faulty
-              }
-              const userDocRef = doc(db, "users", item.receiverId);
-              const userDocSnap = await getDoc(userDocRef);
-    
-              const user = userDocSnap.data();
-    
-              return { ...item, user };
-            });
-    
-            const chatData = await Promise.all(promises);
-    
-            chatData.sort((a, b) => b.updatedAt - a.updatedAt);
-            
-            setChats(chatData);
-            
+      }
+      const unSub = onSnapshot(doc(db, "userchats", currentUser.id), async (res) => {
+        const items = res.data().chats;
+        const promises = items.map(async (item) => {
+          if (!item.receiverId) {
+            console.error("Missing receiver ID for item:", item);
+            return null;  // Continue to the next item if this one is faulty
           }
-        );
-    
-        return () => {
-          unSub();
-        };
-      }, [currentUser?.id, updateTrigger]);
+          const userDocRef = doc(db, "users", item.receiverId);
+          const userDocSnap = await getDoc(userDocRef);
+  
+          const user = userDocSnap.data();
+  
+          return { ...item, user };
+        });
+  
+        const chatData = await Promise.all(promises);
+        chatData.sort((a, b) => b.updatedAt - a.updatedAt);
+  
+        setAllChats(chatData);
+        setChats(chatData); // Initially, all chats are displayed
+      });
+  
+      return () => unSub();
+    }, [currentUser?.id, updateTrigger]);
 
     if (isLoading || !currentUser) {
         return <div>Loading...Please Refresh your page</div>; 
@@ -68,6 +60,15 @@ const Chat = ({updateTrigger}) =>{
       return <div>{message}</div>;  // Display the message if there is one
   }
     const navigate = useNavigate();
+
+    useEffect(() => {
+      const filteredChats = allChats.filter(chat => 
+        chat.user.firstName.toLowerCase().includes(searchInput.toLowerCase()) ||
+        chat.user.lastName.toLowerCase().includes(searchInput.toLowerCase()) ||
+        chat.lastMessage.toLowerCase().includes(searchInput.toLowerCase())
+      );
+      setChats(filteredChats);
+    }, [searchInput, allChats]);
  
     const handleSelectChat = async (chat) => {
       const userChats = chats.map((item) => {

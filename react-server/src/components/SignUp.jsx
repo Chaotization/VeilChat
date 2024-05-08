@@ -122,7 +122,7 @@ function SignUp() {
                       
                         setErrors([])
                     }
-
+                      
                     const userDocRef = doc(db, "users",uid);
                     await setDoc(userDocRef, {
                      id: uid,
@@ -134,6 +134,7 @@ function SignUp() {
                       phoneNumber: "",
                       languages: [],
                       friends: [],
+                      friendRequests: [],
                       profilePictureLocation: ""
                   });
                   await setDoc(doc(db, "userchats", uid), {
