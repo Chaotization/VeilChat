@@ -21,6 +21,8 @@ const url=useParams();
       try {
         // Check for existing user data if currentUser exists
         if (currentUser) {
+          console.log("test")
+          console.log(currentUser)
           const response = await fetch("http://localhost:4000/user/userinfo", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
