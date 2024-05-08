@@ -134,6 +134,7 @@ function SignUp() {
                       phoneNumber: "",
                       languages: [],
                       friends: [],
+                      friendRequests: [],
                       profilePictureLocation: ""
                   });
                   await setDoc(doc(db, "userchats", uid), {

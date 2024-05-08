@@ -28,11 +28,7 @@ router.route("/newMessage").post(async (req, res) => {
     try {
         await client.messages.create({
             body: `You have new message from ${userName} haven't read`,
-<<<<<<< HEAD
             from: '+18666664001',
-=======
-            from: '+18334580397',
->>>>>>> parent of 0a71671 (updated Profile)
             to: friend.phoneNumber
         });
 

@@ -16,7 +16,7 @@ const ChatRoom = () =>{
     return new Date(createdAt.seconds * 1000);
   }
   const [notification, setNotification] = useState({ visible: false, message: '' });
-
+  const MAX_FILE_SIZE = 100 * 1024 * 1024;
   const [chat, setChat] = useState();
   const endRef = useRef(null)
   const { chatId, user } = useChatStore();
@@ -49,6 +49,11 @@ const ChatRoom = () =>{
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
+    if (!file) return;
+    setNotification({
+      visible: true,
+      message: 'File size should not exceed 100 MB.'
+    });
     if (file) {
       const url = URL.createObjectURL(file);
       setfile({
@@ -58,56 +63,6 @@ const ChatRoom = () =>{
       });
     }
   };
-
-
-  const checkUserStatus = async () => {
-    if (!chatId) return;
-    try {
-      const chatRef = doc(db, "chats", chatId);
-      const chatDoc = await getDoc(chatRef);
-
-      if (!chatDoc.exists()) {
-        console.log("Chat document does not exist.");
-        return;
-      }
-      const chatData = chatDoc.data();
-      const receiverId = chatData.members.find(memberId => memberId !== currentUser.id);
-      const lastCreatedAt = timeFormat(chatData.createdAt);
-
-      const userChatRef = doc(db, 'userchats', receiverId);
-      const userChatDoc = await getDoc(userChatRef);
-      const useChatData = userChatDoc.data();
-      const isSeen = useChatData.chats[0]?.isSeen
-      if (userChatDoc.exists() && !isSeen) {
-        const response = await axios.post("http://localhost:4000/user/checkstatus", {
-          receiverId: receiverId,
-          lastMessageTime: lastCreatedAt
-        });
-
-        if(!response.data.isOnline){
-          const sendNotification = await axios.post("http://localhost:4000/sendNotification/newMessage", {
-            userName: currentUser.firstName,
-            friendId: receiverId
-          })
-          if(sendNotification.sendStatus){
-            setNotification({
-              visible: true,
-              message: 'Notification sent successfully!'
-            });
-            setTimeout(() => {
-              setNotification({ visible: false, message: '' });
-            }, 3000);
-          }
-        }
-        }
-
-
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error fetching chat document or checking status:", error);
-    }
-  };
-
 
   const handleSend = async () => {
   
@@ -161,7 +116,6 @@ const ChatRoom = () =>{
           }
         }
       }
-      await checkUserStatus()
     } catch (error) {
       console.error("Error sending message:", error);
     } finally {
@@ -173,14 +127,15 @@ const ChatRoom = () =>{
   const FileMessage = ({ message }) => {
     const { fileType, fileUrl, fileName } = message;
   
-    const fileExtension = fileType?.split('/').pop();
   
     const handleClick = () => {
       
       const link = document.createElement('a');
       link.href = fileUrl;
       link.download = fileUrl.split('/').pop(); 
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
     };
   
     if (fileType?.startsWith('image')) {
