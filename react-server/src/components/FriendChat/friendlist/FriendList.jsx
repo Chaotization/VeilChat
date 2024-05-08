@@ -107,9 +107,6 @@ const FriendList = ({triggerChatUpdate}) => {
     setFriends(filteredFriends);
   }, [searchInput, allFriends]);
 
-  const handleSearchChange = (e) => {
-    setSearchInput(e.target.value);
-  };
 
   const handleDeleteFriend = async () => {
     const userRef = doc(db, "users", currentUser.id);

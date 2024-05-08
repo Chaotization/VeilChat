@@ -3,25 +3,17 @@ import { useContext, useEffect, useState } from 'react';
 import { useUserStore } from '../../../context/userStore';
 import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore"
 import { db } from '../../../firebase/FirebaseFunctions';
-import AddFriend from '../../addFriend/AddFriend';
 import {useChatStore} from '../../../context/chatStore';
 import { useNavigate } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 const Chat = ({updateTrigger}) =>{
     const { currentUser, isLoading } = useUserStore();
     const [allChats, setAllChats] = useState([]);
+    const { chatId, changeChat } = useChatStore();
     const [chats, setChats] = useState([]);
     const [searchInput, setsearchInput] = useState("");
-    const [addMode, setAddMode] = useState(false);
     const [message, setMessage] = useState("");
-    // let {cUser}=getAuth();
-    // useEffect(()=>{
-    //   if(!cUser)
-    //   {
-    //     navigate('/signin')
-    //     return
-    //   }
-    // },[])
+    
 
     useEffect(() => {
       if (!currentUser || !currentUser.id) {
@@ -71,6 +63,7 @@ const Chat = ({updateTrigger}) =>{
     }, [searchInput, allChats]);
  
     const handleSelectChat = async (chat) => {
+      const chatRef = doc(db, "chats", chat.chatId);
       const userChats = chats.map((item) => {
         const { user, ...rest } = item;
         return rest;
@@ -85,10 +78,14 @@ const Chat = ({updateTrigger}) =>{
       const userChatsRef = doc(db, "userchats", currentUser.id);
   
       try {
+        await updateDoc(chatRef, {
+          updatedAt: Date.now(),
+        });
         await updateDoc(userChatsRef, {
           chats: userChats,
         });
         changeChat(chat.chatId, chat.user);
+        
       } catch (err) {
         console.log(err);
       }
@@ -126,13 +123,6 @@ const Chat = ({updateTrigger}) =>{
             </div>
           ))}
         </div>
-        {addMode && (
-          <div className="modalOverlay fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="modalContent bg-white rounded-lg p-4">
-              <AddFriend />
-            </div>
-          </div>
-        )}
       </div>
     )
 }
