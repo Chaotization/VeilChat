@@ -46,7 +46,7 @@ router.route("/verification").post(async (req, res) => {
     try {
         await client.messages.create({
             body: `You verification code: ${verificationCode}`,
-            from: '+18334580397',
+            from: '+18666664001',
             to: phoneNumber
         });
 
