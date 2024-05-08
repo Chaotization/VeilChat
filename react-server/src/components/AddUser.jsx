@@ -258,11 +258,11 @@ return(
       <h4 style={{background:"white",color:"purple"}} className="text-center text-2xl font-medium mb-4"> Dear {props.firstName || "user"}, fill this form to continue</h4>
     <form
           onSubmit={handleSignUp}
-          className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+          className="bg-base-100 shadow-md rounded px-8 pt-6 pb-8 mb-4">
           <div className="mb-4">
             <label
               htmlFor="first_name"
-              className="block text-gray-700 text-sm font-bold mb-2">
+              className="block  text-sm font-bold mb-2">
               First Name:
             </label>
             <input
@@ -271,12 +271,12 @@ return(
               value={formData.first_name}
               required
               onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"/>
+              className="shadow appearance-none border rounded w-full py-2 px-3  leading-tight focus:outline-none focus:shadow-outline"/>
           </div>
           <div className="mb-4">
             <label
               htmlFor="last_name"
-              className="block text-gray-700 text-sm font-bold mb-2">
+              className="block  text-sm font-bold mb-2">
               Last Name:
             </label>
             <input
@@ -285,12 +285,12 @@ return(
               value={formData.last_name}
               required
               onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3  leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
         <div className="mb-4">
           <label htmlFor="dob"
-          className="block text-gray-700 text-sm font-bold mb-2">
+          className="block  text-sm font-bold mb-2">
             Date of Birth:
           </label>
           <input
@@ -302,7 +302,7 @@ return(
               required
               min={1900}
               max={2024}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3  leading-tight focus:outline-none focus:shadow-outline"
             />
         </div>
         <PhoneVerificationModal initialPhoneNumber={phoneNumber} onVerificationSuccess={onVerificationSuccess} />
@@ -310,14 +310,14 @@ return(
         <div className="mb-4">
             <label
               htmlFor="gender"
-              className="block text-gray-700 text-sm font-bold mb-2">
+              className="block  text-sm font-bold mb-2">
               Gender:
             </label>
             <select
               name="gender"
               id="gender"
               required
-              className=" border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className=" border rounded py-2 px-3  leading-tight focus:outline-none focus:shadow-outline"
               value={formData.gender}
               onChange={handleChange}>
               <option key="some_random_value" value="select">
@@ -331,14 +331,14 @@ return(
           <div className="mb-4">
             <label
               htmlFor="languages"
-              className="block text-gray-700 text-sm font-bold mb-2">
+              className="block  text-sm font-bold mb-2">
               Languages you know:(choose maximum 3)
             </label>
             <select
               name="languages[]" 
               id="languages"
               required
-              className="border rounded py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="border rounded py-1 px-3  leading-tight focus:outline-none focus:shadow-outline"
               value={languages}  
               onChange={handleLanguages}
               multiple
@@ -365,7 +365,7 @@ return(
   )}
 </div>
 <div className="container">
-      <label className="block text-gray-700 text-sm font-bold mb-2">Upload your Profile picture:</label>
+      <label className="block  text-sm font-bold mb-2">Upload your Profile picture:</label>
         <input type="file" accept="image/*" onChange={handleImageChange}/>
         {uploadError &&<p style={{color:"red"}}>{uploadError}</p>}
         {imageFile && (

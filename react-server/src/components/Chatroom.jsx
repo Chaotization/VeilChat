@@ -377,7 +377,7 @@ function Chatroom(props) {
         </div>
         {showExitOptions && (
             <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-              <div className="bg-white p-6 rounded-lg shadow-lg">
+              <div className="bg-base-100 p-6 rounded-lg shadow-lg">
                 <h2 className="text-xl font-bold mb-4">Exit Chat</h2>
                 <div className="flex justify-end">
                   <button className="btn btn-primary mr-4" onClick={handleGoToHome}>
@@ -392,7 +392,7 @@ function Chatroom(props) {
         )}
         {showFriendRequestModal && (
             <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-              <div className="bg-white p-6 rounded-lg shadow-lg">
+              <div className="bg-base-100 p-6 rounded-lg shadow-lg">
                 <h2 className="text-xl font-bold mb-4">Send Friend Request</h2>
                 <p>Do you want to send a friend request?</p>
                 <div className="flex justify-end mt-4">

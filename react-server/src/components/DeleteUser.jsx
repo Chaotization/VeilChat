@@ -31,7 +31,7 @@ const DeleteUserButton = () => {
     }
     return (
         <div>
-        <button className='bg-red-400 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' type='button' onClick={()=>setShowModal(!showModal)}>
+        <button className='bg-red-400 hover:bg-red-700  font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' type='button' onClick={()=>setShowModal(!showModal)}>
             Delete Account
         </button>
         {showModal&&
@@ -45,14 +45,14 @@ const DeleteUserButton = () => {
               id="password"
               required={true}
               placeholder='Enter your password here'
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             />
             <br/>
-            <button className='bg-red-400 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' type='submit'>
+            <button className='bg-red-400 hover:bg-red-700  font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' type='submit'>
             Confirm Deletion
         </button>
         <button
-              className="bg-gradient-to-r from-gray-500 to-gray-700 hover:bg-gradient-to-l from-green-700 to-green-500 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-lg shadow-green-500/50"
+              className="bg-gradient-to-r from-gray-500 to-gray-700 hover:bg-gradient-to-l from-green-700 to-green-500  font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-lg shadow-green-500/50"
             onClick={()=>setShowModal(false)}
             >
               Cancel

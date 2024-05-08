@@ -169,12 +169,12 @@ function SignUp() {
                 <div>
 
                     <div className='card'>
-                        <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+                        <form onSubmit={handleSubmit} className="bg-base-100 shadow-md rounded px-8 pt-6 pb-8 mb-4">
                             <h2 style={{textAlign: "center", fontWeight: "bold"}}>Create a new profile</h2>
                             <div className="mb-4">
                                 <label
                                     htmlFor="email"
-                                    className="block text-gray-700 text-sm font-bold mb-2">
+                                    className="block  text-sm font-bold mb-2">
                                     Email:
                                 </label>
                                 <input
@@ -183,13 +183,13 @@ function SignUp() {
                                     value={email}
                                     required
                                     onChange={(e)=>setEmail(e.target.value)}
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    className="shadow appearance-none border rounded w-full py-2 px-3  leading-tight focus:outline-none focus:shadow-outline"
                                 />
                             </div>
                             <div className="mb-4">
                                 <label
                                     htmlFor="password"
-                                    className="block text-gray-700 text-sm font-bold mb-2">
+                                    className="block  text-sm font-bold mb-2">
                                     Password:
                                 </label>
                                 <input
@@ -198,7 +198,7 @@ function SignUp() {
                                     value={password}
                                     required
                                     onChange={handlePwdChange}
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    className="shadow appearance-none border rounded w-full py-2 px-3  leading-tight focus:outline-none focus:shadow-outline"
                                 />
                                 {password && (
                                     <span
@@ -216,7 +216,7 @@ function SignUp() {
                             <div className="mb-4">
                                 <label
                                     htmlFor="repeat_password"
-                                    className="block text-gray-700 text-sm font-bold mb-2">
+                                    className="block  text-sm font-bold mb-2">
                                     Confirm Password:
                                 </label>
                                 <input
@@ -225,7 +225,7 @@ function SignUp() {
                                     value={repeat_password}
                                     required
                                     onChange={handleRePwdChange}
-                                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    className="shadow appearance-none border rounded w-full py-2 px-3  leading-tight focus:outline-none focus:shadow-outline"
                                 />
                                 {repeat_password && (
                                     <span style={match ? {color: "green"} : {color: "red"}}>
@@ -242,7 +242,7 @@ function SignUp() {
                             </ul>}
                             <div className="flex justify-between items-center">
                                 <button
-                                    className="bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline"
+                                    className="bg-blue-500 hover:bg-blue-700  font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline"
                                     id='submitButton'
                                     name='submitButton'
                                     type='submit'
@@ -252,7 +252,7 @@ function SignUp() {
 
                                 <Link to="/signin">
                                     <button
-                                        className="bg-gradient-to-r from-green-500 to-green-700 hover:bg-gradient-to-l from-green-700 to-green-500 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-lg shadow-green-500/50">
+                                        className="bg-gradient-to-r from-green-500 to-green-700 hover:bg-gradient-to-l from-green-700 to-green-500  font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-lg shadow-green-500/50">
                                         Already have an account
                                     </button>
 

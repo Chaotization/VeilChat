@@ -167,7 +167,7 @@ const ChatRoom = () =>{
   }
 
   return (
-    <div className="chat bg-white shadow-md rounded-lg p-4">
+    <div className="chat bg-base-100 shadow-md rounded-lg p-4">
       {notification.visible && (
           <div className="notification-popup fixed top-20 right-20 bg-blue-500 text-white p-3 rounded-lg shadow-lg">
             {notification.message}
