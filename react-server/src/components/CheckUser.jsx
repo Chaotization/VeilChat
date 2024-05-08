@@ -14,12 +14,13 @@ function CheckUser(props) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const[firstLog, setFirstLog]=useState(false);
   const auth = getAuth();
   const currentUser = auth.currentUser;
   const navigate = useNavigate();
   const url = useParams();
   const [ newPasswordUser,setNewPasswordUser]=useState(false);
-
+  const social_password=import.meta.env.VITE_SOCIAL_SIGNIN_PASSWORD
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -36,6 +37,25 @@ function CheckUser(props) {
           if (response.ok) {
             const jsonData = await response.json();
             setData(jsonData);
+            if (currentUser?.providerData[0]?.providerId === 'google.com' &&firstLog){
+              try{
+             const loginResponse= await fetch("http://localhost:4000/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: currentUser.email, password:social_password }),
+          });
+          if(loginResponse.ok)
+          {
+            console.log("social login success")
+            setFirstLog(true);
+          }
+        }
+          catch(e)
+          {
+            console.log(e);
+          }
+
+            }
           } else{
             if (currentUser?.providerData[0]?.providerId === 'google.com') {
               try {
