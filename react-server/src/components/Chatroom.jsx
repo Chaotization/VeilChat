@@ -264,13 +264,6 @@ function Chatroom(props) {
   };
 
 
-
-
-  const handleExitChat = () => {
-    setShowExitOptions(true);
-
-  };
-
   const handleGoToHome = async () => {
     const response = await axios.post("http://localhost:4000/search/exit", {
       userId: currentUser.uid

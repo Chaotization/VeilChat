@@ -50,7 +50,7 @@ router.route("/").post(async (req, res) => {
 				chatId,
 			});
 		} else {
-			return res.status(404).json({
+			return res.status(200).json({
 				success: false,
 				filteredUserId: null,
 			});
@@ -67,9 +67,9 @@ router.route("/exit").post(async (req, res) => {
 		const response = await searchData.existSearch(userId);
 
 		if (response.deleted) {
-			return res.status(200).json({deleted: true});
+			return res.json(200).json({deleted: true});
 		} else {
-			return res.status(404).json({ deleted: false });
+			return res.status(404).json({ deleted: false, message: "Unable to delete user" });
 		}
 	}catch (error){
 		console.log(error);

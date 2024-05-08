@@ -216,13 +216,16 @@ function Profile(){
         else  updatedUser['lastName']=lname.trim();
     }
 
-      if (!phoneNumberVerified) {
-          setErrors(prevState => [...prevState, "Please verify your phone number."]);
-          return;
-      }
-      if (!phoneNumberVerified) {
-          setErrors(prevState => [...prevState, "Please verify your phone number."]);
-          return;
+      if(phoneNumber?.trim())
+      {
+          updatedUser['phoneNumber']="+1"+phoneNumber;
+
+          if (phoneNumber !== data.phoneNumber) {
+              if (!phoneNumberVerified) {
+                  setErrors(prevState => [...prevState, "Please verify your phone number."]);
+                  return;
+              }
+          }
       }
     if(dob)
     {

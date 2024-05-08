@@ -1,9 +1,10 @@
-import  { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getDatabase, ref, push, get } from 'firebase/database';
-import { getAuth } from 'firebase/auth';
+import {useEffect, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {get, getDatabase, push, ref} from 'firebase/database';
+import {getAuth} from 'firebase/auth';
 import axios from 'axios';
 import CheckUser from './CheckUser';
+
 const UserFilter = (props) => {
     const [gender, setGender] = useState('');
     const [age, setAge] = useState('');
@@ -13,7 +14,9 @@ const UserFilter = (props) => {
     const [locationAccessDenied, setLocationAccessDenied] = useState(false);
     const [filteredUser, setFilteredUser] = useState([]);
     const [loading, setLoading] = useState(false)
-
+    const [showMatchingModal, setShowMatchingModal] = useState(false);
+    const [clock, setClock] = useState(0);
+    const [timerActive, setTimerActive] = useState(false);
     //firebase
     const [messages,setMessages] = useState([])
     const [chatId, setChatId] = useState('')
@@ -56,34 +59,28 @@ const UserFilter = (props) => {
           distance,
           userLocation,
         });
-    
+
         if (response.data.success) {
           setFilteredUser(response.data.filteredUserId);
           console.log('Filtered User ID:', response.data.filteredUserId);
+            setShowMatchingModal(false);
           const chatId = response.data.chatId;
           await createNewChat(response.data.filteredUserId, chatId);
           navigate(`/chat/${chatId}`);
         } else {
-          setFilteredUser(null);
-          console.log('No filtered user found.');
+            setShowMatchingModal(true);
+            setTimerActive(true);
+            setClock(0);
         }
       } catch (error) {
-            if (error.response) {
-                if (error.response.status === 404) {
-                    setFilteredUser(null);
-                    console.log('No filtered user found.');
-                } else if (error.response.status === 500) {
-                    console.error('Internal server error occurred.');
-                }
-            } else if (error.request) {
-                console.log(error.request);
-                console.error('No response received from the server.');
-            } else {
-                console.log('Error', error.message);
-            }
-        }finally{
-            setLoading(false)
-        }
+          console.error('Error:', error);
+          setFilteredUser([]);
+          setShowMatchingModal(true);
+          setTimerActive(true);
+          setClock(0);
+      } finally {
+          setLoading(false);
+      }
     };
 
     const handleDistanceChange = (e) => {
@@ -95,6 +92,20 @@ const UserFilter = (props) => {
         }
     };
 
+    useEffect(() => {
+        let interval = null;
+        if (timerActive) {
+            interval = setInterval(() => {
+                setClock((prevTime) => prevTime + 1);
+            }, 1000);
+        }
+        return () => clearInterval(interval);
+    }, [timerActive]);
+
+    const handleCancel = () => {
+        setShowMatchingModal(false);
+        setTimerActive(false);
+    };
 
     //firebase
     const generateChatId = () => {
@@ -105,8 +116,8 @@ const UserFilter = (props) => {
       const db = getDatabase();
       const chatRef = ref(db, `chats/${chatId}`);
       const snapshot = await get(chatRef);
-    
-      if (!snapshot.exists()) {
+
+        if (!snapshot.exists()) {
         setChatId(chatId);
         setMessages([]);
         console.log(chatId);
@@ -115,8 +126,8 @@ const UserFilter = (props) => {
         await push(participantsRef, { userId: uid, joined: true });
       }
     };
-    
-    
+
+
     if(props && props.tested)
     {
     return (
@@ -193,6 +204,17 @@ const UserFilter = (props) => {
                   </button>
               )}
           </div>
+          {showMatchingModal && (
+              <div className="modal modal-open">
+                  <div className="modal-box">
+                      <h3 className="font-bold text-lg">Waiting for a match...</h3>
+                      <p className="py-4">Time elapsed: {clock} seconds</p>
+                      <div className="modal-action">
+                          <button className="btn" onClick={handleCancel}>Cancel</button>
+                      </div>
+                  </div>
+              </div>
+          )}
       </div>
     );}
     return <CheckUser search={true}/>
