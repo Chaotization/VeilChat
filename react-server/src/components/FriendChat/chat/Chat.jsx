@@ -107,7 +107,6 @@ const Chat = ({updateTrigger}) =>{
             <div className="searchBar flex-grow">
               <input type="text" placeholder="Search Chat" onChange={(e) => setsearchInput(e.target.value)} className="input input-bordered w-full" />
             </div>
-            <img src="/imgs/plusSign.png" alt="" className="add w-8 h-8 ml-2 cursor-pointer" onClick={() => setAddMode((prev) => !prev)} />
           </div>
           {chats.map(chat => (
             <div
