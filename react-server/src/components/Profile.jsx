@@ -7,6 +7,7 @@ import AddUser from "./AddUser";
 import {PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
 import PhoneVerificationModal from './PhoneVerification.jsx';
 import { useUserStore } from "../context/userStore";
+import Loader from "./Loader.jsx";
 function Profile(){
     const auth =getAuth();
     const currentUser=auth.currentUser;
@@ -94,7 +95,11 @@ function Profile(){
     console.log(currentUser)
     if(loading)
     {
-        return <div> Fetching the data from server</div>
+        return (<div> Fetching the data from server
+         <Loader/>
+        </div>)
+
+
     }
     const handleImageChange = (e) => {
         const file = e.target.files[0];
