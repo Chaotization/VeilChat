@@ -206,7 +206,7 @@ export const loginUser = async (email, password) => {
             {uId: userId},
             { $set: { lastOnlineAt: validation.generateCurrentDate() } }
         )
-        if (updateUser.modifiedCount === 0) {
+        if (updateUser.modifiedCount === 0 || !updateUser.acknowledged) {
             throw `Error: Failed to update last online at for user with ID ${userId}`;
         }
 
@@ -239,6 +239,8 @@ export const loginUser = async (email, password) => {
     }
 };
 
+
+
 export const logoutUser = async (userId) => {
     userId = validation.checkId(userId);
     const userCollection = await users();
@@ -252,7 +254,7 @@ export const logoutUser = async (userId) => {
         {uId: userId},
         { $set: { lastOnlineAt: validation.generateCurrentDate() } }
     )
-    if (updateUser.modifiedCount === 0) {
+    if (updateUser.modifiedCount === 0 || !updateUser.acknowledged) {
         throw `Error: Failed to update last online at for user with ID ${userId}`;
     }
 
