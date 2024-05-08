@@ -158,8 +158,15 @@ function Chatroom(props) {
     toggleFriendRequestModal();
   };
 
-  const handleExitChat = () => {
+  const handleExitChat = async () => {
     setShowExitOptions(true);
+    const response = await axios.post("https://localhost:4000/search/exist", {
+      userId: currentUser.uid
+    })
+    if(response.data.deleted){
+      console.log('Successful exist the chatting room');
+    }
+
   };
 
   const handleGoToHome = () => {

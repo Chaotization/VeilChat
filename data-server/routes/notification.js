@@ -45,7 +45,7 @@ router.route("/verification").post(async (req, res) => {
     const verificationCode = Math.floor(100000 + Math.random() * 900000);
     try {
         await client.messages.create({
-            body: `You verification code: ${verificationCode}`,
+            body: `You verification code: ${verificationCode}, the code expired in 60 seconds.`,
             from: '+18334580397',
             to: phoneNumber
         });
