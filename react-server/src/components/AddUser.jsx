@@ -209,7 +209,7 @@ function AddUser(props)
               await setDoc(userChatsRef, { chats: [] });
           }
 
-          
+          useUserStore.getState().fetchUserInfo(loggedUser.uid);
       let response = await fetch("http://localhost:4000/user/updateuser", {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
