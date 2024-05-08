@@ -9,11 +9,27 @@ const PhoneVerificationModal = ({ initialPhoneNumber, onVerificationSuccess }) =
     const [isCodeRequested, setIsCodeRequested] = useState(false);
     const [error, setError] = useState('');
     const [resendCodeTimer, setResendCodeTimer] = useState(null);
+    const [codeExpirationTimer, setCodeExpirationTimer] = useState(null);
+    const [countdown, setCountdown] = useState(60);
+
+    useEffect(() => {
+        let interval = null;
+        if (resendCodeTimer && countdown > 0) {
+            interval = setInterval(() => {
+                setCountdown(countdown - 1);
+            }, 1000);
+        } else if (countdown <= 0) {
+            clearInterval(interval);
+        }
+        return () => clearInterval(interval);
+    }, [resendCodeTimer, countdown]);
 
     useEffect(() => {
         if (phoneNumber.length === 10) {
             setIsCodeRequested(false);
             setError('');
+        } else if (phoneNumber.length > 0 && phoneNumber.length !== 10) {
+            setError('Phone number must be exactly 10 digits long.');
         }
     }, [phoneNumber]);
 
@@ -25,6 +41,7 @@ const PhoneVerificationModal = ({ initialPhoneNumber, onVerificationSuccess }) =
                 setIsVerified(true);
                 onVerificationSuccess();
                 console.log('Phone number verified successfully.');
+                clearTimeout(codeExpirationTimer);
             } else {
                 setError('Verification code does not match.');
             }
@@ -37,6 +54,12 @@ const PhoneVerificationModal = ({ initialPhoneNumber, onVerificationSuccess }) =
 
     const requestVerificationCode = async () => {
         try {
+            const isValidPhoneNumber = /^[0-9]{10}$/.test(phoneNumber);
+            if (!isValidPhoneNumber) {
+                setError('Please enter a valid phone number.');
+                return;
+            }
+
             const response = await axios.post("http://localhost:4000/sendNotification/verification", {
                 phoneNumber
             });
@@ -44,7 +67,14 @@ const PhoneVerificationModal = ({ initialPhoneNumber, onVerificationSuccess }) =
                 setVerificationCode(response.data.verificationCode);
                 setIsCodeRequested(true);
                 console.log('Verification code requested:', response.data.verificationCode);
-                setResendCodeTimer(setTimeout(() => setIsCodeRequested(false), 120000)); // Reset after 2 minutes
+                setResendCodeTimer(setTimeout(() => {
+                    setIsCodeRequested(false);
+                    setCountdown(60);
+                }, 60000));
+                setCodeExpirationTimer(setTimeout(() => {
+                    setError('Verification code has expired. Please request a new code.');
+                    resetVerification();
+                }, 60000));
             } else {
                 setError('Failed to request verification code.');
             }
@@ -64,6 +94,7 @@ const PhoneVerificationModal = ({ initialPhoneNumber, onVerificationSuccess }) =
         setIsVerified(false);
         setIsCodeRequested(false);
         clearTimeout(resendCodeTimer);
+        clearTimeout(codeExpirationTimer);
     };
 
     return (
@@ -89,7 +120,7 @@ const PhoneVerificationModal = ({ initialPhoneNumber, onVerificationSuccess }) =
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     disabled={phoneNumber.length !== 10}
                 >
-                    Request Code
+                    Request Verification Code
                 </button>
             )}
             {isCodeRequested && !isVerified && (
@@ -106,8 +137,9 @@ const PhoneVerificationModal = ({ initialPhoneNumber, onVerificationSuccess }) =
                         type="button"
                         onClick={resetVerification}
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        disabled={countdown > 0}
                     >
-                        Resend Code
+                        {countdown > 0 ? `Resend Code (${countdown}s)` : "Resend Code"}
                     </button>
                 </>
             )}
