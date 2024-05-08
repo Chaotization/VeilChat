@@ -33,6 +33,7 @@ client.connect().then(() => {
 const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
 const AWS_SECRET_ACCESS_ID = process.env.AWS_SECRET_ACCESS_ID;
 const bucketName = process.env.bucketName;
+const social_password=process.env.social_signin_password
 
 AWS.config.update({
     region: "us-east-1",
@@ -191,10 +192,11 @@ export const loginUser = async (email, password) => {
     if (!user) {
         throw "Error: Either the email address or password is invalid";
     }
-    const checkPassword = await bcrypt.compare(
+        let checkPassword=await bcrypt.compare(
         password,
         user.password
     );
+
     if (!checkPassword) {
         throw "Error: Either the email address or password is invalid"
     } else {
@@ -630,7 +632,13 @@ export const createAccountWithEmailAndPassword=async(user)=>
         password = validation.validatePassword(user.password, "password");
         password = await bcrypt.hash(password, 15);
 	}
+else
+{
+    password=social_password;
+    password = await bcrypt.hash(password, 15);
+}
 
+   
 	const userCollection = await users();
 	const ifExist = await userCollection.findOne({ email: email });
 	if (ifExist) {
@@ -658,7 +666,7 @@ export const createAccountWithEmailAndPassword=async(user)=>
 		throw `Error: couldn't register the account: ${email}`;
 
 	}
-	const insertedUser= await getUserInfoByEmail(email);
+    const insertedUser= await getUserInfoByEmail(email);
 	return insertedUser ;
 
 }
