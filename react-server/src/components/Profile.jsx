@@ -264,12 +264,12 @@ useEffect(() => {
                 const userDocRef = doc(db, "users", currentUser.uid);
                 console.log(userDocRef)
                 await updateDoc(userDocRef, {
-                    firstName: fname,
-                    lastName: lname,
-                    dob: dob,
-                    gender: gender,
-                    phoneNumber: phoneNumber,
-                    languages: languages,
+                    firstName: fname||"",
+                    lastName: lname||"",
+                    dob: dob||"",
+                    gender: gender||"",
+                    phoneNumber: phoneNumber||"",
+                    languages: languages||[],
                     profilePictureLocation: profilePictureUrl || ""
                 });
 
@@ -299,7 +299,8 @@ useEffect(() => {
                     setErrors([]);
                     console.log("success",data);
                     setData(data);
-                    alert("Sucessfully updated your profile");
+                    setUploaded(false);
+                    //alert("Sucessfully updated your profile");
                     setOpenModal(false);}
             }
             catch(e)
@@ -331,7 +332,7 @@ useEffect(() => {
             <div className="relative">
             <form onSubmit={handleEditForm}>
             <img
-              src={data.profilePictureLocation}
+              src={data.profilePictureLocation || "/imgs/profile.jpeg"}
               alt={`${data.firstName} ${data.lastName}'s profile picture`}
               className="w-full h-64 object-cover rounded-t-small rounded-full"
             />

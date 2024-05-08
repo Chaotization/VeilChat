@@ -18,6 +18,7 @@ function CheckUser(props) {
   const currentUser = auth.currentUser;
   const navigate = useNavigate();
   const url = useParams();
+  const [ newPasswordUser,setNewPasswordUser]=useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,7 +36,7 @@ function CheckUser(props) {
           if (response.ok) {
             const jsonData = await response.json();
             setData(jsonData);
-          } else if (response.status === 404) {
+          } else{
             if (currentUser?.providerData[0]?.providerId === 'google.com') {
               try {
                 const createResponse = await fetch("http://localhost:4000/user/createuserwithemail", {
@@ -74,19 +75,19 @@ function CheckUser(props) {
                     setError("Error with firestore")
                     return
                   }
-                } else {
-                 setError('Failed to create user')
-                }
+                } 
               } catch (error) {
                 setError(error.message);
                 return
               }
             }
-          } else {
-            setError(`Request failed`);
-            return
-          }
-        } else {
+            else
+            {
+              setNewPasswordUser(true);
+            }
+          } 
+        } 
+        else {
           navigate('/signin');
           return
         }
@@ -111,7 +112,7 @@ function CheckUser(props) {
   }, [data, isDataComplete]);
 
   if (loading) {
-    return <Loader />
+    return <Loader/>
   }
 
   if (error) {
@@ -128,8 +129,13 @@ function CheckUser(props) {
 
   } else {
     
+    if(newPasswordUser)
+    {
+      return <Loader/>
+    }
+    else{
      return <AddUser firstName={currentUser && currentUser.displayName || "User"} redirect="/home" />;
-    //return <Loader/>
+    }
     
    
   }
