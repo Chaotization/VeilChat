@@ -47,7 +47,7 @@ const Chat = ({updateTrigger}) =>{
         chatData.sort((a, b) => b.updatedAt - a.updatedAt);
   
         setAllChats(chatData);
-        setChats(chatData); // Initially, all chats are displayed
+        setChats(chatData);
       });
   
       return () => unSub();
@@ -57,7 +57,7 @@ const Chat = ({updateTrigger}) =>{
         return <div>Loading...Please Refresh your page</div>; 
     }
     if (message) {
-      return <div>{message}</div>;  // Display the message if there is one
+      return <div>{message}</div>;
   }
     const navigate = useNavigate();
 

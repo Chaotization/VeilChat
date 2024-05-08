@@ -72,8 +72,7 @@ function CheckUser(props) {
 
                   }
                   catch (e) {
-                    setError("Error with firestore")
-                    return
+                    setError('Failed to create user')
                   }
                 } 
               } catch (error) {
@@ -134,7 +133,7 @@ function CheckUser(props) {
       return <Loader/>
     }
     else{
-     return <AddUser firstName={currentUser && currentUser.displayName || "User"} redirect="/home" />;
+      return <AddUser firstName={currentUser && currentUser.displayName || "User"} redirect="/home" />;
     }
     
    

@@ -22,17 +22,8 @@ router.route("/").get(async (req, res) => {
             secure: false,
             sameSite: "strict",
         });
-        if (req.session) {
-            req.session.destroy(err => {
-                if (err) {
-                    console.error("Session destruction error:", err);
-                    return res.status(500).json({ message: "Failed to destroy session." });
-                }
-                res.status(200).json({ message: "Logged out successfully." });
-            });
-        } else {
-            res.status(200).json({ message: "Logged out successfully." });
-        }
+
+        res.status(200).json({ message: "Logged out successfully." });
     } catch (e) {
         console.error(e);
         if (e instanceof jwt.JsonWebTokenError) {
