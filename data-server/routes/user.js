@@ -91,6 +91,7 @@ router.route('/userinfo').post(async(req,res)=>{
     try 
     {
         let email= req.body.email.trim();
+        console.log(email);
         let userInfo=await usersData.getUserInfoByEmail(email);
         return res.status(200).json(userInfo);
 
