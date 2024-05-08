@@ -276,6 +276,33 @@ let exportedMethods = {
             };
         }
     },
+
+    async existSearch(userId) {
+        try {
+            userId = validation.checkId(userId);
+
+            const exists = await client.exists("activeUsers");
+            if (!exists) {
+                return ('No active users found.');
+            }
+
+            const allUsers = await client.json.get("activeUsers");
+            if (!allUsers) {
+                return ('Failed to retrieve active users.');
+            }
+
+            const filteredUsers = allUsers.filter(user => user.uId !== userId);
+
+            const updated = await client.json.set("activeUsers", '$', filteredUsers);
+            if (updated) {
+                return {deleted: true};
+            } else {
+                return {deleted: false};
+            }
+        } catch (error) {
+            console.error('Error during existSearch:', error);
+        }
+    }
 }
 
 export default exportedMethods;

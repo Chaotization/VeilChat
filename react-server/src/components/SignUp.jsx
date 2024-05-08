@@ -85,6 +85,7 @@ function SignUp() {
                     email,
                     password
                 );
+
                 userCreated = auth.currentUser;
 
                 if (userCreated) {
@@ -116,6 +117,7 @@ function SignUp() {
                             password: password,
                         })
                     });
+
                     let data = await response.json();
                     if (!response.ok) {
                         if (data && data.message) {

@@ -43,6 +43,7 @@ const url=useParams();
                   body: JSON.stringify({
                     uId: currentUser.uid,
                     email: currentUser.email,
+                    password: pa
                   })
                 });
 
