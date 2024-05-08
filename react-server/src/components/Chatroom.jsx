@@ -6,6 +6,7 @@ import axios from 'axios';
 import FriendRequestListener from "./FriendRequestListener.jsx";
 import {arrayRemove, arrayUnion, doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
 import {db} from "../firebase/FirebaseFunctions.js";
+import { useUserStore } from '../context/userStore.jsx';
 
 function Chatroom(props) {
   const [messages,setMessages] = useState([])
@@ -228,7 +229,7 @@ function Chatroom(props) {
         await updateDoc(requesterDocRef, {
           friends: updatedRequesterFriends,
         });
-
+        await useUserStore.getState().fetchUserInfo(currentUser.uid);
         setFriendRequestReceived(null);
         console.log(`Friend request accepted from ${requesterId}`);
         setPromoteToFriend(true);
