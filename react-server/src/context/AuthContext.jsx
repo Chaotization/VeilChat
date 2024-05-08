@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {getAuth, onAuthStateChanged} from 'firebase/auth';
+import Loader from '../components/Loader';
 export const AuthContext = React.createContext();
 
 export const AuthProvider = ({children}) => {
@@ -17,12 +18,9 @@ export const AuthProvider = ({children}) => {
     }, []);
 
     if (loadingUser) {
-        return (
-            <div>
-                <h1>Loading....Loading....Loading....Loading....Loading....</h1>
-            </div>
-        );
-    }
+        return <Loader/>
+      }
+    
 
     return (
         <AuthContext.Provider value={{currentUser}}>
