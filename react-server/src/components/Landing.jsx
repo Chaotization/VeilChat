@@ -39,9 +39,25 @@ function Landing() {
               d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
             />
           </svg>
+          <a href="http://www.freepik.com" className='font-extralight text-xs'>Designed by pch.vector / Freepik</a>
         </div>
         <div>
-          <h1 className="text-5xl font-bold">Welcome to VeilChat!</h1>
+          <h1 className="text-5xl font-bold">Welcome to </h1>
+          {/* AI generated svg */}
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100">
+            <defs>
+              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#FF4136" />
+                <stop offset="100%" stop-color="#0074D9" />
+              </linearGradient>
+            </defs>
+            <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-size="80" font-weight="bold" fill="url(#gradient)">
+              <tspan>V</tspan>
+              <tspan fill="base">eil</tspan>
+              <tspan>C</tspan>
+              <tspan fill="base">hat</tspan>
+            </text>
+          </svg>
           <p className="py-6">
             Connect with interesting strangers based on your preferences and engage in meaningful conversations.
           </p>
