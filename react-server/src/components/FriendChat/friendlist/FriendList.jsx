@@ -6,9 +6,11 @@ import {useChatStore} from '../../../context/chatStore';
 
 const FriendList = ({triggerChatUpdate}) => {
   const { currentUser } = useUserStore();
+  const [allFriends, setAllFriends] = useState([]);
   const [friends, setFriends] = useState([]);
   const { changeChat } = useChatStore();
   const [showConfirm, setShowConfirm] = useState(false);
+  const [searchInput, setsearchInput] = useState("");
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [showProfile, setShowProfile] = useState(false);
   const [viewingFriend, setViewingFriend] = useState(null);
@@ -25,6 +27,7 @@ const FriendList = ({triggerChatUpdate}) => {
         // Assuming the last name is stored under the key 'lastName'
         return a.lastName.localeCompare(b.lastName);
       });
+      setAllFriends(sortedFriends);
       setFriends(sortedFriends);
     }
   
@@ -96,6 +99,15 @@ const FriendList = ({triggerChatUpdate}) => {
     }
   };
 
+  useEffect(() => {
+    const filteredFriends = allFriends.filter(friend =>
+      friend.firstName.toLowerCase().includes(searchInput.toLowerCase()) ||
+      friend.lastName.toLowerCase().includes(searchInput.toLowerCase())
+    );
+    setFriends(filteredFriends);
+  }, [searchInput, allFriends]);
+
+
   const handleDeleteFriend = async () => {
     const userRef = doc(db, "users", currentUser.id);
     const friendRef = doc(db, "users", selectedFriend.id);
@@ -150,7 +162,13 @@ const FriendList = ({triggerChatUpdate}) => {
     <div className="friendList bg-white shadow-md rounded-lg p-4 h-screen max-h-screen">
       <div className="search mb-4">
         <div className="searchbar">
-          <input type="text" placeholder="Search Friend" className="input input-bordered w-full" />
+        <input
+            type="text"
+            placeholder="Search Friend"
+            className="input input-bordered w-full"
+            value={searchInput}
+            onChange={(e) => setsearchInput(e.target.value)} 
+          />
         </div>
       </div>
       {friends.map(friend => (
