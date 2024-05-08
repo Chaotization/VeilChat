@@ -8,6 +8,8 @@ import {PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
 import PhoneVerificationModal from './PhoneVerification.jsx';
 import { useUserStore } from "../context/userStore";
 import Loader from "./Loader.jsx";
+import {doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
+import {db} from '../firebase/FirebaseFunctions';
 function Profile(){
     const auth =getAuth();
     const currentUser=auth.currentUser;
@@ -92,7 +94,7 @@ function Profile(){
         }
     },[]);
 
-    console.log(currentUser)
+    
     if(loading)
     {
         return (<div> Fetching the data from server
@@ -103,7 +105,7 @@ function Profile(){
     }
     const handleImageChange = (e) => {
         const file = e.target.files[0];
-        console.log(file);
+        
         Resizer.imageFileResizer(
             file,
             300,
@@ -173,7 +175,7 @@ function Profile(){
             console.error("S3 Upload Error:", error);
         }
     };
-    console.log(userInFireStore)
+    
 
 
     async function handleEditForm(e){
@@ -257,6 +259,17 @@ function Profile(){
                     updatedUser['profilePictureLocation']=profilePictureUrl;
                 }
 
+                const userDocRef = doc(db, "users", currentUser.uid);
+                console.log(userDocRef)
+                await updateDoc(userDocRef, {
+                    firstName: fname,
+                    lastName: lname,
+                    dob: dob,
+                    gender: gender,
+                    phoneNumber: phoneNumber,
+                    languages: languages,
+                    profilePictureLocation: profilePictureUrl || ""
+                });
 
                 let response=await fetch("http://localhost:4000/user/updateuser",{
                     method:"POST",
@@ -266,7 +279,7 @@ function Profile(){
 
                 let data=await response.json()
 
-                console.log("data:",data)
+                
                 if (!response.ok) {
                     if (data && data.message) {
                         setErrors((prevState) => {
@@ -299,7 +312,7 @@ function Profile(){
     }
 
     if(data && data.firstName){
-        console.log(data)
+        
         let dob=new Date(data.dob);
         let dateOfBirth=String(dob.getMonth() + 1).padStart(2, '0').toString()+"-"+String(dob.getDate()).padStart(2, '0').toString()+"-"+parseInt(dob.getFullYear().toString());
         const rootElement = document.getElementById('root');

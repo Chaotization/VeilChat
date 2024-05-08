@@ -36,7 +36,7 @@ function CheckUser(props) {
             const jsonData = await response.json();
             setData(jsonData);
           } else if (response.status === 404) {
-            if (currentUser?.providerData[0]?.providerId === 'google.com' || currentUser?.providerData[0]?.providerId === 'password') {
+            if (currentUser?.providerData[0]?.providerId === 'google.com') {
               try {
                 const createResponse = await fetch("http://localhost:4000/user/createuserwithemail", {
                   method: "POST",
