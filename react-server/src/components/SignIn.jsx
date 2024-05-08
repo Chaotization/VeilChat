@@ -7,6 +7,7 @@ import {
   doPasswordReset,
 } from '../firebase/FirebaseFunctions.js';
 import { getAuth } from "firebase/auth";
+import axios from "axios";
 
 const SignIn=()=>
 {
@@ -29,6 +30,7 @@ const SignIn=()=>
     let email = document.getElementById('email').value;
     if (email) {
         doPasswordReset(email);
+
         alert('Password reset email was sent');
     } else {
         alert(
@@ -36,26 +38,39 @@ const SignIn=()=>
         );
     }
 };
-    async function handleSignIn(event)
-    {
+    async function handleSignIn(event) {
         event.preventDefault();
         setError("")
-        let email=document.getElementById("email").value.trim();
-        let password=document.getElementById("password").value.trim();
-        if(!email || !password)
-        {
+        let email = document.getElementById("email").value.trim();
+        let password = document.getElementById("password").value.trim();
+        if (!email || !password) {
             setError("Email/password shouldn't be empty");
             return;
         }
 
         try {
-          await doSignInWithEmailAndPassword(email, password);
-          navigate("/")
-          
-      } catch (error) {
+            const response = await fetch('http://localhost:4000/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({email, password}),
+                credentials: 'include',
+            });
 
-          alert(error.code);
-      }
+            if (response.ok) {
+                const sessionToken = response.headers.get('set-cookie');
+                document.cookie = `sessionToken=${sessionToken}`;
+
+                await doSignInWithEmailAndPassword(email, password);
+                navigate("/");
+
+            } else {
+                const error = await response.json();
+                // Handle login error
+                console.error(error.message);
+            }
+        } catch (error) {
+            alert(error.code);
+        }
     }
     return(
       <div className="max-w-md mx-auto my-8">

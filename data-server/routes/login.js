@@ -4,11 +4,7 @@ import jwt from "jsonwebtoken";
 const router = Router();
 
 router.route("/").post(async (req, res) => {
-	if (req.session && req.session.loggedIn) {
-		return res
-			.status(400)
-			.json({ message: "User already logged in, logout first" });
-	}
+
 	let email = req.body.email;
 	let password = req.body.password;
 	try {
@@ -21,12 +17,9 @@ router.route("/").post(async (req, res) => {
 				(process.env.JWT_SECRET = "someSecret"),
 				{ expiresIn: "60m" }
 			);
-			req.session.user = user;
-			req.session.loggedIn = true;
+
 			res.cookie("sessionToken", accessToken, { httpOnly: true });
-			return res
-				.status(200)
-				.json({ message: "success", loggedInFromServer: req.session.loggedIn });
+			return res.status(200).json({ message: "success" });
 		} else {
 			return res.status(404).json({ message: "Records not found..." });
 		}

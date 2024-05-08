@@ -20,89 +20,91 @@ const s3Client = new S3Client({
 });
 
 function Profile(){
-const auth =getAuth();
-const currentUser=auth.currentUser;
-const [data, setData] = useState("");
-const [openModal,setOpenModal]=useState(false);
-const [loading, setLoading]=useState(false);
-const [uploaded, setUploaded]=useState(false);
-const[error, setError]=useState(null);
- const navigate=useNavigate();
-  const [languages, setLanguages]=useState("");
-  const [uploadError, setUploadError] = useState(null);
-  const [imageFile, setImageFile] = useState(null); 
-  const [formSubmitted, setFormSubmitted] = useState(false);
-  const [phoneVerified, setPhoneVerified] = useState(false);
-  const langs= [
-    "English",
-    "Arabic",
-    "Bengali",
-    "Chinese",
-    "French",
-    "German",
-    "Hindi",
-    "Indonesian",
-    "Japanese",
-    "Marathi",
-    "Nigerian Pidgin",
-    "Portuguese",
-    "Russian",
-    "Spanish",
-    "Tamil",
-    "Telugu",
-    "Turkish",
-    "Urdu",
-    "Vietnamese"
-  ];
-  const [availableLanguages, setAvailableLanguages]=useState(langs)
-  const [errors, setErrors] = useState([]);
-  const[profilePictureLocation, setProfilePictureLocation]=useState(null);
+    const auth =getAuth();
+    const currentUser=auth.currentUser;
+    const [data, setData] = useState("");
+    const [openModal,setOpenModal]=useState(false);
+    const [loading, setLoading]=useState(false);
+    const [uploaded, setUploaded]=useState(false);
+    const[error, setError]=useState(null);
+    const navigate=useNavigate();
+    const [languages, setLanguages]=useState("");
+    const [uploadError, setUploadError] = useState(null);
+    const [imageFile, setImageFile] = useState(null);
+    const [formSubmitted, setFormSubmitted] = useState(false);
+    const [phoneNumberVerified, setPhoneNumberVerified] = useState(false);
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const langs= [
+        "English",
+        "Arabic",
+        "Bengali",
+        "Chinese",
+        "French",
+        "German",
+        "Hindi",
+        "Indonesian",
+        "Japanese",
+        "Marathi",
+        "Nigerian Pidgin",
+        "Portuguese",
+        "Russian",
+        "Spanish",
+        "Tamil",
+        "Telugu",
+        "Turkish",
+        "Urdu",
+        "Vietnamese"
+      ];
+      const [availableLanguages, setAvailableLanguages]=useState(langs)
+      const [errors, setErrors] = useState([]);
+      const[profilePictureLocation, setProfilePictureLocation]=useState(null);
 
-useEffect(() => {
-    const fetchData = async () => {
-        setLoading(true)
-      try {
-        let response = await fetch("http://localhost:4000/user/userinfo", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: currentUser.email }),
-        });
-  
-        if (!response.ok) {
-         
-          throw new Error(`Request failed`);
-         
-        }
-        const jsonData = await response.json();
-        setData(jsonData);
-        setLanguages(jsonData.languages)
-      } catch (error) {
-        
-       setError(error);
-       setLoading('false')
-       alert('There was some problem processing your data')
-       navigate('/home')
-       return
-      }
-      setLoading(false);
+    const onVerificationSuccess = () => {
+        setPhoneNumberVerified(true);
+        setErrors(errors.filter(e => e !== "Please verify your phone number."));
     };
-  
-    if(currentUser)
-    {fetchData();}
-    else {
-        navigate('/signin');
-        return
-      }
-  },[]); 
 
-    
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true)
+          try {
+            let response = await fetch("http://localhost:4000/user/userinfo", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email: currentUser.email }),
+            });
+
+            if (!response.ok) {
+
+              throw new Error(`Request failed`);
+
+            }
+            const jsonData = await response.json();
+            setData(jsonData);
+            setLanguages(jsonData.languages)
+          } catch (error) {
+
+           setError(error);
+           setLoading('false')
+           alert('There was some problem processing your data')
+           navigate('/home')
+           return
+          }
+          setLoading(false);
+        };
+
+        if(currentUser)
+        {fetchData();}
+        else {
+            navigate('/signin');
+            return
+          }
+      },[]);
+
+
     if(loading)
     {
-        return (<div> Fetching the data from server
-         <Loader/>
-        </div>)
-
-
+        return <div><Loader/></div>
     }
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -126,8 +128,6 @@ useEffect(() => {
       );
       
   }
-
-
   const uploadToS3 = async () => {
       try {
           const randomString =
@@ -215,6 +215,15 @@ useEffect(() => {
         }
         else  updatedUser['lastName']=lname.trim();
     }
+
+      if (!phoneNumberVerified) {
+          setErrors(prevState => [...prevState, "Please verify your phone number."]);
+          return;
+      }
+      if (!phoneNumberVerified) {
+          setErrors(prevState => [...prevState, "Please verify your phone number."]);
+          return;
+      }
     if(dob)
     {
         dob=new Date(dob);
@@ -469,11 +478,7 @@ useEffect(() => {
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
         </div>
-        <PhoneVerificationModal
-                            phoneNumber={data.phoneNumber}
-                            onVerificationSuccess={() => setPhoneVerified(true)}
-                            formSubmitted={formSubmitted}
-                        />
+             <PhoneVerificationModal initialPhoneNumber={phoneNumber} onVerificationSuccess={onVerificationSuccess} />
 
 
         <div className="mb-4">
