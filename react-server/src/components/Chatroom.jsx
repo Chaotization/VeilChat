@@ -149,8 +149,6 @@ function Chatroom(props) {
   };
 
   const handleSendFriendRequest = async () => {
-
-
     try{
     const userDocRef = doc(db, "users", otherUserId);
     const userDocSnapshot = await getDoc(userDocRef);
@@ -158,20 +156,20 @@ function Chatroom(props) {
     if (userDocSnapshot.exists()) {
 
       await updateDoc(userDocRef, {
-        friends: arrayUnion({
+        friendRequests: arrayUnion({
           friendId: currentUser.uid,
           status: 'pending',
         }),
       });
     } else {
       await setDoc(userDocRef, {
-        friends: [{
+        friendRequests: [{
           friendId: currentUser.uid,
           status: 'pending',
         }],
       });
     }
-      setFriendRequestSent(true);
+    setFriendRequestSent(true);
     console.log(`Friend request sent to ${otherUserId}`);
   } catch (error) {
     console.error('Error sending friend request:', error);
@@ -187,7 +185,6 @@ function Chatroom(props) {
 
   const onRequestAccepted = ({ requesterId }) => {
     setFriendRequestSent(false);
-    setFriendRequestReceived(false);
     setPromoteToFriend(true);
     console.log(`your friend Request to ${requesterId} was accepted!`);
   };
@@ -197,11 +194,9 @@ function Chatroom(props) {
 
   const handleAcceptFriendRequest = async (requesterId) => {
     try {
-      // Get the document references for the current user and the requester
       const currentUserDocRef = doc(db, 'users', currentUser.uid);
       const requesterDocRef = doc(db, 'users', requesterId);
 
-      // Read the current data for the users
       const currentUserDocSnap = await getDoc(currentUserDocRef);
       const requesterDocSnap = await getDoc(requesterDocRef);
 
@@ -209,25 +204,36 @@ function Chatroom(props) {
         const currentUserData = currentUserDocSnap.data();
         const requesterData = requesterDocSnap.data();
 
-        const updatedCurrentUserFriends = (currentUserData.friends || []).filter(
+        const updatedCurrentUserFriends = (currentUserData.friendRequests || []).filter(
             (friend) => !(friend.friendId === requesterId && friend.status === 'pending')
         );
 
         updatedCurrentUserFriends.push({ friendId: requesterId, status: 'accepted' });
 
         await updateDoc(currentUserDocRef, {
-          friends: updatedCurrentUserFriends,
+          friendRequests: updatedCurrentUserFriends,
         });
 
-        const updatedRequesterFriends = (requesterData.friends || []).filter(
+        await updateDoc(currentUserDocRef, {
+          friends: arrayUnion(requesterId)
+        });
+
+
+
+
+        const updatedRequesterFriends = (requesterData.friendRequests || []).filter(
             (friend) => !(friend.friendId === currentUser.uid && friend.status === 'pending')
         );
 
         updatedRequesterFriends.push({ friendId: currentUser.uid, status: 'accepted' });
+        await updateDoc(requesterDocRef, {
+          friendRequests: updatedRequesterFriends,
+        });
 
         await updateDoc(requesterDocRef, {
-          friends: updatedRequesterFriends,
+          friends: arrayUnion(currentUser.uid)
         });
+
 
         setFriendRequestReceived(null);
         console.log(`Friend request accepted from ${requesterId}`);
@@ -243,19 +249,16 @@ function Chatroom(props) {
 
   const handleRejectFriendRequest = async (requesterId) => {
     try {
-      // Remove requester from current user's friends list
       const currentUserDocRef = doc(db, 'users', currentUser.uid);
       await updateDoc(currentUserDocRef, {
-        friends: arrayRemove({ friendId: requesterId, status: 'pending' }),
+        friendRequests: arrayRemove({ friendId: requesterId, status: 'pending' }),
       });
 
-      // Remove current user from requester's friends list
       const requesterDocRef = doc(db, 'users', requesterId);
       await updateDoc(requesterDocRef, {
-        friends: arrayRemove({ friendId: currentUser.uid, status: 'pending' }),
+        friendRequests: arrayRemove({ friendId: currentUser.uid, status: 'pending' }),
       });
 
-      // Remove the pending request locally
       setFriendRequestReceived(null);
       console.log(`Friend request rejected from ${requesterId}`);
     } catch (error) {
@@ -292,6 +295,9 @@ function Chatroom(props) {
   //   joinChat(joinChatId);
   //   setJoinChatId('');
   // };
+  const openFriendRequestModal = () => {
+    setShowFriendRequestModal(true);
+  };
 
 
 
@@ -316,7 +322,7 @@ function Chatroom(props) {
                   </>
               ) : (
                   friendRequestSent === false ? (
-                      <button className="text-white" onClick={handleSendFriendRequest}>
+                      <button className="text-white" onClick={openFriendRequestModal}>
                         <span className="material-symbols-outlined btn btn-ghost">Add Friend</span>
                       </button>
                   ) : (

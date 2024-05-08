@@ -4,7 +4,7 @@ import {updateFriendStatus} from "../data/users.js";
 
 const router = Router();
 
-router.route("/:id").post(async (req, res) => {
+router.route("/accept/:id").post(async (req, res) => {
     try {
         const userData = req.session.user;
         if (userData) {
@@ -25,7 +25,7 @@ router.route("/:id").post(async (req, res) => {
 });
 
 
-router.route("/rejectFriendRequest/:id").post(async (req, res) => {
+router.route("/reject/:id").post(async (req, res) => {
     try {
         const userData = req.session.user;
         if (userData) {
@@ -45,7 +45,7 @@ router.route("/rejectFriendRequest/:id").post(async (req, res) => {
     }
 });
 
-router.route("/acceptFriendRequest/:id").post(async (req, res) => {
+router.route("/send/:id").post(async (req, res) => {
     try {
         const userData = req.session.user;
         if (userData) {
@@ -65,7 +65,7 @@ router.route("/acceptFriendRequest/:id").post(async (req, res) => {
     }
 });
 
-router.route("/deleteFriend/:id").post(async (req, res) => {
+router.route("/delete/:id").post(async (req, res) => {
     try {
         const userData = req.session.user;
         if (userData) {
