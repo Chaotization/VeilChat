@@ -112,18 +112,15 @@ const FriendList = ({triggerChatUpdate}) => {
     const userRef = doc(db, "users", currentUser.id);
     const friendRef = doc(db, "users", selectedFriend.id);
 
-
-    
-
     const userChatRef = doc(db, "userchats", currentUser.id);
     const userChatSnapshot = await getDoc(userChatRef);
     const userChatData = userChatSnapshot.data();
     const userFdata = userChatData.chats.find(chat => chat.receiverId === selectedFriend.id);
-    const userchatDRef = doc(db, "chats", userFdata.id)
-    const userChatDocRef = doc(db, "userchats", "currentUser.id");
+    const userchatDRef = doc(db, "chats", userFdata.chatId)
+    
 
     try {
-      await updateDoc(userChatDocRef,{
+      await updateDoc(userChatRef,{
         chats: arrayRemove(userFdata)
       } );
     } catch (error) {
@@ -138,23 +135,24 @@ const FriendList = ({triggerChatUpdate}) => {
     const friendChatSnapshot = await getDoc(friendChatRef);
     const friendChatData = friendChatSnapshot.data();
     const FriendFdata = friendChatData.chats.find(chat => chat.receiverId === currentUser.id);
-    const friendChatDocRef = doc(db, "userchats", selectedFriend.id);
-    await updateDoc(userRef, {
-      friends: arrayRemove(selectedFriend.id)
-    });
-
     
-    await updateDoc(friendRef, {
-      friends: arrayRemove(currentUser.id)
-    });
+    
     try {
-      await updateDoc(friendChatDocRef,{
+      await updateDoc(friendChatRef ,{
         chats: arrayRemove(FriendFdata)
       } );
     } catch (error) {
       console.error("Error deleting document:", error);
     }
 
+    await updateDoc(userRef, {
+      friends: arrayRemove(selectedFriend.id)
+    });
+
+
+    await updateDoc(friendRef, {
+      friends: arrayRemove(currentUser.id)
+    });
 
 
     setShowConfirm(false);
