@@ -373,16 +373,6 @@ function Chatroom(props) {
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyDown={handleEnter}
             />
-            <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="hidden"
-                id="imageUpload"
-            />
-            <label htmlFor="imageUpload" className="btn btn-primary btn-outline mr-2">
-              <span className="material-symbols-outlined">image</span>
-            </label>
             <button className="btn btn-primary btn-outline" onClick={handleSendMessage}>
               <span className="material-symbols-outlined">send</span>
             </button>

@@ -31,6 +31,8 @@ const UserFilter = (props) => {
       return
     }
   },[])
+
+
     const handleLocationAccess = () => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
@@ -64,7 +66,8 @@ const UserFilter = (props) => {
           setFilteredUser(response.data.filteredUserId);
           console.log('Filtered User ID:', response.data.filteredUserId);
             setShowMatchingModal(false);
-          const chatId = response.data.chatId;
+          const chatId = await response.data.chatId;
+          
           await createNewChat(response.data.filteredUserId, chatId);
           navigate(`/chat/${chatId}`);
         } else {
