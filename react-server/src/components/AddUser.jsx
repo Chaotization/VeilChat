@@ -202,7 +202,7 @@ function AddUser(props)
               languages: languages,
               profilePictureLocation: profilePictureUrl || ""
           });
-
+          await useUserStore.getState().fetchUserInfo(loggedUser.uid);
           const userChatsRef = doc(db, "userchats", loggedUser.uid);
           const userChatsSnap = await getDoc(userChatsRef);
           if (!userChatsSnap.exists()) {
