@@ -66,7 +66,7 @@ const PhoneVerificationModal = ({ initialPhoneNumber, onVerificationSuccess }) =
             if (response.data.sendStatus) {
                 setVerificationCode(response.data.verificationCode);
                 setIsCodeRequested(true);
-                console.log('Verification code requested:', response.data.verificationCode);
+            
                 setResendCodeTimer(setTimeout(() => {
                     setIsCodeRequested(false);
                     setCountdown(60);
