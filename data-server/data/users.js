@@ -202,12 +202,14 @@ export const loginUser = async (email, password) => {
     } else {
         const userId = user.uId.toString();
         const onlineUsersKey = 'onlineUsers';
-        const updateUser = await userCollection.updateOne(
-            {uId: userId},
-            { $set: { lastOnlineAt: validation.generateCurrentDate() } }
-        )
-        if (updateUser.modifiedCount === 0 || !updateUser.acknowledged) {
-            throw `Error: Failed to update last online at for user with ID ${userId}`;
+        if(user.lastOnlineAt !== validation.generateCurrentDate()){
+            const updateUser = await userCollection.updateOne(
+                {uId: userId},
+                { $set: { lastOnlineAt: validation.generateCurrentDate() } }
+            )
+            if (updateUser.modifiedCount === 0 && !updateUser.acknowledged) {
+                throw 'Error: Failed to update last online at for user with ID ${userId}';
+            }
         }
 
         let exist = await client.exists(onlineUsersKey);
@@ -250,13 +252,16 @@ export const logoutUser = async (userId) => {
     if (!user) {
         throw "Error: Either the email address or password is invalid";
     }
-    const updateUser = await userCollection.updateOne(
-        {uId: userId},
-        { $set: { lastOnlineAt: validation.generateCurrentDate() } }
-    )
-    if (updateUser.modifiedCount === 0 || !updateUser.acknowledged) {
-        throw `Error: Failed to update last online at for user with ID ${userId}`;
+    if(user.lastOnlineAt !== validation.generateCurrentDate()){
+        const updateUser = await userCollection.updateOne(
+            {uId: userId},
+            { $set: { lastOnlineAt: validation.generateCurrentDate() } }
+        )
+        if (updateUser.modifiedCount === 0 && !updateUser.acknowledged) {
+            throw `Error: Failed to update last online at for user with ID ${userId}`;
+        }
     }
+    
 
     const onlineUsersKey = 'onlineUsers';
     let exist = await client.exists(onlineUsersKey);
