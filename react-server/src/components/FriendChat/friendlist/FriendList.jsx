@@ -162,7 +162,7 @@ const FriendList = ({triggerChatUpdate}) => {
   };
 
   return (
-    <div className="friendList bg-white shadow-md rounded-lg p-4 h-screen max-h-screen">
+    <div className="friendList bg-base-100 shadow-md rounded-lg p-4 h-screen max-h-screen">
       <div className="search mb-4">
         <div className="searchbar">
         <input
@@ -191,7 +191,7 @@ const FriendList = ({triggerChatUpdate}) => {
         </div>
       ))}
       {showConfirm && (
-        <div className="confirmDialog bg-white shadow-md rounded-lg p-4 fixed inset-0 flex flex-col justify-center items-center">
+        <div className="confirmDialog bg-base-100 shadow-md rounded-lg p-4 fixed inset-0 flex flex-col justify-center items-center">
           <p className="mb-4">Are you sure you want to delete {selectedFriend.firstName} {selectedFriend.lastName}?</p>
           <img src={selectedFriend.profilePictureLocation || './public/imgs/default_avatar.png'} alt={selectedFriend.firstName} className="w-20 h-20 rounded-full mb-4" />
           <div className="flex justify-center">
@@ -201,7 +201,7 @@ const FriendList = ({triggerChatUpdate}) => {
         </div>
       )}
       {showProfile && (
-        <div className="profileDialog bg-white shadow-md rounded-lg p-4 fixed inset-0 flex flex-col justify-center items-center">
+        <div className="profileDialog bg-base-100 shadow-md rounded-lg p-4 fixed inset-0 flex flex-col justify-center items-center">
         <h2 className="mb-4">{viewingFriend.firstName} {viewingFriend.lastName}'s Profile</h2>
         <img src={viewingFriend.profilePictureLocation || './public/imgs/default_avatar.png'} alt={viewingFriend.firstName} className="w-20 h-20 rounded-full mb-4" />
         <p>Email: {viewingFriend.email}</p>

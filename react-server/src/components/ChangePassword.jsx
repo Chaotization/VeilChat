@@ -45,7 +45,7 @@ function ChangePassword() {
             type="password"
             id="currentPassword"
             name="currentPassword"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="shadow appearance-none border rounded w-full py-2 px-3  leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             placeholder="Current Password"
             autoComplete="off"
             required
@@ -60,7 +60,7 @@ function ChangePassword() {
             type="password"
             id="newPasswordOne"
             name="newPasswordOne"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="shadow appearance-none border rounded w-full py-2 px-3  leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             placeholder="Password"
             autoComplete="off"
             required
@@ -75,14 +75,14 @@ function ChangePassword() {
             type="password"
             id="newPasswordTwo"
             name="newPasswordTwo"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="shadow appearance-none border rounded w-full py-2 px-3  leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             placeholder="Confirm Password"
             autoComplete="off"
             required
           />
         </div>
   
-        <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        <button type="submit" className="bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
           Change Password
         </button>
       </form>
@@ -92,7 +92,7 @@ function ChangePassword() {
       <h2 className="text-2xl font-bold mb-4">
         {currentUser.displayName}, Password Change Unavailable
       </h2>
-      <p className="text-gray-500 mb-0">
+      <p className=" mb-0">
         You are signed in using a Social Media Provider. Password change is not
         available.
       </p>

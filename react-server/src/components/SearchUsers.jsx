@@ -131,7 +131,7 @@ const UserFilter = (props) => {
     if(props && props.tested)
     {
     return (
-      <div className="bg-base-200 p-6 rounded-lg shadow-md">
+      <div className="bg-base-200 p-6 my-10 mx-20 rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-4">User Filter</h2>
         <div className="mb-4">
           <label className="block mb-2 font-bold">Gender:</label>
@@ -200,7 +200,7 @@ const UserFilter = (props) => {
                   <button className="btn outline loading">Finding a match...</button>
               ) : (
                   <button className="btn btn-outline" onClick={handleFilter}>
-                      Apply Filters
+                      Find a Match
                   </button>
               )}
           </div>

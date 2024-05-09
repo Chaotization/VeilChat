@@ -33,12 +33,12 @@ const NavigationAuth = () => {
         <NavLink to='/' className="btn btn-ghost normal-case text-xl">VeilChat</NavLink>
       </div>
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal space-x-1">
-          <li className='btn'><NavLink to='/'>Landing</NavLink></li>
-          <li className='btn'><NavLink to='/home'>Home</NavLink></li>
-          <li className='btn'><NavLink to='/searchuser'>Random Chat</NavLink></li>
-          <li className='btn'><NavLink to='/profile'>Profile</NavLink></li>
-          <li className='btn'><NavLink to='/account'>Account</NavLink></li>
+        <ul className="menu menu-horizontal space-x-3">
+          <li className='btn border-primary'><NavLink to='/'>Landing</NavLink></li>
+          <li className='btn border-primary'><NavLink to='/home'>Home</NavLink></li>
+          <li className='btn border-primary'><NavLink to='/account'>Account</NavLink></li>
+          <li className='btn border-primary'><NavLink to='/searchuser'>Random Chat</NavLink></li>
+          <li className='btn border-primary'><NavLink to='/profile'>Profile</NavLink></li>
         </ul>
       </div>
       <div className="navbar-end space-x-8 px-2">
@@ -63,10 +63,10 @@ const NavigationNonAuth = () => {
         <NavLink to='/' className="btn btn-ghost normal-case text-xl">VeilChat</NavLink>
       </div>
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1">
-          <li><NavLink to='/'>Landing</NavLink></li>
-          <li><NavLink to='/signup'>Sign-up</NavLink></li>
-          <li><NavLink to='/signin'>Sign-In</NavLink></li>
+        <ul className="menu menu-horizontal space-x-3">
+          <li className='btn border-primary'><NavLink to='/'>Landing</NavLink></li>
+          <li className='btn border-primary'><NavLink to='/signup'>Sign-up</NavLink></li>
+          <li className='btn border-primary'><NavLink to='/signin'>Sign-In</NavLink></li>
         </ul>
       </div>
       <div className="navbar-end">

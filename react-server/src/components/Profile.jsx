@@ -216,17 +216,14 @@ function Profile(){
         else  updatedUser['lastName']=lname.trim();
     }
 
-      if(phoneNumber?.trim())
-      {
-          updatedUser['phoneNumber']="+1"+phoneNumber;
-
-          if (phoneNumber !== data.phoneNumber) {
-              if (!phoneNumberVerified) {
-                  setErrors(prevState => [...prevState, "Please verify your phone number."]);
-                  return;
-              }
-          }
+    if(phoneNumber)
+    {
+      if (!phoneNumberVerified) {
+          setErrors(prevState => [...prevState, "Please verify your phone number."]);
+          return;
       }
+    }
+    
     if(dob)
     {
         dob=new Date(dob);
@@ -342,20 +339,20 @@ function Profile(){
     const rootElement = document.getElementById('root');
     return(
         <div className="container my-6 mx-auto">
-            <div className="profile-container mx-auto max-w-sm rounded-lg shadow-md bg-white overflow-hidden">
+            <div className="profile-container mx-auto max-w-sm rounded-lg shadow-md overflow-hidden">
             <div className="relative">
             <form onSubmit={handleEditForm}>
             <img
               src={data.profilePictureLocation || "/imgs/profile.jpeg"}
               alt={`${data.firstName} ${data.lastName}'s profile picture`}
-              className="w-full h-64 object-cover rounded-t-small rounded-full"
+              className="w-64 h-64 mx-auto rounded-full"
             />
         <label className="absolute bottom-4 right-4 cursor-pointer">
           <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
           {!uploaded ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-16 w-16 text-white bg-blue-500 rounded-full p-2 hover:bg-blue-600 transition duration-300"
+              className="h-8 w-8 text-white bg-blue-500 rounded-full hover:bg-blue-600 transition duration-300"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -391,21 +388,21 @@ function Profile(){
         </form>
     </div>
       <div className="px-6 py-4">
-        <h2 className="text-xl font-bold text-gray-800">
+        <h2 className="text-xl font-bold">
           {data.firstName} {data.lastName}
         </h2>
-        <p className="text-sm text-gray-600">User since: {data.userSince.split('-')[0]}</p>
+        <p className="text-sm ">User since: {data.userSince.split('-')[0]}</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-          <p className="text-sm text-gray-600">Mobile: {data.phoneNumber}</p>
-          <p className="text-sm text-gray-600">Email: {data.email}</p>
-          <p className="text-sm text-gray-600">Born on: {dateOfBirth}</p>
+          <p className="text-sm ">Mobile: {data.phoneNumber}</p>
+          <p className="text-sm ">Email: {data.email}</p>
+          <p className="text-sm ">Born on: {dateOfBirth}</p>
         </div>
-        <p className="text-sm text-gray-600 mt-4">
+        <p className="text-sm  mt-4">
           Languages you know:
           {data.languages && data.languages.length > 0 && (
             <>
               {data.languages.map((lang) => (
-                <span key={lang} className="inline-block px-3 mr-1 text-sm text-gray-700 bg-gray-200 rounded-full">
+                <span key={lang} className="inline-block px-3 mr-1 text-sm rounded-full">
                   {lang}
                 </span>
               ))}
@@ -414,10 +411,10 @@ function Profile(){
         </p>
         {data.friends && data.friends.length > 0 && (
           <>
-            <h3 className="text-lg font-medium mt-6 text-gray-800">Friends</h3>
+            <h3 className="text-lg font-medium mt-6">Friends</h3>
             <ol className="list-none space-y-2 pl-4">
               {data.friends.map((friend) => (
-                <li key={friend.userId} className="text-base text-gray-600">
+                <li key={friend.userId} className="text-base ">
                   {friend.firstName}
                 </li>
               ))}
@@ -434,16 +431,17 @@ function Profile(){
         Edit Profile
       </button>
     </div>
-       <ReactModal isOpen={openModal} contentLabel="editProfile" appElement={rootElement}>
-        <h2 className="text-center text-2xl font-medium mb-4">Editing profile Information</h2>
+      <div className="container bg-base-100">
+       <ReactModal isOpen={openModal} contentLabel="editProfile" appElement={rootElement} className=""> 
+        <h2 className="text-center bg-base-100 text-2xl font-medium mb-4">Editing profile Information</h2>
          <form
           onSubmit={(e)=>{handleEditForm(e); setFormSubmitted(true)}}
          
-          className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+          className="shadow-md rounded px-8 pt-6 pb-8 mb-4">
           <div className="mb-4">
             <label
               htmlFor="first_name"
-              className="block text-white-700 text-sm font-bold mb-2">
+              className="text-sm font-bold mb-2">
               First Name:
             </label>
             <input
@@ -452,12 +450,12 @@ function Profile(){
               id="first_name"
               defaultValue={data.firstName}    
               //onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-white-700 leading-tight focus:outline-none focus:shadow-outline"/>
+              className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"/>
           </div>
           <div className="mb-4">
             <label
               htmlFor="last_name"
-              className="block text-gray-700 text-sm font-bold mb-2">
+              className="block  text-sm font-bold mb-2">
               Last Name:
             </label>
             <input
@@ -466,12 +464,12 @@ function Profile(){
               id="last_name"
               defaultValue={data.lastName}
               //onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3  leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
         <div className="mb-4">
           <label htmlFor="dob"
-          className="block text-gray-700 text-sm font-bold mb-2">
+          className="block  text-sm font-bold mb-2">
             Date of Birth:
           </label>
           <input
@@ -480,7 +478,7 @@ function Profile(){
               id="dob"
               min={1900}
               max={2024}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3  leading-tight focus:outline-none focus:shadow-outline"
             />
         </div>
              <PhoneVerificationModal initialPhoneNumber={phoneNumber} onVerificationSuccess={onVerificationSuccess} />
@@ -489,13 +487,13 @@ function Profile(){
         <div className="mb-4">
             <label
               htmlFor="gender"
-              className="block text-gray-700 text-sm font-bold mb-2">
+              className="block  text-sm font-bold mb-2">
               Gender:
             </label>
             <select
               name="gender"
               id="gender"
-              className=" border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className=" border rounded py-2 px-3  leading-tight focus:outline-none focus:shadow-outline"
               defaultValue={data.gender}
                //onChange={handleChange}
                >
@@ -510,13 +508,13 @@ function Profile(){
           <div className="mb-4">
             <label
               htmlFor="languages"
-              className="block text-gray-700 text-sm font-bold mb-2">
+              className="block  text-sm font-bold mb-2">
               Languages you know:(choose maximum 3)
             </label>
             <select
               name="languages[]" 
               id="languages"
-              className="border rounded py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="border rounded py-1 px-3  leading-tight focus:outline-none focus:shadow-outline"
               value={languages}  
               onChange={handleLanguages}
               multiple
@@ -534,7 +532,7 @@ function Profile(){
 
         {languages.map((language) => (
           <span key={language} className="me-2 mb-2 inline-flex">          
-            <button type="button" className="bg-blue-300 hover:bg-red-300 text-black  py-1 px-1 rounded focus:outline-none focus:shadow-outline" onClick={() => handleLanguageRemove(language)}>
+            <button type="button" className="bg-blue-300 hover:bg-red-300   py-1 px-1 rounded focus:outline-none focus:shadow-outline" onClick={() => handleLanguageRemove(language)}>
             {language}
             </button>
           </span>
@@ -553,14 +551,16 @@ function Profile(){
         </div>
           <div className="mb-6">
             <div className="flex space-x-10">
-              <button type="button" className="bg-red-500 hover:bg-red-700 text-black font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline" onClick={()=>setOpenModal(!openModal)}>close</button>
+              <button type="button" className="btn btn-secondary" onClick={()=>setOpenModal(!openModal)}>close</button>
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline">
+              className="btn btn-primary">
               Make Changes
             </button>
           
-                </div></div></form></ReactModal></div>
+                </div></div></form></ReactModal>
+                </div>
+                </div>
     )
 }
 else
