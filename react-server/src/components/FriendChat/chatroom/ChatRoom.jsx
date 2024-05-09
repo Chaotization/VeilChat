@@ -167,60 +167,101 @@ const ChatRoom = () =>{
   }
 
   return (
-    <div className="chat bg-base-100 shadow-md rounded-lg p-4">
+    <div className="chat bg-base-100 shadow-xl rounded-xl p-6 flex flex-col h-screen">
       {notification.visible && (
-          <div className="notification-popup fixed top-20 right-20 bg-blue-500 text-white p-3 rounded-lg shadow-lg">
-            {notification.message}
+        <div className="alert alert-info shadow-lg absolute top-4 right-4">
+          <div>
+            <span>{notification.message}</span>
           </div>
+        </div>
       )}
-      <div className="top flex items-center mb-4">
+      <div className="top bg-primary text-white rounded-xl p-4 mb-6">
         <div className="user flex items-center">
-          <img src={user?.profilePictureLocation || "/imgs/avatar.png"} alt="" className="w-12 h-12 rounded-full mr-4" />
+          <div className="avatar mr-4">
+            <div className="w-12 rounded-full">
+              <img src={user?.profilePictureLocation || '/imgs/avatar.png'} alt="" />
+            </div>
+          </div>
           <div className="texts">
             <span className="font-bold">{user?.firstName} {user?.lastName}</span>
           </div>
         </div>
       </div>
-      <div className="center overflow-y-auto max-h-80">
-        {chat?.messages?.map(message => (
-          <div
-            className={`message ${message.senderId === currentUser?.id ? 'own bg-primary text-white' : 'bg-gray-200'} rounded-lg p-2 mb-2`}
-            key={message?.creatAt}
-          >
-            <div className="texts">
-              {message.fileUrl && <FileMessage message={message} />}
-              {message.text && <p>{message.text}</p>}
-              <span>{timeAgo(message.createdAt)}</span>
+      <div className="center flex-grow overflow-y-auto">
+        <div className="messages flex flex-col space-y-4">
+          {chat?.messages?.map((message) => (
+            <div
+              className={`chat ${
+                message.senderId === currentUser?.id ? 'chat-end' : 'chat-start'
+              }`}
+              key={message?.createdAt}
+            >
+              <div
+                className={`chat-bubble ${
+                  message.senderId === currentUser?.id
+                    ? 'bg-primary text-white'
+                    : 'bg-secondary text-white'
+                }`}
+              >
+                {message.fileUrl && <FileMessage message={message} />}
+                {message.text && <p>{message.text}</p>}
+                <span className="chat-time opacity-50">{timeAgo(message.createdAt)}</span>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+          {file.url && (
+            <div className="chat chat-end">
+              <div className="chat-bubble bg-primary text-white">
+                <img src={file.url} alt="" className="w-full mb-2 rounded-lg" />
+              </div>
+            </div>
+          )}
+          <div ref={endRef}></div>
+        </div>
+      </div>
+      <div className="bottom mt-6">
+        <div className="flex items-center space-x-4">
+          <input
+            type="text"
+            placeholder="Type a message..."
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            className="input input-bordered flex-grow"
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                handleSend();
+              }
+            }}
+          />
+          <label htmlFor="file" className="btn btn-circle btn-primary">
+            <span className="material-symbols-outlined">attach_file</span>
+          </label>
+          <input
+            type="file"
+            id="file"
+            className="hidden"
+            onChange={handleFileUpload}
+          />
+          <button className="btn btn-primary" onClick={handleSend}>
+            <span className="material-symbols-outlined">send</span>
+          </button>
+        </div>
         {file.url && (
-          <div className="message own bg-primary text-white rounded-lg p-2 mb-2">
-            <div className="texts">
-              <img src={file.url} alt="" className="w-full mb-2 rounded-lg" />
+          <div className="alert alert-success shadow-lg flex items-center mt-4">
+            <div>
+              <p className="mr-2">{file.name}</p>
+              <button
+                onClick={() => setfile({ file: null, url: '', name: '' })}
+                className="btn btn-sm btn-error"
+              >
+                Remove
+              </button>
             </div>
           </div>
         )}
-        <div ref={endRef}></div>
       </div>
-      <div className="bottom flex items-center mt-4 space-x-2">
-    <input type="text" placeholder="Type a message..." value={text} onChange={(e) => setText(e.target.value)} className="input input-bordered flex-grow mr-2" />
-    <label htmlFor="file" className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-        <img src="imgs/file.png" alt="Upload" className="h-5 w-5" />  
-    </label>
-    <input type="file" id="file" className="hidden" onChange={handleFileUpload} />
-    <button className="btn btn-primary" onClick={handleSend}>Send</button>
-    {file.url && (
-        <div className="preview bg-green-200 p-2 rounded flex items-center">
-            <p className="mr-2">{file.name}</p> {/* Display the name of the file here */}
-            <button onClick={() => setfile({ file: null, url: "", name: "" })} className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">
-                Remove
-            </button>
-        </div>
-    )}
-</div>
     </div>
-  )
+  );
 }
 
 export default ChatRoom

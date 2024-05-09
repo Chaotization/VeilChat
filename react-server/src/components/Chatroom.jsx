@@ -5,6 +5,7 @@ import { getAuth } from 'firebase/auth';
 import axios from 'axios';
 import FriendRequestListener from "./FriendRequestListener.jsx";
 import {arrayRemove, arrayUnion, doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
+import { useUserStore } from '../context/userStore.jsx';
 import {db} from "../firebase/FirebaseFunctions.js";
 import { useUserStore } from '../context/userStore.jsx';
 
@@ -310,7 +311,7 @@ function Chatroom(props) {
             <div>
 
               {promoteToFriend?
-                  <p className="btn btn-primary">Friendship Established</p>
+                  <p className="material-symbols-outlined btn btn-primary text-white text-xl">group</p>
                   :friendRequestReceived ? (
                   <>
                     <button className="btn btn-primary" onClick={() => handleAcceptFriendRequest(friendRequestReceived)}>Accept</button>
@@ -318,11 +319,11 @@ function Chatroom(props) {
                   </>
               ) : (
                   friendRequestSent === false ? (
-                      <button className="text-white" onClick={handleSendFriendRequest}>
-                        <span className="material-symbols-outlined btn btn-ghost">Add Friend</span>
+                      <button className="text-white" onClick={openFriendRequestModal}>
+                        <span className="material-symbols-outlined btn btn-ghost">person_add</span>
                       </button>
                   ) : (
-                      <button className="btn btn-ghost text-white">Pending</button>
+                      <button className="material-symbols-outlined  text-xl btn btn-ghost text-white">Pending</button>
                   )
               )}
               <button className="btn btn-ghost text-white" onClick={() => setShowExitOptions(true)}>Exit</button>
