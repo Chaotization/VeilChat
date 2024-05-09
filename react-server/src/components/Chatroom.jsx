@@ -7,7 +7,6 @@ import FriendRequestListener from "./FriendRequestListener.jsx";
 import {arrayRemove, arrayUnion, doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
 import { useUserStore } from '../context/userStore.jsx';
 import {db} from "../firebase/FirebaseFunctions.js";
-import { useUserStore } from '../context/userStore.jsx';
 
 function Chatroom(props) {
   const [messages,setMessages] = useState([])
@@ -319,7 +318,7 @@ function Chatroom(props) {
                   </>
               ) : (
                   friendRequestSent === false ? (
-                      <button className="text-white" onClick={openFriendRequestModal}>
+                      <button className="text-white" onClick={handleSendFriendRequest}>
                         <span className="material-symbols-outlined btn btn-ghost">person_add</span>
                       </button>
                   ) : (
