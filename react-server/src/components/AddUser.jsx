@@ -23,7 +23,7 @@ function AddUser(props)
     const navigate=useNavigate();
     const loggedUser=auth.currentUser;
     const { currentUser} = useUserStore();
-    const [languages, setLanguages]=useState("");
+    const [languages, setLanguages]=useState([]);
     const [uploadError, setUploadError] = useState(null);
     const [imageFile, setImageFile] = useState(null);
     const [phoneNumberVerified, setPhoneNumberVerified] = useState(false);
@@ -59,7 +59,7 @@ function AddUser(props)
           dob: "",
           email: "",
           gender:"",
-          languages:""
+          languages:[]
     });
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -104,13 +104,13 @@ function AddUser(props)
                 ACL: "public-read",
             };
 
-            console.log("Uploading with parameters:", params);
+            //console.log("Uploading with parameters:", params);
 
             const command = new PutObjectCommand(params);
             await s3Client.send(command);
 
             const fileUrl = `https://${params.Bucket}.s3.amazonaws.com/${params.Key}`;
-            console.log("Image uploaded successfully:", fileUrl);
+            //console.log("Image uploaded successfully:", fileUrl);
 
             return fileUrl;
         } catch (error) {
@@ -127,7 +127,7 @@ function AddUser(props)
             }
         }
     }
-  //console.log(loggedUser, currentUser)
+  ////console.log(loggedUser, currentUser)
     const handleLanguageRemove = (languageToRemove) => {
         if(languages.length<2) {
         alert("You need to choose atleast one language");

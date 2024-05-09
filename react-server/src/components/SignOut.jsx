@@ -1,19 +1,23 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
-import { doSignOut as FirebaseSignOut } from '../firebase/FirebaseFunctions.js';
+import { doSignOut } from '../firebase/FirebaseFunctions.js';
+import { getAuth } from 'firebase/auth';
 
 const SignOutButton = () => {
     const navigate = useNavigate();
-    const doSignOut = async () => {
+    let auth=getAuth();
+    let currentUser=auth.currentUser;
+    const handleSignOut = async () => {
         try {
             const response = await fetch('http://localhost:4000/logout', {
-                method: 'GET',
-                credentials: 'include',
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+           body: JSON.stringify({ email:currentUser.email, uid:currentUser.uid }),
             });
 
             if (response.ok) {
-                await FirebaseSignOut();
-                navigate("/");
+                await doSignOut();
+                navigate("/signin");
             } else {
                 const error = await response.json();
                 console.error('Logout failed:', error.message);
@@ -27,7 +31,7 @@ const SignOutButton = () => {
         <button
             className='bg-red-400 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
             type='button'
-            onClick={doSignOut}
+            onClick={handleSignOut}
         >
             Sign Out
         </button>

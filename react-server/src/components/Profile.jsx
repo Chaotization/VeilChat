@@ -143,13 +143,13 @@ function Profile(){
               ACL: "public-read",
           };
 
-          console.log("Uploading with parameters:", params);
+          //console.log("Uploading with parameters:", params);
 
           const command = new PutObjectCommand(params);
           await s3Client.send(command);
 
           const fileUrl = `https://${params.Bucket}.s3.amazonaws.com/${params.Key}`;
-          console.log("Image uploaded successfully:", fileUrl);
+          //console.log("Image uploaded successfully:", fileUrl);
 
           return fileUrl;
       } catch (error) {
@@ -258,20 +258,27 @@ function Profile(){
     {
         updatedUser['languages']=languages;
     }
+    if(phoneNumber)
+    {
+      if (!phoneNumberVerified) {
+          setErrors(prevState => [...prevState, "Please verify your phone number."]);
+          return;
+      }
+    } 
     let profilePictureUrl = ""
                 if (imageFile) {
                     profilePictureUrl = await uploadToS3();
 
                 }
     updatedUser['profilePictureLocation']=profilePictureUrl
-    console.log(profilePictureUrl)
+    //console.log(profilePictureUrl)
     if(!errors || errors.length===0)
     {
         try
     
         {
                 const userDocRef = doc(db, "users", currentUser.uid);
-                console.log(userDocRef)
+                //console.log(userDocRef)
                 await updateDoc(userDocRef, {
                     firstName: fname||"",
                     lastName: lname||"",
@@ -308,7 +315,7 @@ function Profile(){
                 }
                 else{
                     setErrors([]);
-                    console.log("success",data);
+                    //console.log("success",data);
                     setData(data);
                     setUploaded(false);
                     //alert("Sucessfully updated your profile");
@@ -324,7 +331,7 @@ function Profile(){
           }
         else{
           setErrors([]);
-          console.log("success",data);
+          //console.log("success",data);
           setData(data);
           setUploaded(false);
           //alert("Sucessfully updated your profile");
@@ -333,7 +340,7 @@ function Profile(){
     }
 
   if(data && data.firstName){
-    console.log(data)
+    //console.log(data)
     let dob=new Date(data.dob);
      let dateOfBirth=String(dob.getMonth() + 1).padStart(2, '0').toString()+"-"+String(dob.getDate()).padStart(2, '0').toString()+"-"+parseInt(dob.getFullYear().toString());
     const rootElement = document.getElementById('root');

@@ -7,13 +7,14 @@ import {
   doPasswordReset,
 } from '../firebase/FirebaseFunctions.js';
 import { getAuth } from "firebase/auth";
-import axios from "axios";
+import Loader from "./Loader.jsx";
 
 const SignIn=()=>
 {
     const navigate=useNavigate();
     const [error, setError]=useState(null);
     const {currentUser} = getAuth()
+    const [loading, setLoading]=useState(false);
 
     useEffect(()=>
   {
@@ -41,36 +42,49 @@ const SignIn=()=>
     async function handleSignIn(event) {
         event.preventDefault();
         setError("")
-        let email = document.getElementById("email").value.trim();
-        let password = document.getElementById("password").value.trim();
-        if (!email || !password) {
+        
+        let email=document.getElementById("email").value.trim();
+        let password=document.getElementById("password").value.trim();
+        if(!email || !password)
+        {
             setError("Email/password shouldn't be empty");
             return;
         }
 
         try {
-            const response = await fetch('http://localhost:4000/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({email, password}),
-                credentials: 'include',
-            });
 
-            if (response.ok) {
-                const sessionToken = response.headers.get('set-cookie');
-                document.cookie = `sessionToken=${sessionToken}`;
+          try{
+            setLoading(true);
+            const loginResponse= await fetch("http://localhost:4000/login", {
+           method: "POST",
+           headers: { "Content-Type": "application/json" },
+           body: JSON.stringify({ email, password }),
+         });
+         
+         if(loginResponse.ok)
+         {
+           //console.log("login success in backend");
+           await doSignInWithEmailAndPassword(email, password);
+           navigate("/")
+          
+         }
+         setLoading(false)
+       }
+         catch(e)
+         {
+           //console.log(e);
+         }
+         
+          
+      } catch (error) {
 
-                await doSignInWithEmailAndPassword(email, password);
-                navigate("/");
+          alert(error.code);
+      }
 
-            } else {
-                const error = await response.json();
-                // Handle login error
-                console.error(error.message);
-            }
-        } catch (error) {
-            alert(error.code);
-        }
+    }
+    if(loading)
+    {
+      return <Loader/>
     }
     return(
       <div className="max-w-md mx-auto my-8">
