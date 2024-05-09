@@ -51,7 +51,7 @@ const ChatRoom = () =>{
     const file = e.target.files[0];
     if (!file) return;
     setNotification({
-      visible: true,
+      visible: false,
       message: 'File size should not exceed 100 MB.'
     });
     if (file) {
