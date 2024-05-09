@@ -5,8 +5,8 @@ import { getAuth } from 'firebase/auth';
 import axios from 'axios';
 import FriendRequestListener from "./FriendRequestListener.jsx";
 import {arrayRemove, arrayUnion, doc, getDoc, setDoc, updateDoc} from "firebase/firestore";
-import {db} from "../firebase/FirebaseFunctions.js";
 import { useUserStore } from '../context/userStore.jsx';
+import {db} from "../firebase/FirebaseFunctions.js";
 
 function Chatroom(props) {
   const [messages,setMessages] = useState([])
@@ -310,7 +310,7 @@ function Chatroom(props) {
             <div>
 
               {promoteToFriend?
-                  <p className="btn btn-primary">Friendship Established</p>
+                  <p className="material-symbols-outlined btn btn-primary text-white text-xl">group</p>
                   :friendRequestReceived ? (
                   <>
                     <button className="btn btn-primary" onClick={() => handleAcceptFriendRequest(friendRequestReceived)}>Accept</button>
@@ -319,10 +319,10 @@ function Chatroom(props) {
               ) : (
                   friendRequestSent === false ? (
                       <button className="text-white" onClick={handleSendFriendRequest}>
-                        <span className="material-symbols-outlined btn btn-ghost">Add Friend</span>
+                        <span className="material-symbols-outlined btn btn-ghost">person_add</span>
                       </button>
                   ) : (
-                      <button className="btn btn-ghost text-white">Pending</button>
+                      <button className="material-symbols-outlined  text-xl btn btn-ghost text-white">Pending</button>
                   )
               )}
               <button className="btn btn-ghost text-white" onClick={() => setShowExitOptions(true)}>Exit</button>
@@ -377,7 +377,7 @@ function Chatroom(props) {
         </div>
         {showExitOptions && (
             <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-              <div className="bg-white p-6 rounded-lg shadow-lg">
+              <div className="bg-base-100 p-6 rounded-lg shadow-lg">
                 <h2 className="text-xl font-bold mb-4">Exit Chat</h2>
                 <div className="flex justify-end">
                   <button className="btn btn-primary mr-4" onClick={handleGoToHome}>
@@ -392,7 +392,7 @@ function Chatroom(props) {
         )}
         {showFriendRequestModal && (
             <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-              <div className="bg-white p-6 rounded-lg shadow-lg">
+              <div className="bg-base-100 p-6 rounded-lg shadow-lg">
                 <h2 className="text-xl font-bold mb-4">Send Friend Request</h2>
                 <p>Do you want to send a friend request?</p>
                 <div className="flex justify-end mt-4">

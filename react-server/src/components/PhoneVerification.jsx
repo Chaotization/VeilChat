@@ -99,7 +99,7 @@ const PhoneVerificationModal = ({ initialPhoneNumber, onVerificationSuccess }) =
 
     return (
         <div className="flex flex-wrap items-center mb-4 space-x-2">
-            <label htmlFor="phoneNumber" className="block text-gray-700 text-sm font-bold mb-2">
+            <label htmlFor="phoneNumber" className="block  text-sm font-bold mb-2">
                 Mobile Number:
             </label>
             <input
@@ -111,13 +111,13 @@ const PhoneVerificationModal = ({ initialPhoneNumber, onVerificationSuccess }) =
                 value={phoneNumber}
                 onChange={handlePhoneNumberChange}
                 disabled={isVerified || isCodeRequested}
-                className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-full md:w-auto"
+                className="shadow appearance-none border rounded py-2 px-3  leading-tight focus:outline-none focus:shadow-outline w-full md:w-auto"
             />
             {!isVerified && !isCodeRequested && (
                 <button
                     type="button"
                     onClick={requestVerificationCode}
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    className="bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     disabled={phoneNumber.length !== 10}
                 >
                     Request Verification Code
@@ -131,7 +131,7 @@ const PhoneVerificationModal = ({ initialPhoneNumber, onVerificationSuccess }) =
                         value={enteredCode}
                         onChange={handleVerificationInput}
                         maxLength={6}
-                        className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-full md:w-auto"
+                        className="shadow appearance-none border rounded py-2 px-3  leading-tight focus:outline-none focus:shadow-outline w-full md:w-auto"
                     />
                     <button
                         type="button"
