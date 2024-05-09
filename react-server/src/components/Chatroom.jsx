@@ -276,7 +276,7 @@ function Chatroom(props) {
   };
 
   const handleGoToHome = async () => {
-    const response = await axios.post("http://localhost:4000/search/exit", {
+    const response = await axios.post("http://localhost:4000/search/exist", {
       userId: currentUser.uid
     })
     if(response.data.deleted){
