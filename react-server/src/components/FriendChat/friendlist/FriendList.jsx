@@ -113,12 +113,7 @@ const FriendList = ({triggerChatUpdate}) => {
     const friendRef = doc(db, "users", selectedFriend.id);
 
 
-    await updateDoc(userRef, {
-      friends: arrayRemove(selectedFriend.id)
-    });
-    await updateDoc(friendRef, {
-      friends: arrayRemove(currentUser.id)
-    });
+    
 
     const userChatRef = doc(db, "userchats", currentUser.id);
     const userChatSnapshot = await getDoc(userChatRef);
@@ -144,6 +139,14 @@ const FriendList = ({triggerChatUpdate}) => {
     const friendChatData = friendChatSnapshot.data();
     const FriendFdata = friendChatData.chats.find(chat => chat.receiverId === currentUser.id);
     const friendChatDocRef = doc(db, "userchats", selectedFriend.id);
+    await updateDoc(userRef, {
+      friends: arrayRemove(selectedFriend.id)
+    });
+
+    
+    await updateDoc(friendRef, {
+      friends: arrayRemove(currentUser.id)
+    });
     try {
       await updateDoc(friendChatDocRef,{
         chats: arrayRemove(FriendFdata)

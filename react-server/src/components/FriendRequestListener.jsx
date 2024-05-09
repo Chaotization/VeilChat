@@ -15,15 +15,18 @@ const FriendRequestListener = ({ onRequestReceived,onRequestAccepted, otherUserI
                 friendsDocRef,
                 (snapshot) => {
                     const userData = snapshot.data();
-                    console.log(`Received Friend Request Data from ${otherUserId}`);
 
-                    if (userData && userData.friends) {
-                        const pendingFriendRequests = userData.friends.filter(
+                    if (userData && userData.friendRequests) {
+                        const pendingFriendRequests = userData.friendRequests.filter(
                             (request) => (request.status === 'pending' && request.friendId===otherUserId)
                         );
 
-                        const AcceptedRequests = userData.friends.filter(
+                        const AcceptedRequests = userData.friendRequests.filter(
                             (request) => (request.status === 'accepted' && request.friendId===otherUserId)
+                        );
+
+                        const friendNotExist = userData.friendRequests.filter(
+                            (request) => (request.friendId===otherUserId)
                         );
 
 
@@ -45,7 +48,6 @@ const FriendRequestListener = ({ onRequestReceived,onRequestAccepted, otherUserI
                 }
             );
 
-            // Cleanup listener on unmount
             return () => unsubscribe();
         } else {
             console.warn('No current user detected for FriendRequestListener');
