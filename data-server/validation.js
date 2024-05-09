@@ -182,7 +182,8 @@ const exportedMethods = {
     const day = date.getDate();
     const hour = date.getHours();
     const minutes = date.getMinutes();
-    return new Date(`${month}/${day}/${year} ${hour}:${minutes}`);
+    const seconds=date.getSeconds()
+    return new Date(`${month}/${day}/${year} ${hour}:${minutes}:${seconds}`);
   },
 
     validateLanguages(languages){
